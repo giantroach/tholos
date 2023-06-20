@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import { watch, onMounted, provide, ref } from 'vue';
 import type { Ref } from 'vue';
-// import HelloWorld from './components/HelloWorld.vue'
+import Board from './components/Board.vue';
 
 import { BgaRequest, BgaNotification } from './type/bga-interface.d';
 import { Gamedata } from './type/gamedata.d';
 import { State, CurrentState } from './logic/state';
 import { Sub } from './logic/sub';
+import { BoardData } from './type/board.d';
 
 let bgaRequest: Ref<BgaRequest> = ref({
   name: '',
@@ -38,6 +39,38 @@ let gamedata: Gamedata = {
 let playerID = -1;
 let state: null | State = null;
 let sub: null | Sub = null;
+
+const mainBoardData: Ref<BoardData> = ref({
+  stones: [
+    ['stoneB'],
+    ['stoneW', 'stoneG'],
+    ['stoneW', 'stoneG', 'stoneG', 'stoneB', 'stoneW'],
+    ['stoneW'],
+    ['stoneB'],
+    ['stoneG'],
+    ['stoneG', 'stoneG'],
+  ],
+  selectable: [],
+  selected: [],
+  // FIXME:
+  active: true,
+});
+
+const wsWBoardData: Ref<BoardData> = ref({
+  stones: [['stoneB'], ['stoneW'], ['stoneG']],
+  selectable: [],
+  selected: [],
+  // FIXME:
+  active: true,
+});
+
+const wsBBoardData: Ref<BoardData> = ref({
+  stones: [['stoneB'], ['stoneW'], ['stoneG']],
+  selectable: [],
+  selected: [],
+  // FIXME:
+  active: true,
+});
 
 const urlBase = ref('');
 provide('urlBase', urlBase);
@@ -144,21 +177,39 @@ defineExpose({
 </script>
 
 <template>
-  Hello World
-  <!-- <HelloWorld msg="Vite + Vue" /> -->
+  <div class="layout">
+    <div class="top">
+      <div class="left">
+        <Board type="main" :data="mainBoardData" />
+      </div>
+
+      <div class="right"></div>
+    </div>
+
+    <div class="bottom">
+      <div>
+        <Board type="workshopW" :data="wsWBoardData" />
+      </div>
+      <div>
+        <Board type="workshopB" :data="wsBBoardData" />
+      </div>
+    </div>
+  </div>
 </template>
 
 <style scoped>
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
+.layout {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.vue:hover {
-  filter: drop-shadow(0 0 2em #42b883aa);
+
+.bottom {
+  display: flex;
+
+  > div {
+    flex: 0 0 auto;
+    padding: 20px;
+  }
 }
 </style>

@@ -73,7 +73,7 @@ define([
       // when the client script is ready
       p.then((v) => {
         vue = v;
-        vue.urlBase.value = g_gamethemeurl;
+        vue.urlBase = g_gamethemeurl;
 
         // TODO: Set up your game interface here, according to "gamedatas"
         this.refreshGamedata(gamedatas);

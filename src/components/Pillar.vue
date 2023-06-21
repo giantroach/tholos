@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import { pillarDefs } from '../def/pillar.ts';
+import { pillarDefs } from '../def/pillar';
 import Stone from './Stone.vue';
-import type { StoneType } from '../type/stone.d.ts';
-import type { PillarType, PillarDef } from '../type/pillar.d.ts';
+import type { StoneType } from '../type/stone.d';
+import type { PillarType, PillarDef } from '../type/pillar.d';
 import type { Ref } from 'vue';
 
 export interface Props {

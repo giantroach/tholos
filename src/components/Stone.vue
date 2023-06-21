@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { inject, ref } from 'vue';
-import { stoneDefs } from '../def/stone.ts';
-import type { StoneType } from '../type/stone.d.ts';
+import { stoneDefs } from '../def/stone';
+import type { StoneType } from '../type/stone.d';
 import type { Ref } from 'vue';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

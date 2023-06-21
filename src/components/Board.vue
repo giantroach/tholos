@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { inject, ref } from 'vue';
-import { boardDefs } from '../def/board.ts';
+import { boardDefs } from '../def/board';
 import Pillar from './Pillar.vue';
-import type { BoardType, BoardData } from '../type/board.d.ts';
+import type { BoardType, BoardData } from '../type/board.d';
 import type { Ref } from 'vue';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const prop = defineProps<{
+const props = defineProps<{
   type: {
     type: BoardType;
     required: true;
@@ -17,9 +17,9 @@ const prop = defineProps<{
   };
 }>() as any;
 const urlBase: Ref<string> = inject('urlBase') || ref('');
-const data: BoardData = ref(prop.data);
+const data: BoardData = ref(props.data);
 
-const def = boardDefs[prop.type as BoardType];
+const def = boardDefs[props.type as BoardType];
 const width = def.width;
 const height = def.height;
 const image = def.image;
@@ -50,8 +50,6 @@ const bgPos = (() => {
         }"
       >
         <Pillar :stones="stoneCol" />
-        <!-- <div>{{ def.stonePos[idx].x }}</div>
-             <div>{{ def.stonePos[idx].y }}</div> -->
       </li>
     </ul>
   </div>

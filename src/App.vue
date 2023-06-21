@@ -2,12 +2,14 @@
 import { watch, onMounted, provide, ref } from 'vue';
 import type { Ref } from 'vue';
 import Board from './components/Board.vue';
+import Quarry from './components/Quarry.vue';
 
 import { BgaRequest, BgaNotification } from './type/bga-interface.d';
 import { Gamedata } from './type/gamedata.d';
 import { State, CurrentState } from './logic/state';
 import { Sub } from './logic/sub';
 import { BoardData } from './type/board.d';
+import { QuarryData } from './type/quarry.d';
 
 let bgaRequest: Ref<BgaRequest> = ref({
   name: '',
@@ -70,6 +72,12 @@ const wsBBoardData: Ref<BoardData> = ref({
   selected: [],
   // FIXME:
   active: true,
+});
+
+const quarryData: Ref<QuarryData> = ref({
+  w: 13,
+  g: 10,
+  b: 13,
 });
 
 const urlBase = ref('');
@@ -173,6 +181,11 @@ defineExpose({
   bgaRequestPromise,
   urlBase,
   gamedata,
+  // game data
+  mainBoardData,
+  wsWBoardData,
+  wsBBoardData,
+  quarryData,
 });
 </script>
 
@@ -183,7 +196,9 @@ defineExpose({
         <Board type="main" :data="mainBoardData" />
       </div>
 
-      <div class="right"></div>
+      <div class="right">
+        <Quarry :data="quarryData" />
+      </div>
     </div>
 
     <div class="bottom">
@@ -202,6 +217,24 @@ defineExpose({
   display: flex;
   flex-direction: column;
   align-items: center;
+
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: center;
+  color: #2c3e50;
+}
+
+.top {
+  display: flex;
+
+  > div.left {
+    flex: 1 1 auto;
+  }
+
+  > div.right {
+    flex: 0 0 150px;
+  }
 }
 
 .bottom {

@@ -42,4 +42,102 @@ const boardDefs: { [boardType in BoardType]: BoardDef } = {
   },
 };
 
-export { boardDefs };
+const defaultMainboardData: BoardData = {
+  pillars: [
+    {
+      stones: ['stoneB'],
+      selectable: [],
+      selected: [],
+      active: false,
+    },
+    {
+      stones: ['stoneW', 'stoneG'],
+      selectable: [],
+      selected: [],
+      active: false,
+    },
+    {
+      stones: ['stoneW', 'stoneG', 'stoneG', 'stoneB', 'stoneW'],
+      selectable: [],
+      selected: [],
+      active: false,
+    },
+    {
+      stones: ['stoneW'],
+      selectable: [],
+      selected: [],
+      active: false,
+    },
+    {
+      stones: ['stoneB'],
+      selectable: [],
+      selected: [],
+      active: false,
+    },
+    {
+      stones: ['stoneG'],
+      selectable: [],
+      selected: [],
+      active: false,
+    },
+    {
+      stones: ['stoneG', 'stoneG'],
+      selectable: [],
+      selected: [],
+      active: false,
+    },
+  ],
+};
+
+const defaultWsWBoardData: BoardData = {
+  pillars: [
+    {
+      stones: ['stoneW'],
+      selectable: [true],
+      selected: [],
+      active: false,
+    },
+    {
+      stones: ['stoneW'],
+      selectable: [true],
+      selected: [true],
+      active: false,
+    },
+    {
+      stones: [],
+      selectable: [],
+      selected: [],
+      active: false,
+    },
+  ],
+};
+
+const defaultWsBBoardData: BoardData = {
+  pillars: [
+    {
+      stones: ['stoneB'],
+      selectable: [],
+      selected: [],
+      active: false,
+    },
+    {
+      stones: ['stoneB'],
+      selectable: [],
+      selected: [],
+      active: false,
+    },
+    {
+      stones: [],
+      selectable: [],
+      selected: [],
+      active: false,
+    },
+  ],
+};
+
+export {
+  boardDefs,
+  defaultMainboardData,
+  defaultWsWBoardData,
+  defaultWsBBoardData,
+};

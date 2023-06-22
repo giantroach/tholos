@@ -19,11 +19,7 @@ interface BoardDef {
 }
 
 interface BoardData {
-  stones: PillarData[];
-  stones: StoneType[][];
-  selectable?: boolean[][][];
-  selected?: boolean[][][];
-  active?: boolean;
+  pillars: PillarData[];
 }
 
 export { BoardType, BoardDef, StonePos, BoardData };

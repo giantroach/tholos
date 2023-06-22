@@ -41,7 +41,7 @@ const bgPos = (() => {
   >
     <ul class="stones">
       <li
-        v-for="(stoneCol, idx) in data.stones"
+        v-for="(pillar, idx) in data.pillars"
         :key="idx"
         class=""
         v-bind:style="{
@@ -49,7 +49,7 @@ const bgPos = (() => {
           top: def.stonePos[idx].y,
         }"
       >
-        <Pillar :stones="stoneCol" />
+        <Pillar :data="pillar" />
       </li>
     </ul>
   </div>

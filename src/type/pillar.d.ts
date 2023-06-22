@@ -6,6 +6,11 @@ interface PillarDef {
   stoneGap: number;
 }
 
-type PillarData = StoneType[];
+type PillarData = {
+  stones: StoneType[];
+  selectable: boolean[];
+  selected: boolean[];
+  active: boolean;
+}
 
 export { PillarType, PillarDef };

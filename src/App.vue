@@ -10,6 +10,11 @@ import { State, CurrentState } from './logic/state';
 import { Sub } from './logic/sub';
 import { BoardData } from './type/board.d';
 import { QuarryData } from './type/quarry.d';
+import {
+  defaultMainboardData,
+  defaultWsWBoardData,
+  defaultWsBBoardData,
+} from './def/board';
 
 let bgaRequest: Ref<BgaRequest> = ref({
   name: '',
@@ -42,37 +47,13 @@ let playerID = -1;
 let state: null | State = null;
 let sub: null | Sub = null;
 
-const mainBoardData: Ref<BoardData> = ref({
-  stones: [
-    ['stoneB'],
-    ['stoneW', 'stoneG'],
-    ['stoneW', 'stoneG', 'stoneG', 'stoneB', 'stoneW'],
-    ['stoneW'],
-    ['stoneB'],
-    ['stoneG'],
-    ['stoneG', 'stoneG'],
-  ],
-  selectable: [],
-  selected: [],
-  // FIXME:
-  active: true,
-});
+const mainBoardData: Ref<BoardData> = ref(
+  structuredClone(defaultMainboardData)
+);
 
-const wsWBoardData: Ref<BoardData> = ref({
-  stones: [['stoneB'], ['stoneW'], ['stoneG']],
-  selectable: [],
-  selected: [],
-  // FIXME:
-  active: true,
-});
+const wsWBoardData: Ref<BoardData> = ref(structuredClone(defaultWsWBoardData));
 
-const wsBBoardData: Ref<BoardData> = ref({
-  stones: [['stoneB'], ['stoneW'], ['stoneG']],
-  selectable: [],
-  selected: [],
-  // FIXME:
-  active: true,
-});
+const wsBBoardData: Ref<BoardData> = ref(structuredClone(defaultWsBBoardData));
 
 const quarryData: Ref<QuarryData> = ref({
   w: 13,

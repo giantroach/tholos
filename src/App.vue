@@ -15,6 +15,7 @@ import {
   defaultWsWBoardData,
   defaultWsBBoardData,
 } from './def/board';
+import { defaultQuarryData } from './def/quarry';
 
 let bgaRequest: Ref<BgaRequest> = ref({
   name: '',
@@ -55,11 +56,7 @@ const wsWBoardData: Ref<BoardData> = ref(structuredClone(defaultWsWBoardData));
 
 const wsBBoardData: Ref<BoardData> = ref(structuredClone(defaultWsBBoardData));
 
-const quarryData: Ref<QuarryData> = ref({
-  w: 13,
-  g: 10,
-  b: 13,
-});
+const quarryData: Ref<QuarryData> = ref(structuredClone(defaultQuarryData));
 
 const urlBase = ref('');
 provide('urlBase', urlBase);

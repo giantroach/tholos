@@ -8,6 +8,7 @@ import type { Ref } from 'vue';
 export interface Props {
   data: PillarData;
   type?: PillarType;
+  active: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -30,9 +31,18 @@ const def: PillarDef = pillarDefs[props.type];
     >
       <Stone
         :type="stoneType"
-        :selectable="data.selectable[idx]"
+        :selectable="active && data.selectable[idx]"
         :selected="data.selected[idx]"
         @selectStone="data.selected[idx] = !data.selected[idx]"
+      />
+    </li>
+
+    <li v-if="data.selectable[0] && !data.stones[0]">
+      <Stone
+        type="none"
+        :selectable="(props.active && data.selectable[0]) || false"
+        :selected="data.selected[0] || false"
+        @selectStone="data.selected[0] = !data.selected[0]"
       />
     </li>
   </ul>

@@ -1,7 +1,7 @@
-type StoneType = 'stoneB' | 'stoneW' | 'stoneG';
+type StoneType = 'stoneB' | 'stoneW' | 'stoneG' | 'none';
 
 interface StoneDef {
-  image: string;
+  image: string | null;
   width: string;
   height: string;
   imgTop?: number;

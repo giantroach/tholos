@@ -7,7 +7,7 @@ import quarryImgUrl from '../assets/quarry.png';
 
 const props = defineProps<{
   data: {
-    data: QuarryData;
+    type: QuarryData;
     required: true;
   };
 }>() as any;
@@ -27,16 +27,31 @@ const urlBase: Ref<string> = inject('urlBase') || ref('');
       />
     </div>
     <div class="quarry-stone quarry-stone-w">
-      <Stone type="stoneW" />
-      <div class="quantity">x{{ data.w }}</div>
+      <Stone
+        type="stoneW"
+        :selectable="data.active && data.stones[0] > 0"
+        :selected="data.selected[0]"
+        @selectStone="data.selected[0] = !data.selected[0]"
+      />
+      <div class="quantity">x{{ data.stones[0] }}</div>
     </div>
     <div class="quarry-stone quarry-stone-g">
-      <Stone type="stoneG" />
-      <div class="quantity">x{{ data.g }}</div>
+      <Stone
+        type="stoneG"
+        :selectable="data.active && data.stones[1] > 0"
+        :selected="data.selected[1]"
+        @selectStone="data.selected[1] = !data.selected[1]"
+      />
+      <div class="quantity">x{{ data.stones[1] }}</div>
     </div>
     <div class="quarry-stone quarry-stone-b">
-      <Stone type="stoneB" />
-      <div class="quantity">x{{ data.b }}</div>
+      <Stone
+        type="stoneB"
+        :selectable="data.active && data.stones[2] > 0"
+        :selected="data.selected[2]"
+        @selectStone="data.selected[2] = !data.selected[2]"
+      />
+      <div class="quantity">x{{ data.stones[2] }}</div>
     </div>
   </div>
 </template>

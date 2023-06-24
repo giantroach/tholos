@@ -1,4 +1,4 @@
-import { BoardType, BoardDef } from '../type/board.d';
+import { BoardType, BoardDef, BoardData } from '../type/board.d';
 import mainBoard1ImgUrl from '../assets/main-board1.jpg';
 // import mainBoard2ImgUrl from '../assets/main-board2.jpg';
 import workshopImgUrl from '../assets/workshops.png';
@@ -58,7 +58,7 @@ const defaultMainboardData: BoardData = {
     },
     {
       stones: ['stoneW', 'stoneG', 'stoneG', 'stoneB', 'stoneW'],
-      selectable: [],
+      selectable: [false, false, false, false, true],
       selected: [],
       active: false,
     },
@@ -87,6 +87,7 @@ const defaultMainboardData: BoardData = {
       active: false,
     },
   ],
+  active: false,
 };
 
 const defaultWsWBoardData: BoardData = {
@@ -95,21 +96,22 @@ const defaultWsWBoardData: BoardData = {
       stones: ['stoneW'],
       selectable: [true],
       selected: [],
-      active: false,
+      active: true,
     },
     {
       stones: ['stoneW'],
       selectable: [true],
       selected: [true],
-      active: false,
+      active: true,
     },
     {
       stones: [],
-      selectable: [],
+      selectable: [true],
       selected: [],
-      active: false,
+      active: true,
     },
   ],
+  active: false,
 };
 
 const defaultWsBBoardData: BoardData = {
@@ -133,6 +135,7 @@ const defaultWsBBoardData: BoardData = {
       active: false,
     },
   ],
+  active: false,
 };
 
 export {

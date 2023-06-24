@@ -39,29 +39,78 @@ const selectStone = () => {
 
 <template>
   <div
+    class="wrapper"
     :class="{
       selectable: !props.selected && props.selectable,
       selected: props.selected,
     }"
-    v-bind:style="{
-      width: width,
-      height: height,
-      backgroundImage: 'url(\'' + urlBase + image + '\')',
-      backgroundPosition: bgPos,
-    }"
-    @click="selectStone()"
-  ></div>
+  >
+    <div
+      v-if="image"
+      v-bind:style="{
+        width: width,
+        height: height,
+        backgroundImage: 'url(\'' + urlBase + image + '\')',
+        backgroundPosition: bgPos,
+      }"
+      @click="selectStone()"
+    ></div>
+    <div
+      class="none"
+      v-if="!image"
+      v-bind:style="{
+        width: width,
+        height: height,
+      }"
+      @click="selectStone()"
+    ></div>
+  </div>
 </template>
 
 <style scoped>
-.selectable {
-  filter: drop-shadow(0 0 3px #000) drop-shadow(0 0 3px #000)
-    drop-shadow(0 0 5px #00e9eb) drop-shadow(0 0 5px #00e9eb);
+.selectable > div {
+  filter: drop-shadow(0 0 5px #00e9eb) drop-shadow(0 0 5px #00e9eb)
+    drop-shadow(0 0 5px #00e9eb);
   cursor: pointer;
 }
-.selected {
-  filter: drop-shadow(0 0 3px #fff) drop-shadow(0 0 3px #fff)
-    drop-shadow(0 0 5px #ffb644) drop-shadow(0 0 5px #ffb644);
+.selected > div {
+  filter: drop-shadow(0 0 5px #ffb644) drop-shadow(0 0 5px #ffb644)
+    drop-shadow(0 0 5px #ffb644);
   cursor: pointer;
+}
+
+.none {
+  border-radius: 50px;
+  background-color: white;
+  margin-top: 8px;
+}
+
+/* aura effects */
+.wrapper {
+  position: relative;
+}
+
+.wrapper.selectable:before,
+.wrapper.selected:before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  color: transparent;
+  animation: aura 3s linear infinite;
+  background-color: white;
+  border-radius: 50px;
+  filter: blur(4px);
+}
+
+@keyframes aura {
+  0% {
+    transform: rotate(0deg) translate(6px) rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg) translate(6px) rotate(-360deg);
+  }
 }
 </style>

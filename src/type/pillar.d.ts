@@ -13,4 +13,4 @@ type PillarData = {
   active: boolean;
 }
 
-export { PillarType, PillarDef };
+export { PillarType, PillarDef, PillarData };

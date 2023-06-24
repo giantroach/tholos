@@ -1,7 +1,7 @@
 interface QuarryData {
-  w: number;
-  g: number;
-  b: number;
+  stones: number[];
+  selected: boolean[],
+  active: boolean;
 }
 
 export { QuarryData };

@@ -18,6 +18,12 @@ const stoneDefs: { [stoneType in StoneType]: StoneDef } = {
     width: '58px',
     height: '66px',
     imgLeft: 116,
+  },
+  none: {
+    image: null,
+    width: '58px',
+    height: '58px',
+    imgLeft: 116,
   }
 };
 

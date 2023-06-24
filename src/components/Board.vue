@@ -49,7 +49,7 @@ const bgPos = (() => {
           top: def.stonePos[idx].y,
         }"
       >
-        <Pillar :data="pillar" />
+        <Pillar :data="pillar" :active="data.active" />
       </li>
     </ul>
   </div>

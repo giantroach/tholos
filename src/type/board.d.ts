@@ -20,6 +20,7 @@ interface BoardDef {
 
 interface BoardData {
   pillars: PillarData[];
+  active: boolean;
 }
 
 export { BoardType, BoardDef, StonePos, BoardData };

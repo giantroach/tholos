@@ -10,6 +10,7 @@ type PillarData = {
   stones: StoneType[];
   selectable: boolean[];
   selected: boolean[];
+  ghosts: boolean[];
   active: boolean;
 }
 

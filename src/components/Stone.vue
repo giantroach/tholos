@@ -6,13 +6,15 @@ import type { Ref } from 'vue';
 
 export interface Props {
   type: StoneType;
-  selectable: boolean;
-  selected: boolean;
+  selectable?: boolean;
+  selected?: boolean;
+  ghost?: Boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   selectable: false,
   selected: false,
+  ghost: false,
 });
 
 const emit = defineEmits(['selectStone']);
@@ -47,6 +49,9 @@ const selectStone = () => {
   >
     <div
       v-if="image"
+      :class="{
+        ghost: ghost,
+      }"
       v-bind:style="{
         width: width,
         height: height,
@@ -83,6 +88,10 @@ const selectStone = () => {
   border-radius: 50px;
   background-color: white;
   margin-top: 8px;
+}
+
+.ghost {
+  opacity: 0.8;
 }
 
 /* aura effects */

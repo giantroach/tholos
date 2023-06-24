@@ -33,6 +33,7 @@ const def: PillarDef = pillarDefs[props.type];
         :type="stoneType"
         :selectable="active && data.selectable[idx]"
         :selected="data.selected[idx]"
+        :ghost="data.ghosts[idx]"
         @selectStone="data.selected[idx] = !data.selected[idx]"
       />
     </li>

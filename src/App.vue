@@ -3,19 +3,24 @@ import { watch, onMounted, provide, ref } from 'vue';
 import type { Ref } from 'vue';
 import Board from './components/Board.vue';
 import Quarry from './components/Quarry.vue';
+import CtrlButton from './components/CtrlButton.vue';
 
-import { BgaRequest, BgaNotification } from './type/bga-interface.d';
-import { Gamedata } from './type/gamedata.d';
 import { State, CurrentState } from './logic/state';
 import { Sub } from './logic/sub';
+
+import { Gamedata } from './type/gamedata.d';
+import { BgaRequest, BgaNotification } from './type/bga-interface.d';
 import { BoardData } from './type/board.d';
 import { QuarryData } from './type/quarry.d';
+import { CtrlButtonData } from './type/ctrlButton.d';
+
 import {
   defaultMainboardData,
   defaultWsWBoardData,
   defaultWsBBoardData,
 } from './def/board';
 import { defaultQuarryData } from './def/quarry';
+import { defaultCtrlButtonData } from './def/ctrlButton';
 
 let bgaRequest: Ref<BgaRequest> = ref({
   name: '',
@@ -58,8 +63,14 @@ const wsBBoardData: Ref<BoardData> = ref(structuredClone(defaultWsBBoardData));
 
 const quarryData: Ref<QuarryData> = ref(structuredClone(defaultQuarryData));
 
+const ctrlButtonData: Ref<CtrlButtonData> = ref(
+  structuredClone(defaultCtrlButtonData)
+);
+
 const urlBase = ref('');
 provide('urlBase', urlBase);
+
+const ready: Ref<boolean> = ref(false);
 
 onMounted(() => {
   // this must be done after the mount
@@ -67,9 +78,11 @@ onMounted(() => {
     initBgaNotification();
   });
   initBgaState();
+
   const unwatch = watch(gamedata, () => {
     restore();
     unwatch();
+    ready.value = true;
   });
 });
 
@@ -90,12 +103,12 @@ const request = (name: string, args: any): Promise<any> => {
     };
     setTimeout(() => {
       bgaRequestPromise
-        .then((reply) => {
-          resolve(reply);
-        })
-        .catch((e) => {
-          reject(e);
-        });
+      .then((reply) => {
+        resolve(reply);
+      })
+      .catch((e) => {
+        reject(e);
+      });
     });
   });
 };
@@ -151,6 +164,14 @@ const initBgaState = (): void => {
   });
 };
 
+const cancelState = () => {
+  state?.cancelState();
+};
+
+const submitState = (mode?: string) => {
+  state?.submitState(mode);
+};
+
 defineExpose({
   playerID,
   bgaStates,
@@ -164,11 +185,13 @@ defineExpose({
   wsWBoardData,
   wsBBoardData,
   quarryData,
+  ctrlButtonData,
+  ready,
 });
 </script>
 
 <template>
-  <div class="layout">
+  <div class="layout" v-if="ready">
     <div class="top">
       <div class="left">
         <Board type="main" :data="mainBoardData" />
@@ -177,6 +200,23 @@ defineExpose({
       <div class="right">
         <Quarry :data="quarryData" />
       </div>
+    </div>
+
+    <div class="center">
+      <CtrlButton
+        type="submit"
+        :active="ctrlButtonData.submit.active"
+        :display="ctrlButtonData.submit.display"
+        auraType="submit"
+        @btnClick="submitState()"
+      ></CtrlButton>
+      <CtrlButton
+        type="cancel"
+        :active="ctrlButtonData.cancel.active"
+        :display="ctrlButtonData.cancel.display"
+        auraType="cancel"
+        @btnClick="cancelState()"
+      ></CtrlButton>
     </div>
 
     <div class="bottom">
@@ -214,6 +254,13 @@ defineExpose({
   > div.right {
     flex: 0 0 150px;
   }
+}
+
+.center {
+  height: 50px;
+}
+.center > * {
+  margin: 10px;
 }
 
 .bottom {

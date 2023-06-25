@@ -45,6 +45,7 @@ const boardDefs: { [boardType in BoardType]: BoardDef } = {
 const defaultMainboardData: BoardData = {
   pillars: [
     {
+      type: 'p1',
       stones: ['stoneB'],
       selectable: [],
       selected: [],
@@ -52,6 +53,7 @@ const defaultMainboardData: BoardData = {
       active: false,
     },
     {
+      type: 'p2',
       stones: ['stoneW', 'stoneG'],
       selectable: [],
       selected: [],
@@ -59,6 +61,7 @@ const defaultMainboardData: BoardData = {
       active: false,
     },
     {
+      type: 'p3',
       stones: ['stoneW', 'stoneG', 'stoneG', 'stoneB', 'stoneW'],
       selectable: [false, false, false, false, true],
       selected: [],
@@ -66,6 +69,7 @@ const defaultMainboardData: BoardData = {
       active: false,
     },
     {
+      type: 'p4',
       stones: ['stoneW'],
       selectable: [],
       selected: [],
@@ -73,6 +77,7 @@ const defaultMainboardData: BoardData = {
       active: false,
     },
     {
+      type: 'p5',
       stones: ['stoneB'],
       selectable: [],
       selected: [],
@@ -80,6 +85,7 @@ const defaultMainboardData: BoardData = {
       active: false,
     },
     {
+      type: 'p6',
       stones: ['stoneG'],
       selectable: [],
       selected: [],
@@ -87,6 +93,7 @@ const defaultMainboardData: BoardData = {
       active: false,
     },
     {
+      type: 'p7',
       stones: ['stoneG', 'stoneG'],
       selectable: [],
       selected: [],

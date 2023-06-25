@@ -8,7 +8,7 @@ export interface Props {
   type: StoneType;
   selectable?: boolean;
   selected?: boolean;
-  ghost?: Boolean;
+  ghost?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {

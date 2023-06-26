@@ -2,7 +2,7 @@ import {
   ButtonType,
   CtrlButtonDef,
   CtrlButtonData,
-} from '../type/CtrlButton.d';
+} from '../type/ctrlButton.d';
 
 const ctrlButtonDefs: { [cardType in ButtonType]: CtrlButtonDef } = {
   cancel: {

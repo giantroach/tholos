@@ -74,7 +74,8 @@ class State {
     }
   }
 
-  public submitState(): void {
+  public submitState(mode?: string): void {
+    console.log('mode', mode);
     if (/^playerTurn/.test(this.current)) {
       this.current = "playerTurn:submit";
       this.throttledRefresh();

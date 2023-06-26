@@ -6,29 +6,20 @@ import type {
   ButtonType,
   ButtonSizeDef,
   CtrlButtonDef,
-} from '../type/CtrlButton.d';
+} from '../type/ctrlButton.d';
 
 const props = defineProps<{
-  type: {
-    type: String;
-  };
-  active: {
-    type: Boolean;
-    required: true;
-  };
-  display: {
-    type: Boolean;
-    required: true;
-  };
+  type: ButtonType;
+  active: Boolean;
+  display: Boolean;
 }>();
 const emit = defineEmits(['btnClick']);
 
+const type: Ref<ButtonType> = ref(props.type);
 const i18n: Ref<any> = inject('i18n') || ref('');
 
-const type = ref(props.type);
-
-const def = ctrlButtonDefs[props.type];
-const size = def.size;
+const def: CtrlButtonDef = ctrlButtonDefs[type.value];
+const size: ButtonSizeDef = def.size;
 
 const btnClick = () => {
   if (!props.active) {

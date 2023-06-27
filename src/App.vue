@@ -36,7 +36,7 @@ let bgaNotifQueue: Promise<any> = Promise.resolve();
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 let bgaStateQueue: Promise<any> = Promise.resolve();
 
-let gamedata: Gamedata = {
+let gamedata: Ref<Gamedata> = ref({
   current_player_id: '',
   decision: { decision_type: '' },
   game_result_neutralized: '',
@@ -47,10 +47,9 @@ let gamedata: Gamedata = {
   playerorder: [],
   players: {},
   tablespeed: '',
-};
+});
 
 let playerID = -1;
-let state: null | State = null;
 let sub: null | Sub = null;
 
 const mainBoardData: Ref<BoardData> = ref(
@@ -86,13 +85,6 @@ onMounted(() => {
   });
 });
 
-const restore = () => {
-  // restore all the data based on gamedata
-  state = new State(request);
-  state.refresh();
-  sub = new Sub(playerID);
-};
-
 const request = (name: string, args: any): Promise<any> => {
   return new Promise((resolve, reject) => {
     // this is where magic happens
@@ -103,14 +95,30 @@ const request = (name: string, args: any): Promise<any> => {
     };
     setTimeout(() => {
       bgaRequestPromise
-      .then((reply) => {
-        resolve(reply);
-      })
-      .catch((e) => {
-        reject(e);
-      });
+        .then((reply) => {
+          resolve(reply);
+        })
+        .catch((e) => {
+          reject(e);
+        });
     });
   });
+};
+
+const state: State = new State(
+  request,
+  mainBoardData,
+  wsWBoardData,
+  wsBBoardData,
+  quarryData,
+  ctrlButtonData
+);
+
+const restore = () => {
+  // restore all the data based on gamedata
+  // state = new State(request);
+  state.refresh();
+  sub = new Sub(playerID);
 };
 
 const initBgaNotification = (): void => {
@@ -180,6 +188,9 @@ defineExpose({
   bgaRequestPromise,
   urlBase,
   gamedata,
+  state,
+  // init method
+  restore,
   // game data
   mainBoardData,
   wsWBoardData,

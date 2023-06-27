@@ -1,18 +1,19 @@
-// import { watch } from "vue";
-import { throttle } from "../util/util";
+import { watch } from 'vue';
+import { throttle } from '../util/util';
+
+import type { Ref } from 'vue';
+import { BoardData } from '../type/board.d';
+import { QuarryData } from '../type/quarry.d';
+import { CtrlButtonData } from '../type/ctrlButton.d';
 
 type CurrentState =
-  | "init"
-  | "playerTurn:init"
-  | "playerTurn:submit"
-  | "waitingForOtherPlayer"
-  | "otherPlayerTurn";
+  | 'init'
+  | 'playerTurn:init'
+  | 'playerTurn:submit'
+  | 'waitingForOtherPlayer'
+  | 'otherPlayerTurn';
 
-type SubState =
-  | "init"
-  | "submit"
-  | "afterAnim"
-  | "afterSubmit";
+type SubState = 'init' | 'submit' | 'afterAnim' | 'afterSubmit';
 
 //
 // State handles data changes / local state changes
@@ -22,37 +23,48 @@ class State {
   constructor(
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     private request: any,
+    private mainBoardData: Ref<BoardData>,
+    private wsWBoardData: Ref<BoardData>,
+    private wsBBoardData: Ref<BoardData>,
+    private quarryData: Ref<QuarryData>,
+    private ctrlButtonData: Ref<CtrlButtonData>
   ) {
     this.throttledRefresh = throttle(this.refresh, 100, this);
-    // watch(
-    //   [],
-    //   () => {
-    //     // FIXME: there are too many of refresh calls
-    //     this.throttledRefresh();
-    //   },
-    // );
+    watch(
+      [
+        this.mainBoardData,
+        this.wsWBoardData,
+        this.wsBBoardData,
+        this.quarryData,
+        this.ctrlButtonData,
+      ],
+      () => {
+        this.throttledRefresh();
+      },
+      { deep: true }
+    );
   }
 
-  public current: CurrentState = "waitingForOtherPlayer";
+  public current: CurrentState = 'waitingForOtherPlayer';
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public throttledRefresh: any;
 
   public refresh() {
     switch (this.current) {
-      case "waitingForOtherPlayer":
+      case 'waitingForOtherPlayer':
         break;
 
-      case "playerTurn:init":
+      case 'playerTurn:init':
         break;
 
-      case "playerTurn:submit":
-        this.request("moveStone", {
-          color: "black",
+      case 'playerTurn:submit':
+        this.request('moveStone', {
+          color: 'black',
           from: null,
           to: null,
         });
-        this.setSubState("afterSubmit");
+        this.setSubState('afterSubmit');
         break;
     }
   }
@@ -69,7 +81,7 @@ class State {
 
   public cancelState(): void {
     if (/^playerTurn/.test(this.current)) {
-      this.current = "playerTurn:init";
+      this.current = 'playerTurn:init';
       this.throttledRefresh();
     }
   }
@@ -77,7 +89,7 @@ class State {
   public submitState(mode?: string): void {
     console.log('mode', mode);
     if (/^playerTurn/.test(this.current)) {
-      this.current = "playerTurn:submit";
+      this.current = 'playerTurn:submit';
       this.throttledRefresh();
     }
   }

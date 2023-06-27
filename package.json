@@ -9,7 +9,7 @@
     "build:bgaBackend": "cp -f ./bga_src/backend/* ./dist/",
     "build:bgaClient": "cp -f ./bga_src/client/* ./dist/",
     "build:bgaCpImg": "cp -f ./bga_src/img/* ./dist/img",
-    "build:dev": "vue-tsc && vite build && rm ./dist/index.html",
+    "build:dev": "vue-tsc && vite build && rm ./dist/index.html && rm ./dist/test.js",
     "clear:dist": "rm -rf ./dist/*",
     "preview": "vite preview"
   },

@@ -13,6 +13,7 @@ import { BgaRequest, BgaNotification } from './type/bga-interface.d';
 import { BoardData } from './type/board.d';
 import { QuarryData } from './type/quarry.d';
 import { CtrlButtonData } from './type/ctrlButton.d';
+import { PlayerData } from './type/player.d';
 
 import {
   defaultMainboardData,
@@ -66,6 +67,8 @@ const ctrlButtonData: Ref<CtrlButtonData> = ref(
   structuredClone(defaultCtrlButtonData)
 );
 
+const playerData: Ref<PlayerData> = ref({ playerSide: 'black' });
+
 const urlBase = ref('');
 provide('urlBase', urlBase);
 
@@ -107,6 +110,7 @@ const request = (name: string, args: any): Promise<any> => {
 
 const state: State = new State(
   request,
+  playerData,
   mainBoardData,
   wsWBoardData,
   wsBBoardData,
@@ -116,9 +120,17 @@ const state: State = new State(
 
 const restore = () => {
   // restore all the data based on gamedata
-  // state = new State(request);
+  restorePlayerSide();
   state.refresh();
   sub = new Sub(playerID);
+};
+
+const restorePlayerSide = () => {
+  if (String(gamedata.value.playerorder[0]) === String(playerID)) {
+    playerData.value.playerSide = 'white';
+  } else {
+    playerData.value.playerSide = 'black';
+  }
 };
 
 const initBgaNotification = (): void => {

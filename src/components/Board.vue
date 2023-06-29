@@ -80,7 +80,7 @@ const showHint = (evt: MouseEvent, idx: number) => {
     const mcRect = mcElm.getBoundingClientRect();
     let mcTop = centerY - mcRect.height / 2;
     // FIXME: hard coded
-    let mcLeft = centerX + 58 + 20;
+    let mcLeft = centerX + 20;
     // let mcLeft = centerX - mcRect.width / 2;
     const bdRect = body.getBoundingClientRect();
     if (mcTop + mcRect.height > bdRect.height) {

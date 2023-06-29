@@ -7,6 +7,16 @@
     <title>Tholos - local dev</title>
   </head>
   <body>
+    <div>
+      <select id="test-data-idx">
+        <option value="0" selected>0</option>
+      </select>
+      <button
+        onclick="loadTestData(Number(document.getElementById('test-data-idx').value))"
+      >
+        Load test data
+      </button>
+    </div>
     <div id="app"></div>
     <script type="module" src="/src/main.ts"></script>
     <script src="/test.js"></script>

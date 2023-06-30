@@ -106,3 +106,24 @@ function loadTestData(idx = 0) {
   vue.state.current = "playerTurn:init";
   // vue.state.refresh();
 }
+
+// append UI
+const base = document.createElement('div');
+base.innerHTML = `
+<select id="test-data-idx">
+  <option value="0" selected>0</option>
+</select>
+<button
+onclick="loadTestData(Number(document.getElementById('test-data-idx').value))"
+  >
+  Load test data
+</button>
+`;
+document.body.prepend(base);
+const sel = document.getElementById('test-data-idx');
+testdata.forEach((d, idx) => {
+  const opt = document.createElement('option');
+  opt.value = idx;
+  opt.innerText = idx;
+  sel.appendChild(opt);
+});

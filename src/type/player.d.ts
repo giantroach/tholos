@@ -1,7 +1,7 @@
 type PlayerSide = 'white' | 'black';
 
 interface PlayerData {
-  playerSide: PlayerSide
+  playerSide: PlayerSide;
 }
 
-export { PlayerSide, PlayerData}
+export { PlayerSide, PlayerData };

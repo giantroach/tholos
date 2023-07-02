@@ -1,7 +1,13 @@
+interface QuarryCarryDialogDef {
+  text: string;
+}
+
 interface QuarryData {
   stones: number[];
-  selected: boolean[],
+  selected: boolean[];
+  carry: number;
+  carryMax: number;
   active: boolean;
 }
 
-export { QuarryData };
+export { QuarryCarryDialogDef, QuarryData };

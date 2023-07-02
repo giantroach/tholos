@@ -73,7 +73,7 @@ const defaultMainboardData: BoardData = {
       stones: ['stoneW'],
       selectable: [],
       selected: [],
-      ghosts: [true],
+      ghosts: [],
       active: false,
     },
     {
@@ -117,7 +117,7 @@ const defaultWsWBoardData: BoardData = {
       stones: ['stoneW'],
       selectable: [],
       selected: [],
-      ghosts: [true],
+      ghosts: [],
       active: false,
     },
     {

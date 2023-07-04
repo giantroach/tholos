@@ -76,7 +76,7 @@ define([
         vue.urlBase = g_gamethemeurl;
 
         // TODO: Set up your game interface here, according to "gamedatas"
-        this.refreshGamedata(gamedatas);
+        vue.gamedata = gamedatas;
         vue.playerID = this.player_id;
         // Setup game notifications to handle (see "setupNotifications" method below)
         this.setupNotifications();
@@ -87,12 +87,6 @@ define([
           'Tholos..': _('Tholos'),
         };
         console.log('Ending game setup');
-      });
-    },
-
-    refreshGamedata: function (gamedatas) {
-      Object.keys(gamedatas).forEach((prop) => {
-        vue.gamedata[prop] = gamedatas[prop];
       });
     },
 

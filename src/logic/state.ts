@@ -5,20 +5,32 @@ import type { Ref } from 'vue';
 import { BoardData } from '../type/board.d';
 import { QuarryData } from '../type/quarry.d';
 import { CtrlButtonData } from '../type/ctrlButton.d';
-import { PlayerData } from './type/player.d';
+import { PlayerData } from '../type/player.d';
 
 type CurrentState =
   | 'init'
   | 'playerTurn:init'
   | 'playerTurn:beforeStoneSelect'
+  | 'playerTurn:beforeQuarryCntSelect'
+  | 'playerTurn:beforePillarSelect'
+  | 'playerTurn:beforeTargetSelect1'
+  | 'playerTurn:beforeTargetSelect2'
+  | 'playerTurn:beforeTargetSelect3'
+  | 'playerTurn:beforeSubmit'
   | 'playerTurn:submit'
+  | 'playerTurn:afterSubmit'
   | 'waitingForOtherPlayer'
   | 'otherPlayerTurn';
 
 type SubState =
   | 'init'
+  | 'beforeQuarryCntSelect'
+  | 'beforePillarSelect'
+  | 'beforeTargetSelect1'
+  | 'beforeTargetSelect2'
+  | 'beforeTargetSelect3'
+  | 'beforeSubmit'
   | 'submit'
-  | 'afterAnim'
   | 'afterSubmit'
   | 'beforeStoneSelect';
 
@@ -71,7 +83,36 @@ class State {
         break;
 
       case 'playerTurn:beforeStoneSelect':
+        if (this.isQuarrySelected()) {
+          this.setSubState('beforeQuarryCntSelect');
+        }
+        if (this.isWsSelected()) {
+          this.setSubState('beforePillarSelect');
+        }
         this.setQuarryWsSelectable();
+        break;
+
+      case 'playerTurn:beforeQuarryCntSelect':
+        if (!this.isQuarrySelected()) {
+          this.assign(this.quarryData.value, 'carryMax', 0);
+          this.setSubState('beforeStoneSelect');
+          break;
+        }
+        if (this.isQuarryCarrySelected()) {
+          this.setSubState('beforeSubmit');
+        }
+        this.setQuarryCarryMax();
+        break;
+
+      case 'playerTurn:beforePillarSelect':
+        this.assign(this.quarryData.value, 'active', false);
+        this.assign(this.ctrlButtonData.value.cancel, 'display', true);
+        break;
+
+      case 'playerTurn:beforeSubmit':
+        this.assign(this.ctrlButtonData.value.submit, 'display', true);
+        this.assign(this.ctrlButtonData.value.cancel, 'display', true);
+        this.everythingNotSelectable();
         break;
 
       case 'playerTurn:submit':
@@ -111,9 +152,29 @@ class State {
   }
 
   public reset() {
-    this.wsWBoardData.value.active = false;
-    this.wsBBoardData.value.active = false;
-    this.quarryData.value.active = false;
+    this.assign(this.ctrlButtonData.value.submit, 'display', false);
+    this.assign(this.ctrlButtonData.value.cancel, 'display', false);
+
+    [this.wsWBoardData, this.wsBBoardData].forEach((b) => {
+      this.assign(b.value, 'active', false);
+      b.value.pillars.forEach((p) => {
+        this.assign(p, 'selected', []);
+      });
+    });
+
+    this.assign(this.quarryData.value, 'active', false);
+    this.assign(this.quarryData.value, 'selected', []);
+    this.assign(this.quarryData.value, 'carryMax', 0);
+  }
+
+  public everythingNotSelectable() {
+    [this.wsWBoardData, this.wsBBoardData].forEach((b) => {
+      this.assign(b.value, 'active', false);
+      b.value.pillars.forEach((p) => {
+        this.assign(p, 'selectable', []);
+      });
+    });
+    this.assign(this.quarryData.value, 'active', false);
   }
 
   public setQuarryWsSelectable(): void {
@@ -136,6 +197,67 @@ class State {
     this.assign(this.quarryData.value, 'active', true);
   }
 
+  public isQuarrySelected(): boolean {
+    return this.quarryData.value.selected.includes(true);
+  }
+
+  public isQuarryCarrySelected(): boolean {
+    return this.quarryData.value.carry > 0;
+  }
+
+  public isWsSelected(): boolean {
+    let target = this.wsWBoardData.value;
+
+    if (this.playerData.value.playerSide === 'black') {
+      target = this.wsBBoardData.value;
+    }
+
+    return target.pillars.some((p) => {
+      return p.selected.includes(true);
+    });
+  }
+
+  public setQuarryCarryMax() {
+    const idx = this.quarryData.value.selected.findIndex((s) => s === true);
+    const color = ['white', 'gray', 'black'].reduce((acc, cur, i) => {
+      if (idx === i) {
+        return cur;
+      }
+      return acc;
+    });
+    const playerSide = this.playerData.value.playerSide;
+
+    let max = 1;
+    if (color === playerSide) {
+      max = 3;
+    }
+    if (color === 'gray') {
+      max = 2;
+    }
+
+    // FIXME: depending on the remaining space, we must reduce the max
+    let ws = this.wsWBoardData.value;
+    if (playerSide === 'black') {
+      ws = this.wsBBoardData.value;
+    }
+    const wsRemainingSpace = 3 - this.getWsStoneCount(ws);
+    if (max > wsRemainingSpace) {
+      max = wsRemainingSpace;
+    }
+
+    this.assign(this.quarryData.value, 'carryMax', max);
+    this.assign(this.quarryData.value, 'carry', max);
+  }
+
+  public getWsStoneCount(ws: BoardData) {
+    return ws.pillars.reduce((acc, cur) => {
+      if (cur.stones[0]) {
+        return acc + 1;
+      }
+      return acc;
+    }, 0);
+  }
+
   public setTargetSelectable() {
     // mainboard
     this.assign(this.mainBoardData.value, 'active', true);
@@ -145,7 +267,7 @@ class State {
       if (pl >= 5) {
         return;
       }
-      const s = p.stones.map((s, idx) => {
+      const s = p.stones.map((_s, idx) => {
         if (pl === idx + 1) {
           return true;
         }

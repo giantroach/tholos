@@ -133,6 +133,7 @@ const hideDialog = () => {
       v-bind:style="{
         top: modalTop + 'px',
         left: modalLeft + 'px',
+        visibility: data.carryMax > 0 ? 'visible' : 'hidden',
       }"
     >
       <div class="text">

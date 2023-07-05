@@ -194,7 +194,14 @@ class State {
     }
 
     // quarry (quarry component has embed logic for selectable)
-    this.assign(this.quarryData.value, 'active', true);
+    // do not make it selectable when there is no space left
+    let ws = this.wsWBoardData.value
+    if (this.playerData.value.playerSide === 'black') {
+      ws = this.wsBBoardData.value;
+    }
+    if (this.getWsStoneCount(ws) < 3) {
+      this.assign(this.quarryData.value, 'active', true);
+    }
   }
 
   public isQuarrySelected(): boolean {
@@ -235,7 +242,7 @@ class State {
       max = 2;
     }
 
-    // FIXME: depending on the remaining space, we must reduce the max
+    // depending on the remaining space, we must reduce the max
     let ws = this.wsWBoardData.value;
     if (playerSide === 'black') {
       ws = this.wsBBoardData.value;

@@ -179,15 +179,16 @@ class State {
 
   public setQuarryWsSelectable(): void {
     // workshop
-    if (this.playerData.value.playerSide === 'white') {
-      this.assign(this.wsWBoardData.value, 'active', true);
-      const ps = this.wsWBoardData.value.pillars;
-      ps.forEach((p) => {
-        this.assign(p, 'selectable', [!!p.stones[0]]);
-      });
-    } else {
-      this.assign(this.wsBBoardData.value, 'active', true);
-      const ps = this.wsBBoardData.value.pillars;
+    let ws = this.wsWBoardData.value;
+    if (this.playerData.value.playerSide === 'black') {
+      ws = this.wsBBoardData.value;
+    }
+    const wsStoneCnt = this.getWsStoneCount(ws);
+
+    // activate onlye when at least one stone is there
+    if (wsStoneCnt > 0) {
+      this.assign(ws, 'active', true);
+      const ps = ws.pillars;
       ps.forEach((p) => {
         this.assign(p, 'selectable', [!!p.stones[0]]);
       });
@@ -195,11 +196,7 @@ class State {
 
     // quarry (quarry component has embed logic for selectable)
     // do not make it selectable when there is no space left
-    let ws = this.wsWBoardData.value
-    if (this.playerData.value.playerSide === 'black') {
-      ws = this.wsBBoardData.value;
-    }
-    if (this.getWsStoneCount(ws) < 3) {
+    if (wsStoneCnt < 3) {
       this.assign(this.quarryData.value, 'active', true);
     }
   }

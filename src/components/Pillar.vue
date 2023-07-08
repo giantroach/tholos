@@ -33,19 +33,38 @@ const def: PillarDef = pillarDefs[props.type];
         :type="stoneType"
         :selectable="active && data.selectable[idx]"
         :selected="data.selected[idx]"
-        :ghost="data.ghosts[idx]"
         @selectStone="data.selected[idx] = !data.selected[idx]"
       />
     </li>
 
-    <li v-if="data.selectable[0] && !data.stones[0]">
+    <li
+      v-for="(stoneType, idx) in data.ghosts"
+      :key="idx"
+      class=""
+      v-bind:style="{
+        top: `${(data.stones.length + idx) * def.stoneGap}px`,
+      }"
+    >
       <Stone
-        type="none"
-        :selectable="(props.active && data.selectable[0]) || false"
-        :selected="data.selected[0] || false"
-        @selectStone="data.selected[0] = !data.selected[0]"
+        :type="stoneType"
+        :selectable="active && data.selectable[data.stones.length + idx]"
+        :selected="data.selected[data.stones.length + idx]"
+        :ghost="true"
+        @selectStone="
+          data.selected[data.stones.length + idx] =
+            !data.selected[data.stones.length + idx]
+        "
       />
     </li>
+
+    <!-- <li v-if="data.selectable[0] && !data.stones[0]">
+         <Stone
+         type="none"
+         :selectable="(props.active && data.selectable[0]) || false"
+         :selected="data.selected[0] || false"
+         @selectStone="data.selected[0] = !data.selected[0]"
+         />
+         </li> -->
   </ul>
 </template>
 

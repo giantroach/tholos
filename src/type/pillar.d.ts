@@ -21,9 +21,9 @@ interface PillarDef {
 type PillarData = {
   type?: PillarType;
   stones: StoneType[];
+  ghosts: StoneType[];
   selectable: boolean[];
   selected: boolean[];
-  ghosts: boolean[];
   active: boolean;
 };
 

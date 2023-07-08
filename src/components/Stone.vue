@@ -45,6 +45,7 @@ const selectStone = () => {
     :class="{
       selectable: !props.selected && props.selectable,
       selected: props.selected,
+      ghost: ghost,
     }"
   >
     <div
@@ -74,13 +75,13 @@ const selectStone = () => {
 
 <style scoped>
 .selectable > div {
-  filter: drop-shadow(0 0 5px #00e9eb) drop-shadow(0 0 5px #00e9eb)
-    drop-shadow(0 0 5px #00e9eb);
+  filter: drop-shadow(0 0 3px #00e9eb) drop-shadow(0 0 3px #00e9eb)
+    drop-shadow(0 0 3px #00e9eb);
   cursor: pointer;
 }
 .selected > div {
-  filter: drop-shadow(0 0 5px #ffb644) drop-shadow(0 0 5px #ffb644)
-    drop-shadow(0 0 5px #ffb644);
+  filter: drop-shadow(0 0 3px #ffb644) drop-shadow(0 0 3px #ffb644)
+    drop-shadow(0 0 3px #ffb644);
   cursor: pointer;
 }
 
@@ -112,14 +113,15 @@ const selectStone = () => {
   background-color: white;
   border-radius: 50px;
   filter: blur(4px);
+  opacity: 0.8;
 }
 
 @keyframes aura {
   0% {
-    transform: rotate(0deg) translate(6px) rotate(0deg);
+    transform: rotate(0deg) translate(5px) rotate(0deg);
   }
   100% {
-    transform: rotate(360deg) translate(6px) rotate(-360deg);
+    transform: rotate(360deg) translate(5px) rotate(-360deg);
   }
 }
 </style>

@@ -6,6 +6,7 @@ import { BoardData } from '../type/board.d';
 import { QuarryData } from '../type/quarry.d';
 import { CtrlButtonData } from '../type/ctrlButton.d';
 import { PlayerData } from '../type/player.d';
+import { StoneType } from '../type/stone.d';
 
 type CurrentState =
   | 'init'
@@ -125,6 +126,15 @@ class State {
       }
 
       case 'playerTurn:beforeTargetSelect1':
+        if (!this.isOwnStonePlacing()) {
+          this.setSubState('beforeSubmit');
+          break;
+        }
+        if (!this.setTargetSelectable()) {
+          this.setSubState('beforeSubmit');
+          break;
+        }
+        console.log('FIXME')
         break;
 
       case 'playerTurn:beforeSubmit':
@@ -244,6 +254,18 @@ class State {
     });
   }
 
+  public isOwnStonePlacing(): boolean {
+    const s = this.getWsSelectedStone();
+    const playerSide = this.playerData.value.playerSide;
+    if (s === 'stoneG') {
+      return false;
+    }
+    if (playerSide === 'white') {
+      return s === 'stoneW';
+    }
+    return s === 'stoneB';
+  }
+
   public setQuarryCarryMax() {
     const idx = this.quarryData.value.selected.findIndex((s) => s === true);
     const color = ['white', 'gray', 'black'].reduce((acc, cur, i) => {
@@ -302,7 +324,7 @@ class State {
     }, 0);
   }
 
-  public getWsSelectedStone() {
+  public getWsSelectedStone(): StoneType {
     let ws = this.wsWBoardData.value;
     if (this.playerData.value.playerSide === 'black') {
       ws = this.wsBBoardData.value;
@@ -313,7 +335,7 @@ class State {
         return ws.pillars[i].stones[idx];
       }
     }
-    return '';
+    return 'none';
   }
 
   // FIXME: we need multi layer in select
@@ -326,23 +348,42 @@ class State {
     }, -1);
   }
 
-  public setTargetSelectable() {
-    // mainboard
-    this.assign(this.mainBoardData.value, 'active', true);
-    const ps = this.mainBoardData.value.pillars;
-    ps.forEach((p) => {
-      const pl = p.stones.length;
-      if (pl >= 5) {
-        return;
-      }
-      const s = p.stones.map((_s, idx) => {
-        if (pl === idx + 1) {
-          return true;
-        }
-        return false;
-      });
-      this.assign(p, 'selectable', s);
-    });
+  public setTargetSelectable(): boolean {
+    switch(this.getMainBoardSelectedIdx()) {
+      case 0:
+        break;
+      case 1:
+        break;
+      case 2:
+        break;
+      case 3:
+        break;
+      case 4:
+        break;
+      case 5:
+        break;
+      case 6:
+        break;
+    }
+
+    // // mainboard
+    // this.assign(this.mainBoardData.value, 'active', true);
+    // const ps = this.mainBoardData.value.pillars;
+    // ps.forEach((p) => {
+    //   const pl = p.stones.length;
+    //   if (pl >= 5) {
+    //     return;
+    //   }
+    //   const s = p.stones.map((_s, idx) => {
+    //     if (pl === idx + 1) {
+    //       return true;
+    //     }
+    //     return false;
+    //   });
+    //   this.assign(p, 'selectable', s);
+    // });
+
+    return false;
   }
 
   removeGhostExcept(board: BoardData, exceptIdx: number = -1) {

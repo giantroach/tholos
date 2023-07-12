@@ -134,7 +134,7 @@ class State {
           this.setSubState('beforeSubmit');
           break;
         }
-        console.log('FIXME')
+        console.log('FIXME');
         break;
 
       case 'playerTurn:beforeSubmit':
@@ -186,7 +186,7 @@ class State {
     [this.wsWBoardData, this.wsBBoardData].forEach((b) => {
       this.assign(b.value, 'active', false);
       b.value.pillars.forEach((p) => {
-        this.assign(p, 'selected', []);
+        this.assign(p, 'selected', [[]]);
       });
     });
 
@@ -196,7 +196,7 @@ class State {
 
     this.mainBoardData.value.pillars.forEach((p) => {
       this.assign(p, 'ghosts', []);
-      this.assign(p, 'selected', []);
+      this.assign(p, 'selected', [[], [], []]);
     });
   }
 
@@ -204,7 +204,7 @@ class State {
     [this.wsWBoardData, this.wsBBoardData].forEach((b) => {
       this.assign(b.value, 'active', false);
       b.value.pillars.forEach((p) => {
-        this.assign(p, 'selectable', []);
+        this.assign(p, 'selectable', [[], [], []]);
       });
     });
     this.assign(this.quarryData.value, 'active', false);
@@ -223,7 +223,7 @@ class State {
       this.assign(ws, 'active', true);
       const ps = ws.pillars;
       ps.forEach((p) => {
-        this.assign(p, 'selectable', [!!p.stones[0]]);
+        this.assign(p, 'selectable', [[!!p.stones[0]]]);
       });
     }
 
@@ -250,7 +250,7 @@ class State {
     }
 
     return target.pillars.some((p) => {
-      return p.selected.includes(true);
+      return p.selected[0]?.includes(true);
     });
   }
 
@@ -298,16 +298,17 @@ class State {
     this.assign(this.quarryData.value, 'carry', max);
   }
 
+  // only layer 0
   public setPillarTopSelectable() {
     const mb = this.mainBoardData.value;
     this.assign(mb, 'active', true);
     mb.pillars.forEach((p) => {
-      const s = new Array(p.stones.length).fill(false);
+      const s: boolean[][] = [new Array(p.stones.length).fill(false)];
       const g = [];
       // s[s.length - 1] = true;
-      if (s.length < 5) {
+      if (s[0].length < 5) {
         const stone = this.getWsSelectedStone();
-        s[s.length] = true;
+        s[0][s[0].length] = true;
         g[0] = stone;
       }
       this.assign(p, 'ghosts', g);
@@ -330,7 +331,7 @@ class State {
       ws = this.wsBBoardData.value;
     }
     for (let i = 0; i < ws.pillars.length; i += 1) {
-      const idx = ws.pillars[i].selected.indexOf(true);
+      const idx = ws.pillars[i].selected[0].indexOf(true);
       if (idx >= 0) {
         return ws.pillars[i].stones[idx];
       }
@@ -339,17 +340,17 @@ class State {
   }
 
   // FIXME: we need multi layer in select
-  public getMainBoardSelectedIdx(): number {
-    return this.mainBoardData.value.pillars.reduce((acc, cur, idx) => {
-      if (cur.selected.includes(true)) {
-        return idx;
+  public getMainBoardSelectedIdx(idx: number = 0): number {
+    return this.mainBoardData.value.pillars.reduce((acc, cur, i) => {
+      if (cur.selected[idx]?.includes(true)) {
+        return i;
       }
       return acc;
     }, -1);
   }
 
   public setTargetSelectable(): boolean {
-    switch(this.getMainBoardSelectedIdx()) {
+    switch (this.getMainBoardSelectedIdx()) {
       case 0:
         break;
       case 1:

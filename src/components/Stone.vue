@@ -9,12 +9,14 @@ export interface Props {
   selectable?: boolean;
   selected?: boolean;
   ghost?: boolean;
+  selectIdx?: number;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   selectable: false,
   selected: false,
   ghost: false,
+  selectIdx: 1,
 });
 
 const emit = defineEmits(['selectStone']);
@@ -43,8 +45,10 @@ const selectStone = () => {
   <div
     class="wrapper"
     :class="{
-      selectable: !props.selected && props.selectable,
-      selected: props.selected,
+      selectable0: !props.selected && props.selectable && props.selectIdx === 0,
+      selectable1: !props.selected && props.selectable && props.selectIdx === 1,
+      selected0: props.selected && props.selectIdx === 0,
+      selected1: props.selected && props.selectIdx === 1,
       ghost: ghost,
     }"
   >
@@ -74,14 +78,24 @@ const selectStone = () => {
 </template>
 
 <style scoped>
-.selectable > div {
+.selectable0 > div {
   filter: drop-shadow(0 0 3px #00e9eb) drop-shadow(0 0 3px #00e9eb)
     drop-shadow(0 0 3px #00e9eb);
   cursor: pointer;
 }
-.selected > div {
+.selectable1 > div {
+  filter: drop-shadow(0 0 3px #00eb7a) drop-shadow(0 0 3px #00eb7a)
+    drop-shadow(0 0 3px #00eb7a);
+  cursor: pointer;
+}
+.selected0 > div {
   filter: drop-shadow(0 0 3px #ffb644) drop-shadow(0 0 3px #ffb644)
     drop-shadow(0 0 3px #ffb644);
+  cursor: pointer;
+}
+.selected1 > div {
+  filter: drop-shadow(0 0 3px #fffc00) drop-shadow(0 0 3px #fffc00)
+    drop-shadow(0 0 3px #fffc00);
   cursor: pointer;
 }
 

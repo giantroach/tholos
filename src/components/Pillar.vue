@@ -17,6 +17,40 @@ const props = withDefaults(defineProps<Props>(), {
 
 const data: Ref<PillarData> = ref(props.data);
 const def: PillarDef = pillarDefs[props.type];
+
+const isSelectable = (idx: number): boolean => {
+  if (!props.active) {
+    return false;
+  }
+  return data.value.selectable.some((s) => {
+    return s[idx];
+  });
+};
+
+const isSelected = (idx: number): boolean => {
+  return data.value.selected.some((s) => {
+    return s[idx];
+  });
+};
+
+const getSelectedLayer = (idx: number): number => {
+  for (let i = 0; 0 <= i; i -= 1) {
+    if (data.value.selected[i]?.[idx]) {
+      return i;
+    }
+  }
+  return -1;
+};
+
+// get the highest selectable layer
+const getSelectableLayer = (idx: number): number => {
+  for (let i = 0; 0 <= i; i -= 1) {
+    if (data.value.selectable[i]?.[idx]) {
+      return i;
+    }
+  }
+  return -1;
+};
 </script>
 
 <template>
@@ -31,9 +65,13 @@ const def: PillarDef = pillarDefs[props.type];
     >
       <Stone
         :type="stoneType"
-        :selectable="active && data.selectable[idx]"
-        :selected="data.selected[idx]"
-        @selectStone="data.selected[idx] = !data.selected[idx]"
+        :selectable="isSelectable(idx)"
+        :selected="isSelected(idx)"
+        :selectIdx="getSelectableLayer(idx)"
+        @selectStone="
+        data.selected[getSelectableLayer(idx)][idx] =
+        !data.selected[getSelectableLayer(idx)][idx]
+        "
       />
     </li>
 
@@ -47,12 +85,17 @@ const def: PillarDef = pillarDefs[props.type];
     >
       <Stone
         :type="stoneType"
-        :selectable="active && data.selectable[data.stones.length + idx]"
-        :selected="data.selected[data.stones.length + idx]"
+        :selectable="isSelectable(data.stones.length + idx)"
+        :selected="isSelected(data.stones.length + idx)"
+        :selectIdx="getSelectableLayer(data.stones.length + idx)"
         :ghost="true"
         @selectStone="
-          data.selected[data.stones.length + idx] =
-            !data.selected[data.stones.length + idx]
+        data.selected[getSelectableLayer(data.stones.length + idx)][
+          data.stones.length + idx
+        ] =
+        !data.selected[getSelectableLayer(data.stones.length + idx)][
+          data.stones.length + idx
+        ]
         "
       />
     </li>

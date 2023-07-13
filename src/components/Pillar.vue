@@ -44,7 +44,8 @@ const getSelectedLayer = (idx: number): number => {
 
 // get the highest selectable layer
 const getSelectableLayer = (idx: number): number => {
-  for (let i = 0; 0 <= i; i -= 1) {
+  const max = 2;
+  for (let i = max; 0 <= i; i -= 1) {
     if (data.value.selectable[i]?.[idx]) {
       return i;
     }
@@ -69,8 +70,8 @@ const getSelectableLayer = (idx: number): number => {
         :selected="isSelected(idx)"
         :selectIdx="getSelectableLayer(idx)"
         @selectStone="
-        data.selected[getSelectableLayer(idx)][idx] =
-        !data.selected[getSelectableLayer(idx)][idx]
+          data.selected[getSelectableLayer(idx)][idx] =
+            !data.selected[getSelectableLayer(idx)][idx]
         "
       />
     </li>
@@ -90,12 +91,12 @@ const getSelectableLayer = (idx: number): number => {
         :selectIdx="getSelectableLayer(data.stones.length + idx)"
         :ghost="true"
         @selectStone="
-        data.selected[getSelectableLayer(data.stones.length + idx)][
-          data.stones.length + idx
-        ] =
-        !data.selected[getSelectableLayer(data.stones.length + idx)][
-          data.stones.length + idx
-        ]
+          data.selected[getSelectableLayer(data.stones.length + idx)][
+            data.stones.length + idx
+          ] =
+            !data.selected[getSelectableLayer(data.stones.length + idx)][
+              data.stones.length + idx
+            ]
         "
       />
     </li>

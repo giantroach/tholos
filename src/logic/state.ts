@@ -130,7 +130,7 @@ class State {
           this.setSubState('beforeSubmit');
           break;
         }
-        if (!this.setTargetSelectable()) {
+        if (!this.setTarget1Selectable()) {
           this.setSubState('beforeSubmit');
           break;
         }
@@ -339,7 +339,7 @@ class State {
     return 'none';
   }
 
-  // FIXME: we need multi layer in select
+  // we need multi layer in select
   public getMainBoardSelectedIdx(idx: number = 0): number {
     return this.mainBoardData.value.pillars.reduce((acc, cur, i) => {
       if (cur.selected[idx]?.includes(true)) {
@@ -349,10 +349,38 @@ class State {
     }, -1);
   }
 
-  public setTargetSelectable(): boolean {
+  public getStoneOnTopOfPillar(type: StoneType): number[] {
+    const mb = this.mainBoardData.value;
+    // this.assign(mb, 'active', true);
+    return mb.pillars.reduce((acc, p, idx) => {
+      if (p.stones[p.stones.length - 1] === type) {
+        acc.push(idx);
+      }
+      return acc;
+    }, []);
+  }
+
+  public setTarget1Selectable(): boolean {
+    const srcIdx = this.getMainBoardSelectedIdx();
+
     switch (this.getMainBoardSelectedIdx()) {
-      case 0:
+      case 0: {
+        const mb = this.mainBoardData.value;
+        const pIdxs = this.getStoneOnTopOfPillar('stoneG');
+        if (!pIdxs.length) {
+          return false;
+        }
+        pIdxs.forEach((idx) => {
+          if (srcIdx === idx) {
+            return;
+          }
+          const p = mb.pillars[idx];
+          const s = [[], [], []];
+          s[1][p.stones.length - 1] = true;
+          this.assign(p, 'selectable', s);
+        });
         break;
+      }
       case 1:
         break;
       case 2:
@@ -366,23 +394,6 @@ class State {
       case 6:
         break;
     }
-
-    // // mainboard
-    // this.assign(this.mainBoardData.value, 'active', true);
-    // const ps = this.mainBoardData.value.pillars;
-    // ps.forEach((p) => {
-    //   const pl = p.stones.length;
-    //   if (pl >= 5) {
-    //     return;
-    //   }
-    //   const s = p.stones.map((_s, idx) => {
-    //     if (pl === idx + 1) {
-    //       return true;
-    //     }
-    //     return false;
-    //   });
-    //   this.assign(p, 'selectable', s);
-    // });
 
     return false;
   }

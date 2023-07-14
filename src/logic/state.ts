@@ -125,15 +125,24 @@ class State {
         break;
       }
 
-      case 'playerTurn:beforeTargetSelect1':
+      case 'playerTurn:beforeTargetSelect1': {
         if (!this.isOwnStonePlacing()) {
           this.setSubState('beforeSubmit');
+          break;
+        }
+        const idx = this.getMainBoardSelectedIdx(1);
+        if (idx !== -1) {
+          this.setSubState('beforeTargetSelect2');
           break;
         }
         if (!this.setTarget1Selectable()) {
           this.setSubState('beforeSubmit');
           break;
         }
+        break;
+      }
+
+      case 'playerTurn:beforeTargetSelect2':
         console.log('FIXME');
         break;
 
@@ -197,6 +206,7 @@ class State {
     this.mainBoardData.value.pillars.forEach((p) => {
       this.assign(p, 'ghosts', []);
       this.assign(p, 'selected', [[], [], []]);
+      this.assign(p, 'selectable', [[], [], []]);
     });
   }
 
@@ -379,7 +389,7 @@ class State {
           s[1][p.stones.length - 1] = true;
           this.assign(p, 'selectable', s);
         });
-        break;
+        return true;
       }
       case 1:
         break;

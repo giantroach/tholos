@@ -115,7 +115,7 @@ class State {
         }
         const idx = this.getMainBoardSelectedIdx();
         if (idx !== -1) {
-          this.removeGhostExcept(this.mainBoardData.value, idx);
+          this.removeGhostExcept(this.mainBoardData.value, [idx]);
           this.setSubState('beforeTargetSelect1');
           break;
         }
@@ -143,6 +143,17 @@ class State {
       }
 
       case 'playerTurn:beforeTargetSelect2':
+        const idx0 = this.getMainBoardSelectedIdx(0);
+        const idx2 = this.getMainBoardSelectedIdx(2);
+        if (idx2 !== -1) {
+          this.removeGhostExcept(this.mainBoardData.value, [idx0, idx2]);
+          this.setSubState('beforeSubmit');
+          break;
+        }
+        if (!this.setTarget2Selectable()) {
+          this.setSubState('beforeSubmit');
+          break;
+        }
         console.log('FIXME');
         break;
 
@@ -315,7 +326,6 @@ class State {
     mb.pillars.forEach((p) => {
       const s: boolean[][] = [new Array(p.stones.length).fill(false)];
       const g = [];
-      // s[s.length - 1] = true;
       if (s[0].length < 5) {
         const stone = this.getWsSelectedStone();
         s[0][s[0].length] = true;
@@ -373,7 +383,7 @@ class State {
   public setTarget1Selectable(): boolean {
     const srcIdx = this.getMainBoardSelectedIdx();
 
-    switch (this.getMainBoardSelectedIdx()) {
+    switch (srcIdx) {
       case 0: {
         const mb = this.mainBoardData.value;
         const pIdxs = this.getStoneOnTopOfPillar('stoneG');
@@ -408,9 +418,51 @@ class State {
     return false;
   }
 
-  removeGhostExcept(board: BoardData, exceptIdx: number = -1) {
+  public setTarget2Selectable(): boolean {
+    const srcIdx0 = this.getMainBoardSelectedIdx(0);
+    const srcIdx1 = this.getMainBoardSelectedIdx(1);
+
+    switch (srcIdx0) {
+      case 0: {
+        const mb = this.mainBoardData.value;
+        let targetAvailable = false;
+        const srcStone =
+          mb.pillars[srcIdx1].stones[mb.pillars[srcIdx1].stones.length - 1];
+        mb.pillars.forEach((p, idx) => {
+          if (idx === srcIdx0 || idx === srcIdx1) {
+            return;
+          }
+          if (p.stones.length < 5) {
+            const s = [[], [], []];
+            const g = [srcStone];
+            s[2][p.stones.length] = true;
+            this.assign(p, 'ghosts', g);
+            this.assign(p, 'selectable', s);
+            targetAvailable = true;
+          }
+        });
+        return targetAvailable;
+      }
+      case 1:
+        break;
+      case 2:
+        break;
+      case 3:
+        break;
+      case 4:
+        break;
+      case 5:
+        break;
+      case 6:
+        break;
+    }
+
+    return false;
+  }
+
+  removeGhostExcept(board: BoardData, exceptIdx: number[] = []) {
     board.pillars.forEach((p, idx) => {
-      if (idx === exceptIdx) {
+      if (exceptIdx.some((i) => i === idx)) {
         return;
       }
       this.assign(p, 'ghosts', []);

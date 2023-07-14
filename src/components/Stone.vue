@@ -47,8 +47,10 @@ const selectStone = () => {
     :class="{
       selectable0: !props.selected && props.selectable && props.selectIdx === 0,
       selectable1: !props.selected && props.selectable && props.selectIdx === 1,
+      selectable2: !props.selected && props.selectable && props.selectIdx === 2,
       selected0: props.selected && props.selectIdx === 0,
       selected1: props.selected && props.selectIdx === 1,
+      selected2: props.selected && props.selectIdx === 2,
       ghost: ghost,
     }"
   >
@@ -88,6 +90,11 @@ const selectStone = () => {
     drop-shadow(0 0 3px #00eb7a);
   cursor: pointer;
 }
+.selectable2 > div {
+  filter: drop-shadow(0 0 3px #a1eb00) drop-shadow(0 0 3px #a1eb00)
+  drop-shadow(0 0 3px #a1eb00);
+  cursor: pointer;
+}
 .selected0 > div {
   filter: drop-shadow(0 0 3px #ffb644) drop-shadow(0 0 3px #ffb644)
     drop-shadow(0 0 3px #ffb644);
@@ -96,6 +103,11 @@ const selectStone = () => {
 .selected1 > div {
   filter: drop-shadow(0 0 3px #fffc00) drop-shadow(0 0 3px #fffc00)
     drop-shadow(0 0 3px #fffc00);
+  cursor: pointer;
+}
+.selected2 > div {
+  filter: drop-shadow(0 0 3px #ff6f00) drop-shadow(0 0 3px #ff6f00)
+  drop-shadow(0 0 3px #ff6f00);
   cursor: pointer;
 }
 

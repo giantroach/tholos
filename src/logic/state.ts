@@ -4,7 +4,7 @@ import { throttle } from '../util/util';
 import type { Ref } from 'vue';
 import { BoardData } from '../type/board.d';
 import { QuarryData } from '../type/quarry.d';
-import { CtrlButtonData } from '../type/ctrlButton.d';
+import { CtrlBarData } from '../type/ctrlBar.d';
 import { PlayerData } from '../type/player.d';
 import { StoneType } from '../type/stone.d';
 
@@ -14,6 +14,7 @@ type CurrentState =
   | 'playerTurn:beforeStoneSelect'
   | 'playerTurn:beforeQuarryCntSelect'
   | 'playerTurn:beforePillarSelect'
+  | 'playerTurn:takeActionConfirmation'
   | 'playerTurn:beforeTargetSelect1'
   | 'playerTurn:beforeTargetSelect2'
   | 'playerTurn:beforeTargetSelect3'
@@ -27,6 +28,7 @@ type SubState =
   | 'init'
   | 'beforeQuarryCntSelect'
   | 'beforePillarSelect'
+  | 'takeActionConfirmation'
   | 'beforeTargetSelect1'
   | 'beforeTargetSelect2'
   | 'beforeTargetSelect3'
@@ -48,7 +50,7 @@ class State {
     private wsWBoardData: Ref<BoardData>,
     private wsBBoardData: Ref<BoardData>,
     private quarryData: Ref<QuarryData>,
-    private ctrlButtonData: Ref<CtrlButtonData>
+    private ctrlBarData: Ref<CtrlBarData>,
   ) {
     this.throttledRefresh = throttle(this.refresh, 100, this);
     watch(
@@ -57,7 +59,7 @@ class State {
         this.wsWBoardData,
         this.wsBBoardData,
         this.quarryData,
-        this.ctrlButtonData,
+        this.ctrlBarData,
       ],
       () => {
         this.throttledRefresh();
@@ -120,7 +122,7 @@ class State {
           break;
         }
         this.assign(this.quarryData.value, 'active', false);
-        this.assign(this.ctrlButtonData.value.cancel, 'display', true);
+        this.assign(this.ctrlBarData.value, 'type', 'cancelable');
         this.setPillarTopSelectable();
         break;
       }
@@ -158,8 +160,7 @@ class State {
         break;
 
       case 'playerTurn:beforeSubmit':
-        this.assign(this.ctrlButtonData.value.submit, 'display', true);
-        this.assign(this.ctrlButtonData.value.cancel, 'display', true);
+        this.assign(this.ctrlBarData.value, 'type', 'submitActionConfirm');
         this.everythingNotSelectable();
         break;
 
@@ -200,8 +201,7 @@ class State {
   }
 
   public reset() {
-    this.assign(this.ctrlButtonData.value.submit, 'display', false);
-    this.assign(this.ctrlButtonData.value.cancel, 'display', false);
+    this.assign(this.ctrlBarData.value, 'type', '');
 
     [this.wsWBoardData, this.wsBBoardData].forEach((b) => {
       this.assign(b.value, 'active', false);
@@ -377,7 +377,7 @@ class State {
         acc.push(idx);
       }
       return acc;
-    }, []);
+    }, [] as number[]);
   }
 
   public setTarget1Selectable(): boolean {
@@ -395,7 +395,7 @@ class State {
             return;
           }
           const p = mb.pillars[idx];
-          const s = [[], [], []];
+          const s: boolean[][] = [[], [], []];
           s[1][p.stones.length - 1] = true;
           this.assign(p, 'selectable', s);
         });
@@ -433,7 +433,7 @@ class State {
             return;
           }
           if (p.stones.length < 5) {
-            const s = [[], [], []];
+            const s: boolean[][] = [[], [], []];
             const g = [srcStone];
             s[2][p.stones.length] = true;
             this.assign(p, 'ghosts', g);

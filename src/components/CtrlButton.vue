@@ -1,12 +1,8 @@
 <script setup lang="ts">
 import { inject, ref } from 'vue';
 import type { Ref } from 'vue';
-import { ctrlButtonDefs } from '../def/ctrlButton';
-import type {
-  ButtonType,
-  ButtonSizeDef,
-  CtrlButtonDef,
-} from '../type/ctrlButton.d';
+import { ctrlButtonDefs as d } from '../def/ctrlButton';
+import type { ButtonType } from '../type/ctrlButton.d';
 
 const props = defineProps<{
   type: ButtonType;
@@ -15,11 +11,7 @@ const props = defineProps<{
 }>();
 const emit = defineEmits(['btnClick']);
 
-const type: Ref<ButtonType> = ref(props.type);
 const i18n: Ref<any> = inject('i18n') || ref('');
-
-const def: CtrlButtonDef = ctrlButtonDefs[type.value];
-const size: ButtonSizeDef = def.size;
 
 const btnClick = () => {
   if (!props.active) {
@@ -27,18 +19,17 @@ const btnClick = () => {
   }
   emit('btnClick');
 };
-
 </script>
 
 <template>
   <Button
     v-bind:style="{
-      width: size.width,
-      height: size.height,
-      borderRadius: size.radius,
-      color: def.textColor,
-      background: def.background,
-      border: def.border,
+      width: d[props.type].size.width,
+      height: d[props.type].size.height,
+      borderRadius: d[props.type].size.radius,
+      color: d[props.type].textColor,
+      background: d[props.type].background,
+      border: d[props.type].border,
       cursor: active ? 'pointer' : '',
       display: props.display ? 'initial' : 'none',
     }"
@@ -48,7 +39,7 @@ const btnClick = () => {
     class="aura"
     @click="btnClick()"
   >
-    {{ i18n(def.label) }}
+    {{ i18n(d[props.type].label) }}
   </Button>
 </template>
 

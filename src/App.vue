@@ -3,7 +3,7 @@ import { watch, onMounted, provide, ref } from 'vue';
 import type { Ref } from 'vue';
 import Board from './components/Board.vue';
 import Quarry from './components/Quarry.vue';
-import CtrlButton from './components/CtrlButton.vue';
+import CtrlBar from './components/CtrlBar.vue';
 
 import { State, CurrentState } from './logic/state';
 import { Sub } from './logic/sub';
@@ -12,7 +12,7 @@ import { Gamedata } from './type/gamedata.d';
 import { BgaRequest, BgaNotification } from './type/bga-interface.d';
 import { BoardData } from './type/board.d';
 import { QuarryData } from './type/quarry.d';
-import { CtrlButtonData } from './type/ctrlButton.d';
+import { CtrlBarData } from './type/ctrlBar.d';
 import { PlayerData } from './type/player.d';
 
 import {
@@ -21,7 +21,7 @@ import {
   defaultWsBBoardData,
 } from './def/board';
 import { defaultQuarryData } from './def/quarry';
-import { defaultCtrlButtonData } from './def/ctrlButton';
+import { defaultCtrlBarData } from './def/ctrlBar';
 
 let bgaRequest: Ref<BgaRequest> = ref({
   name: '',
@@ -63,9 +63,7 @@ const wsBBoardData: Ref<BoardData> = ref(structuredClone(defaultWsBBoardData));
 
 const quarryData: Ref<QuarryData> = ref(structuredClone(defaultQuarryData));
 
-const ctrlButtonData: Ref<CtrlButtonData> = ref(
-  structuredClone(defaultCtrlButtonData)
-);
+const ctrlBarData: Ref<CtrlBarData> = ref(structuredClone(defaultCtrlBarData));
 
 const playerData: Ref<PlayerData> = ref({ playerSide: 'black' });
 
@@ -115,7 +113,7 @@ const state: State = new State(
   wsWBoardData,
   wsBBoardData,
   quarryData,
-  ctrlButtonData
+  ctrlBarData
 );
 
 const restore = () => {
@@ -208,7 +206,7 @@ defineExpose({
   wsWBoardData,
   wsBBoardData,
   quarryData,
-  ctrlButtonData,
+  ctrlBarData,
   ready,
 });
 </script>
@@ -226,20 +224,12 @@ defineExpose({
     </div>
 
     <div class="center">
-      <CtrlButton
-        type="submit"
-        :active="ctrlButtonData.submit.active"
-        :display="ctrlButtonData.submit.display"
-        auraType="submit"
-        @btnClick="submitState()"
-      ></CtrlButton>
-      <CtrlButton
-        type="cancel"
-        :active="ctrlButtonData.cancel.active"
-        :display="ctrlButtonData.cancel.display"
-        auraType="cancel"
-        @btnClick="cancelState()"
-      ></CtrlButton>
+      <CtrlBar
+        :type="ctrlBarData.type"
+        @cancel="cancelState()"
+        @submit="submitState()"
+      >
+      </CtrlBar>
     </div>
 
     <div class="bottom">

@@ -1,4 +1,4 @@
-type ButtonType = "cancel" | "submit";
+type ButtonType = 'cancel' | 'submit' | 'takeAction' | 'noAction';
 
 interface ButtonSizeDef {
   width: string;
@@ -15,7 +15,7 @@ interface CtrlButtonDef {
 }
 
 interface CtrlButtonData {
-  [cardType: string]: {
+  [buttonType: string]: {
     active?: boolean;
     display?: boolean;
   };

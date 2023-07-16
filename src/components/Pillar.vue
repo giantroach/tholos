@@ -33,15 +33,6 @@ const isSelected = (idx: number): boolean => {
   });
 };
 
-const getSelectedLayer = (idx: number): number => {
-  for (let i = 0; 0 <= i; i -= 1) {
-    if (data.value.selected[i]?.[idx]) {
-      return i;
-    }
-  }
-  return -1;
-};
-
 // get the highest selectable layer
 const getSelectableLayer = (idx: number): number => {
   const max = 2;

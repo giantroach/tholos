@@ -122,7 +122,7 @@ class State {
           break;
         }
         this.assign(this.quarryData.value, 'active', false);
-        this.assign(this.ctrlBarData.value, 'type', 'cancelable');
+        this.assign(this.ctrlBarData.value, 'type', 'choosePillar');
         this.setPillarTopSelectable();
         break;
       }
@@ -399,6 +399,7 @@ class State {
           s[1][p.stones.length - 1] = true;
           this.assign(p, 'selectable', s);
         });
+        this.assign(this.ctrlBarData.value, 'type', 'chooseTarget1a');
         return true;
       }
       case 1:
@@ -441,6 +442,7 @@ class State {
             targetAvailable = true;
           }
         });
+        this.assign(this.ctrlBarData.value, 'type', 'chooseTarget2a');
         return targetAvailable;
       }
       case 1:

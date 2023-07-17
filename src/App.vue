@@ -270,10 +270,9 @@ defineExpose({
 }
 
 .center {
-  height: 50px;
-}
-.center > * {
-  margin: 10px;
+  height: 72px;
+  margin-top: -72px;
+  width: 100%;
 }
 
 .bottom {

@@ -1,6 +1,13 @@
 import { CtrlButtonData, ButtonType } from './ctrlButton.d';
 
-type BarType = '' | 'cancelable' | 'takeActionConfirm' | 'submitActionConfirm';
+type BarType =
+  | ''
+  | 'cancelable'
+  | 'choosePillar'
+  | 'takeActionConfirm'
+  | 'chooseTarget1a'
+  | 'chooseTarget2a'
+  | 'submitActionConfirm';
 
 interface CtrlBarDef {
   message: string;

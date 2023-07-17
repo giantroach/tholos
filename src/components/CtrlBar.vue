@@ -19,28 +19,55 @@ const btnClick = (type: ButtonType) => {
 </script>
 
 <template>
-  <div class="message">
-    {{ i18n(ctrlBarDefs[props.type].message) }}
+  <div
+    class="bar-container"
+    v-if="
+      ctrlBarDefs[props.type].message ||
+      ctrlBarDefs[props.type].buttonTypes.length
+    "
+  >
+    <div class="message">
+      {{ i18n(ctrlBarDefs[props.type].message) }}
+    </div>
+    <ul class="buttons">
+      <li
+        v-for="(buttonType, idx) in ctrlBarDefs[props.type].buttonTypes"
+        :key="idx"
+      >
+        <CtrlButton
+          :type="buttonType"
+          :active="true"
+          :display="true"
+          @btnClick="btnClick(buttonType)"
+        ></CtrlButton>
+      </li>
+    </ul>
   </div>
-  <ul class="buttons">
-    <li
-      v-for="(buttonType, idx) in ctrlBarDefs[props.type].buttonTypes"
-      :key="idx"
-    >
-      <CtrlButton
-        :type="buttonType"
-        :active="true"
-        :display="true"
-        @btnClick="btnClick(buttonType)"
-      ></CtrlButton>
-    </li>
-  </ul>
 </template>
 
 <style scoped>
+.bar-container {
+  background-color: rgba(0, 0, 0, 0.5);
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  height: 72px;
+}
+
+.message {
+  margin: 5px 0;
+}
+
 ul.buttons {
   display: flex;
   list-style: none;
   padding: 0;
+  margin: 5px 0;
+}
+ul.buttons > li {
+  margin: 0 5px;
 }
 </style>

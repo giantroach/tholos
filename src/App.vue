@@ -96,12 +96,12 @@ const request = (name: string, args: any): Promise<any> => {
     };
     setTimeout(() => {
       bgaRequestPromise
-        .then((reply) => {
-          resolve(reply);
-        })
-        .catch((e) => {
-          reject(e);
-        });
+      .then((reply) => {
+        resolve(reply);
+      })
+      .catch((e) => {
+        reject(e);
+      });
     });
   });
 };
@@ -190,6 +190,18 @@ const submitState = (mode?: string) => {
   state?.submitState(mode);
 };
 
+const takeAction = () => {
+  state?.setSubState('beforeTargetSelect1');
+};
+
+const noAction = () => {
+  state?.setSubState('beforeSubmit');
+};
+
+const noValidTarget = () => {
+  state?.setSubState('beforeSubmit');
+}
+
 defineExpose({
   playerID,
   bgaStates,
@@ -228,6 +240,9 @@ defineExpose({
         :type="ctrlBarData.type"
         @cancel="cancelState()"
         @submit="submitState()"
+        @takeAction="takeAction()"
+        @noAction="noAction()"
+        @noValidTarget="noValidTarget()"
       >
       </CtrlBar>
     </div>

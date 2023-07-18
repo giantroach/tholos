@@ -50,7 +50,7 @@ class State {
     private wsWBoardData: Ref<BoardData>,
     private wsBBoardData: Ref<BoardData>,
     private quarryData: Ref<QuarryData>,
-    private ctrlBarData: Ref<CtrlBarData>,
+    private ctrlBarData: Ref<CtrlBarData>
   ) {
     this.throttledRefresh = throttle(this.refresh, 100, this);
     watch(
@@ -118,7 +118,7 @@ class State {
         const idx = this.getMainBoardSelectedIdx();
         if (idx !== -1) {
           this.removeGhostExcept(this.mainBoardData.value, [idx]);
-          this.setSubState('beforeTargetSelect1');
+          this.setSubState('takeActionConfirmation');
           break;
         }
         this.assign(this.quarryData.value, 'active', false);
@@ -126,6 +126,14 @@ class State {
         this.setPillarTopSelectable();
         break;
       }
+
+      case 'playerTurn:takeActionConfirmation':
+        if (!this.isOwnStonePlacing()) {
+          this.setSubState('beforeSubmit');
+          break;
+        }
+        this.assign(this.ctrlBarData.value, 'type', 'takeActionConfirm');
+        break;
 
       case 'playerTurn:beforeTargetSelect1': {
         if (!this.isOwnStonePlacing()) {
@@ -138,7 +146,7 @@ class State {
           break;
         }
         if (!this.setTarget1Selectable()) {
-          this.setSubState('beforeSubmit');
+          this.assign(this.ctrlBarData.value, 'type', 'noValidTarget');
           break;
         }
         break;
@@ -156,7 +164,6 @@ class State {
           this.setSubState('beforeSubmit');
           break;
         }
-        console.log('FIXME');
         break;
 
       case 'playerTurn:beforeSubmit':
@@ -462,7 +469,7 @@ class State {
     return false;
   }
 
-  removeGhostExcept(board: BoardData, exceptIdx: number[] = []) {
+  public removeGhostExcept(board: BoardData, exceptIdx: number[] = []) {
     board.pillars.forEach((p, idx) => {
       if (exceptIdx.some((i) => i === idx)) {
         return;

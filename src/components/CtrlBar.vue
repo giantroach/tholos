@@ -9,7 +9,13 @@ import CtrlButton from './CtrlButton.vue';
 const props = defineProps<{
   type: BarType;
 }>();
-const emit = defineEmits(['cancel', 'submit', 'takeAction', 'noAction']);
+const emit = defineEmits([
+  'cancel',
+  'submit',
+  'takeAction',
+  'noAction',
+  'noValidTarget',
+]);
 
 const i18n: Ref<any> = inject('i18n') || ref('');
 
@@ -55,6 +61,7 @@ const btnClick = (type: ButtonType) => {
   align-items: center;
   color: white;
   height: 72px;
+  animation: fadein 0.4s ease-out forwards;
 }
 
 .message {
@@ -69,5 +76,13 @@ ul.buttons {
 }
 ul.buttons > li {
   margin: 0 5px;
+}
+@keyframes fadein {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
 }
 </style>

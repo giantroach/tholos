@@ -1,4 +1,9 @@
-type ButtonType = 'cancel' | 'submit' | 'takeAction' | 'noAction';
+type ButtonType =
+  | 'cancel'
+  | 'submit'
+  | 'takeAction'
+  | 'noAction'
+  | 'noValidTarget';
 
 interface ButtonSizeDef {
   width: string;

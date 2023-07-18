@@ -20,7 +20,7 @@ const ctrlButtonDefs: { [buttonType in ButtonType]: CtrlButtonDef } = {
     border: '2px solid #ffb571',
   },
   takeAction: {
-    label: 'Cancel',
+    label: 'Take Action',
     size: { width: '138px', height: '30px', radius: '15px' },
     textColor: 'white',
     background: '#ff621f',
@@ -32,6 +32,13 @@ const ctrlButtonDefs: { [buttonType in ButtonType]: CtrlButtonDef } = {
     textColor: 'white',
     background: '#3d50ff',
     border: '2px solid #adc1ff',
+  },
+  noValidTarget: {
+    label: 'OK',
+    size: { width: '138px', height: '30px', radius: '15px' },
+    textColor: 'white',
+    background: '#ff621f',
+    border: '2px solid #ffb571',
   },
 };
 

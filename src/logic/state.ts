@@ -140,11 +140,6 @@ class State {
           this.setSubState('beforeSubmit');
           break;
         }
-        const idx = this.getMainBoardSelectedIdx(1);
-        if (idx !== -1) {
-          this.setSubState('beforeTargetSelect2');
-          break;
-        }
         if (!this.setTarget1Selectable()) {
           this.assign(this.ctrlBarData.value, 'type', 'noValidTarget');
           break;
@@ -153,13 +148,6 @@ class State {
       }
 
       case 'playerTurn:beforeTargetSelect2':
-        const idx0 = this.getMainBoardSelectedIdx(0);
-        const idx2 = this.getMainBoardSelectedIdx(2);
-        if (idx2 !== -1) {
-          this.removeGhostExcept(this.mainBoardData.value, [idx0, idx2]);
-          this.setSubState('beforeSubmit');
-          break;
-        }
         if (!this.setTarget2Selectable()) {
           this.setSubState('beforeSubmit');
           break;
@@ -236,6 +224,7 @@ class State {
       });
     });
     this.assign(this.quarryData.value, 'active', false);
+    this.assign(this.mainBoardData.value, 'active', false);
   }
 
   public setQuarryWsSelectable(): void {
@@ -392,6 +381,11 @@ class State {
 
     switch (srcIdx) {
       case 0: {
+        const idx1 = this.getMainBoardSelectedIdx(1);
+        if (idx1 !== -1) {
+          this.setSubState('beforeTargetSelect2');
+          return true;
+        }
         const mb = this.mainBoardData.value;
         const pIdxs = this.getStoneOnTopOfPillar('stoneG');
         if (!pIdxs.length) {
@@ -413,8 +407,22 @@ class State {
         break;
       case 2:
         break;
-      case 3:
-        break;
+      case 3: {
+        if (this.quarryData.value.selected.includes(true)) {
+          this.setSubState('beforeTargetSelect2');
+          return true;
+        }
+        if (
+          !this.quarryData.value.stones.some((n) => {
+            return n > 0;
+          })
+        ) {
+          return false;
+        }
+        this.assign(this.quarryData.value, 'active', true);
+        this.assign(this.ctrlBarData.value, 'type', 'chooseTarget1d');
+        return true;
+      }
       case 4:
         break;
       case 5:
@@ -432,6 +440,13 @@ class State {
 
     switch (srcIdx0) {
       case 0: {
+        const idx2 = this.getMainBoardSelectedIdx(2);
+        if (idx2 !== -1) {
+          this.removeGhostExcept(this.mainBoardData.value, [srcIdx0, idx2]);
+          this.setSubState('beforeSubmit');
+          return true;
+        }
+
         const mb = this.mainBoardData.value;
         let targetAvailable = false;
         const srcStone =
@@ -457,7 +472,8 @@ class State {
       case 2:
         break;
       case 3:
-        break;
+        this.setSubState('beforeSubmit');
+        return true;
       case 4:
         break;
       case 5:

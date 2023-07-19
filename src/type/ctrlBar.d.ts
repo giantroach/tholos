@@ -5,7 +5,9 @@ type BarType =
   | 'cancelable'
   | 'choosePillar'
   | 'takeActionConfirm'
+  | 'noValidTarget'
   | 'chooseTarget1a'
+  | 'chooseTarget1d'
   | 'chooseTarget2a'
   | 'submitActionConfirm';
 

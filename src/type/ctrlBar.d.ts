@@ -7,7 +7,12 @@ type BarType =
   | 'takeActionConfirm'
   | 'noValidTarget'
   | 'chooseTarget1a'
+  | 'chooseTarget1b'
+  | 'chooseTarget1c'
   | 'chooseTarget1d'
+  | 'chooseTarget1e'
+  | 'chooseTarget1f'
+  | 'chooseTarget1g'
   | 'chooseTarget2a'
   | 'submitActionConfirm';
 

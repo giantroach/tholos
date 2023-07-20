@@ -365,13 +365,24 @@ class State {
     }, -1);
   }
 
-  public getStoneOnTopOfPillar(type: StoneType): number[] {
+  public getPillarIdxWithStone(
+    topStoneType: StoneType | null = null,
+    exceptIdx: number | null = null
+  ): number[] {
     const mb = this.mainBoardData.value;
-    // this.assign(mb, 'active', true);
     return mb.pillars.reduce((acc, p, idx) => {
-      if (p.stones[p.stones.length - 1] === type) {
+      if (exceptIdx !== null && exceptIdx === idx) {
+        return acc;
+      }
+      const s = p.stones[p.stones.length - 1];
+      if (topStoneType === null) {
+        if (s) {
+          acc.push(idx);
+        }
+      } else if (s === topStoneType) {
         acc.push(idx);
       }
+
       return acc;
     }, [] as number[]);
   }
@@ -387,14 +398,11 @@ class State {
           return true;
         }
         const mb = this.mainBoardData.value;
-        const pIdxs = this.getStoneOnTopOfPillar('stoneG');
+        const pIdxs = this.getPillarIdxWithStone('stoneG', srcIdx);
         if (!pIdxs.length) {
           return false;
         }
         pIdxs.forEach((idx) => {
-          if (srcIdx === idx) {
-            return;
-          }
           const p = mb.pillars[idx];
           const s: boolean[][] = [[], [], []];
           s[1][p.stones.length - 1] = true;
@@ -403,10 +411,31 @@ class State {
         this.assign(this.ctrlBarData.value, 'type', 'chooseTarget1a');
         return true;
       }
+
       case 1:
         break;
-      case 2:
-        break;
+
+      case 2: {
+        const idx1 = this.getMainBoardSelectedIdx(1);
+        if (idx1 !== -1) {
+          this.setSubState('beforeTargetSelect2');
+          return true;
+        }
+        const mb = this.mainBoardData.value;
+        const pIdxs = this.getPillarIdxWithStone(null, srcIdx);
+        if (!pIdxs.length) {
+          return false;
+        }
+        pIdxs.forEach((idx) => {
+          const p = mb.pillars[idx];
+          const s: boolean[][] = [[], [], []];
+          s[1][p.stones.length - 1] = true;
+          this.assign(p, 'selectable', s);
+        });
+        this.assign(this.ctrlBarData.value, 'type', 'chooseTarget1c');
+        return true;
+      }
+
       case 3: {
         if (this.quarryData.value.selected.includes(true)) {
           this.setSubState('beforeTargetSelect2');
@@ -423,6 +452,7 @@ class State {
         this.assign(this.ctrlBarData.value, 'type', 'chooseTarget1d');
         return true;
       }
+
       case 4:
         break;
       case 5:
@@ -470,7 +500,8 @@ class State {
       case 1:
         break;
       case 2:
-        break;
+        this.setSubState('beforeSubmit');
+        return true;
       case 3:
         this.setSubState('beforeSubmit');
         return true;

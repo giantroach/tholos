@@ -201,7 +201,7 @@ class State {
     [this.wsWBoardData, this.wsBBoardData].forEach((b) => {
       this.assign(b.value, 'active', false);
       b.value.pillars.forEach((p) => {
-        this.assign(p, 'selected', [[]]);
+        this.assign(p, 'selected', [[], [], []]);
       });
     });
 
@@ -219,9 +219,6 @@ class State {
   public everythingNotSelectable() {
     [this.wsWBoardData, this.wsBBoardData].forEach((b) => {
       this.assign(b.value, 'active', false);
-      b.value.pillars.forEach((p) => {
-        this.assign(p, 'selectable', [[], [], []]);
-      });
     });
     this.assign(this.quarryData.value, 'active', false);
     this.assign(this.mainBoardData.value, 'active', false);
@@ -256,10 +253,10 @@ class State {
     return this.quarryData.value.carry > 0;
   }
 
-  public isWsSelected(own = true): boolean {
+  public isWsSelected(own = true, idx = 0): boolean {
     const ws = own ? this.getOwnWs() : this.getOppoWs();
     return ws.pillars.some((p) => {
-      return p.selected[0]?.includes(true);
+      return p.selected[idx]?.includes(true);
     });
   }
 
@@ -452,7 +449,26 @@ class State {
       }
 
       case 4:
-        break;
+        // check if opponents workshop has selected stone
+        if (this.isWsSelected(false, 1)) {
+          this.setSubState('beforeTargetSelect2');
+          return true;
+        }
+
+        // check if opponents have stone in their workshop
+        const ws = this.getOppoWs();
+        if (!ws.pillars.some((p) => p.stones.length)) {
+          return false;
+        }
+
+        // make opponent workshop selectable
+        this.assign(ws, 'active', true);
+        ws.pillars.forEach((p) => {
+          this.assign(p, 'selectable', [false, [!!p.stones[0]]]);
+        });
+        this.assign(this.ctrlBarData.value, 'type', 'chooseTarget1e');
+        return true;
+
       case 5:
         break;
       case 6:

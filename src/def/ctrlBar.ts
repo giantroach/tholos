@@ -26,11 +26,11 @@ const ctrlBarDefs: { [barType in BarType]: CtrlBarDef } = {
     buttonTypes: ['cancel'],
   },
   chooseTarget1b: {
-    message: 'FIXME',
+    message: 'Choose a stone to move from.',
     buttonTypes: ['cancel'],
   },
   chooseTarget1c: {
-    message: 'Choose a stone to take away to the quarry.',
+    message: 'Choose a stone to take away from the board.',
     buttonTypes: ['cancel'],
   },
   chooseTarget1d: {
@@ -38,15 +38,15 @@ const ctrlBarDefs: { [barType in BarType]: CtrlBarDef } = {
     buttonTypes: ['cancel'],
   },
   chooseTarget1e: {
-    message: 'FIXME',
+    message: 'Choose a stone to take away from the opponent\'s workshop.',
     buttonTypes: ['cancel'],
   },
   chooseTarget1f: {
-    message: 'FIXME',
+    message: 'Choose another stone to place.',
     buttonTypes: ['cancel'],
   },
   chooseTarget1g: {
-    message: 'FIXME',
+    message: 'Choose a stone to move from.',
     buttonTypes: ['cancel'],
   },
   chooseTarget2a: {

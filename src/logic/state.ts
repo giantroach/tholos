@@ -229,10 +229,7 @@ class State {
 
   public setQuarryWsSelectable(): void {
     // workshop
-    let ws = this.wsWBoardData.value;
-    if (this.playerData.value.playerSide === 'black') {
-      ws = this.wsBBoardData.value;
-    }
+    const ws = this.getOwnWs();
     const wsStoneCnt = this.getWsStoneCount(ws);
 
     // activate onlye when at least one stone is there
@@ -259,14 +256,9 @@ class State {
     return this.quarryData.value.carry > 0;
   }
 
-  public isWsSelected(): boolean {
-    let target = this.wsWBoardData.value;
-
-    if (this.playerData.value.playerSide === 'black') {
-      target = this.wsBBoardData.value;
-    }
-
-    return target.pillars.some((p) => {
+  public isWsSelected(own = true): boolean {
+    const ws = own ? this.getOwnWs() : this.getOppoWs();
+    return ws.pillars.some((p) => {
       return p.selected[0]?.includes(true);
     });
   }
@@ -302,10 +294,7 @@ class State {
     }
 
     // depending on the remaining space, we must reduce the max
-    let ws = this.wsWBoardData.value;
-    if (playerSide === 'black') {
-      ws = this.wsBBoardData.value;
-    }
+    const ws = this.getOwnWs();
     const wsRemainingSpace = 3 - this.getWsStoneCount(ws);
     if (max > wsRemainingSpace) {
       max = wsRemainingSpace;
@@ -332,6 +321,18 @@ class State {
     });
   }
 
+  public getOwnWs(): BoardData {
+    return this.playerData.value.playerSide === 'black' ?
+      this.wsBBoardData.value :
+      this.wsWBoardData.value;
+  }
+
+  public getOppoWs(): BoardData {
+    return this.playerData.value.playerSide === 'white' ?
+      this.wsBBoardData.value :
+      this.wsWBoardData.value;
+  }
+
   public getWsStoneCount(ws: BoardData) {
     return ws.pillars.reduce((acc, cur) => {
       if (cur.stones[0]) {
@@ -342,10 +343,7 @@ class State {
   }
 
   public getWsSelectedStone(): StoneType {
-    let ws = this.wsWBoardData.value;
-    if (this.playerData.value.playerSide === 'black') {
-      ws = this.wsBBoardData.value;
-    }
+    const ws = this.getOwnWs();
     for (let i = 0; i < ws.pillars.length; i += 1) {
       const idx = ws.pillars[i].selected[0].indexOf(true);
       if (idx >= 0) {

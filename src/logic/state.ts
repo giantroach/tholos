@@ -133,6 +133,7 @@ class State {
           break;
         }
         this.assign(this.ctrlBarData.value, 'type', 'takeActionConfirm');
+        this.assign(this.getOwnWs(), 'active', false);
         break;
 
       case 'playerTurn:beforeTargetSelect1': {
@@ -450,7 +451,7 @@ class State {
 
       case 4: {
         // check if opponents workshop has selected stone
-        if (this.isWsSelected(true, 1)) {
+        if (this.isWsSelected(false, 1)) {
           this.setSubState('beforeTargetSelect2');
           return true;
         }

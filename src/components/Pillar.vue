@@ -36,8 +36,17 @@ const isSelected = (idx: number): boolean => {
 // get the highest selectable layer
 const getSelectableLayer = (idx: number): number => {
   const max = 2;
+  // by priority looks at selectable layer
   for (let i = max; 0 <= i; i -= 1) {
     if (data.value.selectable[i]?.[idx]) {
+      return i;
+    }
+  }
+  // If none, return based on selected layer
+  // This is necessary when you want to let user to choose layer 1+
+  // while layer 0 is kept selected state.
+  for (let i = max; 0 <= i; i -= 1) {
+    if (data.value.selected[i]?.[idx]) {
       return i;
     }
   }

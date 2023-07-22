@@ -22,7 +22,7 @@ const ctrlBarDefs: { [barType in BarType]: CtrlBarDef } = {
     buttonTypes: ['noValidTarget'],
   },
   chooseTarget1a: {
-    message: 'Choose a stone to move from.',
+    message: 'Choose a gray stone to move from.',
     buttonTypes: ['cancel'],
   },
   chooseTarget1b: {
@@ -42,7 +42,7 @@ const ctrlBarDefs: { [barType in BarType]: CtrlBarDef } = {
     buttonTypes: ['cancel'],
   },
   chooseTarget1f: {
-    message: 'Choose another stone to place.',
+    message: 'Choose another stone in your workshop to place.',
     buttonTypes: ['cancel'],
   },
   chooseTarget1g: {
@@ -50,6 +50,18 @@ const ctrlBarDefs: { [barType in BarType]: CtrlBarDef } = {
     buttonTypes: ['cancel'],
   },
   chooseTarget2a: {
+    message: 'Choose a column to move to.',
+    buttonTypes: ['cancel'],
+  },
+  chooseTarget2b: {
+    message: 'Choose a column to move to.',
+    buttonTypes: ['cancel'],
+  },
+  chooseTarget2f: {
+    message: 'Choose a column to move to.',
+    buttonTypes: ['cancel'],
+  },
+  chooseTarget2g: {
     message: 'Choose a column to move to.',
     buttonTypes: ['cancel'],
   },

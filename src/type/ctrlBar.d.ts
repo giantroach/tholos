@@ -14,6 +14,9 @@ type BarType =
   | 'chooseTarget1f'
   | 'chooseTarget1g'
   | 'chooseTarget2a'
+  | 'chooseTarget2b'
+  | 'chooseTarget2f'
+  | 'chooseTarget2g'
   | 'submitActionConfirm';
 
 interface CtrlBarDef {

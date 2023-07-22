@@ -319,15 +319,15 @@ class State {
   }
 
   public getOwnWs(): BoardData {
-    return this.playerData.value.playerSide === 'black' ?
-      this.wsBBoardData.value :
-      this.wsWBoardData.value;
+    return this.playerData.value.playerSide === 'black'
+      ? this.wsBBoardData.value
+      : this.wsWBoardData.value;
   }
 
   public getOppoWs(): BoardData {
-    return this.playerData.value.playerSide === 'white' ?
-      this.wsBBoardData.value :
-      this.wsWBoardData.value;
+    return this.playerData.value.playerSide === 'white'
+      ? this.wsBBoardData.value
+      : this.wsWBoardData.value;
   }
 
   public getWsStoneCount(ws: BoardData) {
@@ -339,12 +339,12 @@ class State {
     }, 0);
   }
 
-  public getWsSelectedStone(): StoneType {
+  public getWsSelectedStone(idx = 0): StoneType {
     const ws = this.getOwnWs();
     for (let i = 0; i < ws.pillars.length; i += 1) {
-      const idx = ws.pillars[i].selected[0].indexOf(true);
-      if (idx >= 0) {
-        return ws.pillars[i].stones[idx];
+      const idx2 = ws.pillars[i].selected[idx].indexOf(true);
+      if (idx2 >= 0) {
+        return ws.pillars[i].stones[idx2];
       }
     }
     return 'none';
@@ -448,9 +448,9 @@ class State {
         return true;
       }
 
-      case 4:
+      case 4: {
         // check if opponents workshop has selected stone
-        if (this.isWsSelected(false, 1)) {
+        if (this.isWsSelected(true, 1)) {
           this.setSubState('beforeTargetSelect2');
           return true;
         }
@@ -468,9 +468,44 @@ class State {
         });
         this.assign(this.ctrlBarData.value, 'type', 'chooseTarget1e');
         return true;
+      }
 
-      case 5:
-        break;
+      case 5: {
+        const ws = this.getOwnWs();
+        // check if you already have selected another stone
+        if (this.isWsSelected(true, 1)) {
+          this.setSubState('beforeTargetSelect2');
+          return true;
+        }
+
+        // check if you have another stone to place
+        if (
+          !ws.pillars.some((p) => {
+            return p.stones[0] && !p.selected[0][0];
+          })
+        ) {
+          return false;
+        }
+
+        // check if there is another place to place
+        const mb = this.mainBoardData.value;
+        if (
+          !mb.pillars.some((p) => {
+            return p.stones.length < 5;
+          })
+        ) {
+          return false;
+        }
+
+        // make ws layer 1 selectable
+        this.assign(ws, 'active', true);
+        ws.pillars.forEach((p) => {
+          this.assign(p, 'selectable', [false, [!!p.stones[0] && !p.selected[0][0]]]);
+        });
+        this.assign(this.ctrlBarData.value, 'type', 'chooseTarget1f');
+        return true;
+      }
+
       case 6:
         break;
     }
@@ -481,6 +516,7 @@ class State {
   public setTarget2Selectable(): boolean {
     const srcIdx0 = this.getMainBoardSelectedIdx(0);
     const srcIdx1 = this.getMainBoardSelectedIdx(1);
+    const srcIdx2 = this.getMainBoardSelectedIdx(2);
 
     switch (srcIdx0) {
       case 0: {
@@ -493,22 +529,22 @@ class State {
 
         const mb = this.mainBoardData.value;
         let targetAvailable = false;
-        const srcStone =
-          mb.pillars[srcIdx1].stones[mb.pillars[srcIdx1].stones.length - 1];
+        const srcStone = this.getWsSelectedStone(1);
+        // mb.pillars[srcIdx1].stones[mb.pillars[srcIdx1].stones.length - 1];
         mb.pillars.forEach((p, idx) => {
-          if (idx === srcIdx0 || idx === srcIdx1) {
+          if (idx === srcIdx0) {
             return;
           }
           if (p.stones.length < 5) {
             const s: boolean[][] = [[], [], []];
             const g = [srcStone];
-            s[2][p.stones.length] = true;
+            s[1][p.stones.length] = true;
             this.assign(p, 'ghosts', g);
             this.assign(p, 'selectable', s);
             targetAvailable = true;
           }
         });
-        this.assign(this.ctrlBarData.value, 'type', 'chooseTarget2a');
+        this.assign(this.ctrlBarData.value, 'type', 'chooseTarget2f');
         return targetAvailable;
       }
       case 1:
@@ -520,9 +556,41 @@ class State {
         this.setSubState('beforeSubmit');
         return true;
       case 4:
-        break;
-      case 5:
-        break;
+        this.setSubState('beforeSubmit');
+        return true;
+
+      case 5: {
+        // check if board layer 1 is selected
+        if (srcIdx2 !== -1) {
+          this.removeGhostExcept(this.mainBoardData.value, [srcIdx0, srcIdx2]);
+          this.setSubState('beforeSubmit');
+          return true;
+        }
+
+        // check if valid target available & make it selectable
+        const mb = this.mainBoardData.value;
+        let targetAvailable = false;
+
+        // const srcStone =
+        //   mb.pillars[srcIdx1].stones[mb.pillars[srcIdx1].stones.length - 1];
+        const srcStone = this.getWsSelectedStone(1);
+        mb.pillars.forEach((p, idx) => {
+          if (idx === srcIdx0) {
+            return;
+          }
+          if (p.stones.length < 5) {
+            const s: boolean[][] = [[], [], []];
+            const g = [srcStone];
+            s[2][p.stones.length] = true;
+            this.assign(p, 'ghosts', g);
+            this.assign(p, 'selectable', s);
+            targetAvailable = true;
+          }
+        });
+        this.assign(this.ctrlBarData.value, 'type', 'chooseTarget2f');
+        return targetAvailable;
+      }
+
       case 6:
         break;
     }

@@ -26,7 +26,7 @@ const ctrlBarDefs: { [barType in BarType]: CtrlBarDef } = {
     buttonTypes: ['cancel'],
   },
   chooseTarget1b: {
-    message: 'Choose a stone to move from.',
+    message: 'Choose a white stone to move from.',
     buttonTypes: ['cancel'],
   },
   chooseTarget1c: {
@@ -46,7 +46,7 @@ const ctrlBarDefs: { [barType in BarType]: CtrlBarDef } = {
     buttonTypes: ['cancel'],
   },
   chooseTarget1g: {
-    message: 'Choose a stone to move from.',
+    message: 'Choose a black stone to move from.',
     buttonTypes: ['cancel'],
   },
   chooseTarget2a: {

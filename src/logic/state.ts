@@ -385,16 +385,31 @@ class State {
 
   public setTarget1Selectable(): boolean {
     const srcIdx = this.getMainBoardSelectedIdx();
+    let targetStone: StoneType = 'none';
+    let nextState: SubState = 'beforeSubmit';
 
-    switch (srcIdx) {
-      case 0: {
+    switch (true) {
+      case srcIdx === 0 || srcIdx === 1 || srcIdx === 6: {
+        if (srcIdx === 0) {
+          targetStone = 'stoneG';
+          nextState = 'chooseTarget1a';
+        }
+        if (srcIdx === 1) {
+          targetStone = 'stoneW';
+          nextState = 'chooseTarget1b';
+        }
+        if (srcIdx === 6) {
+          targetStone = 'stoneB';
+          nextState = 'chooseTarget1g';
+        }
+
         const idx1 = this.getMainBoardSelectedIdx(1);
         if (idx1 !== -1) {
           this.setSubState('beforeTargetSelect2');
           return true;
         }
         const mb = this.mainBoardData.value;
-        const pIdxs = this.getPillarIdxWithStone('stoneG', srcIdx);
+        const pIdxs = this.getPillarIdxWithStone(targetStone, srcIdx);
         if (!pIdxs.length) {
           return false;
         }
@@ -404,14 +419,11 @@ class State {
           s[1][p.stones.length - 1] = true;
           this.assign(p, 'selectable', s);
         });
-        this.assign(this.ctrlBarData.value, 'type', 'chooseTarget1a');
+        this.assign(this.ctrlBarData.value, 'type', nextState);
         return true;
       }
 
-      case 1:
-        break;
-
-      case 2: {
+      case srcIdx === 2: {
         const idx1 = this.getMainBoardSelectedIdx(1);
         if (idx1 !== -1) {
           this.setSubState('beforeTargetSelect2');
@@ -432,7 +444,7 @@ class State {
         return true;
       }
 
-      case 3: {
+      case srcIdx === 3: {
         if (this.quarryData.value.selected.includes(true)) {
           this.setSubState('beforeTargetSelect2');
           return true;
@@ -449,7 +461,7 @@ class State {
         return true;
       }
 
-      case 4: {
+      case srcIdx === 4: {
         // check if opponents workshop has selected stone
         if (this.isWsSelected(false, 1)) {
           this.setSubState('beforeTargetSelect2');
@@ -471,7 +483,7 @@ class State {
         return true;
       }
 
-      case 5: {
+      case srcIdx === 5: {
         const ws = this.getOwnWs();
         // check if you already have selected another stone
         if (this.isWsSelected(true, 1)) {
@@ -501,14 +513,14 @@ class State {
         // make ws layer 1 selectable
         this.assign(ws, 'active', true);
         ws.pillars.forEach((p) => {
-          this.assign(p, 'selectable', [false, [!!p.stones[0] && !p.selected[0][0]]]);
+          this.assign(p, 'selectable', [
+            false,
+            [!!p.stones[0] && !p.selected[0][0]],
+          ]);
         });
         this.assign(this.ctrlBarData.value, 'type', 'chooseTarget1f');
         return true;
       }
-
-      case 6:
-        break;
     }
 
     return false;
@@ -518,49 +530,61 @@ class State {
     const srcIdx0 = this.getMainBoardSelectedIdx(0);
     const srcIdx1 = this.getMainBoardSelectedIdx(1);
     const srcIdx2 = this.getMainBoardSelectedIdx(2);
+    let targetStone: StoneType = 'none';
+    let nextState: SubState = 'beforeSubmit';
 
-    switch (srcIdx0) {
-      case 0: {
-        const idx2 = this.getMainBoardSelectedIdx(2);
-        if (idx2 !== -1) {
-          this.removeGhostExcept(this.mainBoardData.value, [srcIdx0, idx2]);
+    switch (true) {
+      case srcIdx0 === 0 || srcIdx0 === 1 || srcIdx0 === 6: {
+        if (srcIdx0 === 0) {
+          targetStone = 'stoneG';
+          nextState = 'chooseTarget2a';
+        }
+        if (srcIdx0 === 1) {
+          targetStone = 'stoneW';
+          nextState = 'chooseTarget2b';
+        }
+        if (srcIdx0 === 6) {
+          targetStone = 'stoneB';
+          nextState = 'chooseTarget2g';
+        }
+
+        if (srcIdx2 !== -1) {
+          this.removeGhostExcept(this.mainBoardData.value, [srcIdx0, srcIdx2]);
           this.setSubState('beforeSubmit');
           return true;
         }
-
         const mb = this.mainBoardData.value;
         let targetAvailable = false;
-        const srcStone = this.getWsSelectedStone(1);
-        // mb.pillars[srcIdx1].stones[mb.pillars[srcIdx1].stones.length - 1];
         mb.pillars.forEach((p, idx) => {
-          if (idx === srcIdx0) {
+          if (idx === srcIdx0 || idx === srcIdx1) {
+            const s: boolean[][] = [[], [], []];
+            this.assign(p, 'selectable', s);
             return;
           }
           if (p.stones.length < 5) {
             const s: boolean[][] = [[], [], []];
-            const g = [srcStone];
-            s[1][p.stones.length] = true;
+            const g = [targetStone];
+            s[2][p.stones.length] = true;
             this.assign(p, 'ghosts', g);
             this.assign(p, 'selectable', s);
             targetAvailable = true;
           }
         });
-        this.assign(this.ctrlBarData.value, 'type', 'chooseTarget2f');
+        this.assign(this.ctrlBarData.value, 'type', nextState);
         return targetAvailable;
       }
-      case 1:
-        break;
-      case 2:
+
+      case srcIdx0 === 2:
         this.setSubState('beforeSubmit');
         return true;
-      case 3:
+      case srcIdx0 === 3:
         this.setSubState('beforeSubmit');
         return true;
-      case 4:
+      case srcIdx0 === 4:
         this.setSubState('beforeSubmit');
         return true;
 
-      case 5: {
+      case srcIdx0 === 5: {
         // check if board layer 1 is selected
         if (srcIdx2 !== -1) {
           this.removeGhostExcept(this.mainBoardData.value, [srcIdx0, srcIdx2]);
@@ -591,9 +615,6 @@ class State {
         this.assign(this.ctrlBarData.value, 'type', 'chooseTarget2f');
         return targetAvailable;
       }
-
-      case 6:
-        break;
     }
 
     return false;

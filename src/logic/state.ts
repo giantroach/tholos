@@ -387,21 +387,21 @@ class State {
   public setTarget1Selectable(): boolean {
     const srcIdx = this.getMainBoardSelectedIdx();
     let targetStone: StoneType = 'none';
-    let nextState: BarType = '';
+    let nextBar: BarType = '';
 
     switch (true) {
       case srcIdx === 0 || srcIdx === 1 || srcIdx === 6: {
         if (srcIdx === 0) {
           targetStone = 'stoneG';
-          nextState = 'chooseTarget1a';
+          nextBar = 'chooseTarget1a';
         }
         if (srcIdx === 1) {
           targetStone = 'stoneW';
-          nextState = 'chooseTarget1b';
+          nextBar = 'chooseTarget1b';
         }
         if (srcIdx === 6) {
           targetStone = 'stoneB';
-          nextState = 'chooseTarget1g';
+          nextBar = 'chooseTarget1g';
         }
 
         const idx1 = this.getMainBoardSelectedIdx(1);
@@ -420,7 +420,7 @@ class State {
           s[1][p.stones.length - 1] = true;
           this.assign(p, 'selectable', s);
         });
-        this.assign(this.ctrlBarData.value, 'type', nextState);
+        this.assign(this.ctrlBarData.value, 'type', nextBar);
         return true;
       }
 
@@ -532,21 +532,21 @@ class State {
     const srcIdx1 = this.getMainBoardSelectedIdx(1);
     const srcIdx2 = this.getMainBoardSelectedIdx(2);
     let targetStone: StoneType = 'none';
-    let nextState: BarType = '';
+    let nextBar: BarType = '';
 
     switch (true) {
       case srcIdx0 === 0 || srcIdx0 === 1 || srcIdx0 === 6: {
         if (srcIdx0 === 0) {
           targetStone = 'stoneG';
-          nextState = 'chooseTarget2a';
+          nextBar = 'chooseTarget2a';
         }
         if (srcIdx0 === 1) {
           targetStone = 'stoneW';
-          nextState = 'chooseTarget2b';
+          nextBar = 'chooseTarget2b';
         }
         if (srcIdx0 === 6) {
           targetStone = 'stoneB';
-          nextState = 'chooseTarget2g';
+          nextBar = 'chooseTarget2g';
         }
 
         if (srcIdx2 !== -1) {
@@ -571,7 +571,7 @@ class State {
             targetAvailable = true;
           }
         });
-        this.assign(this.ctrlBarData.value, 'type', nextState);
+        this.assign(this.ctrlBarData.value, 'type', nextBar);
         return targetAvailable;
       }
 

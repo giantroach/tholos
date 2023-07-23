@@ -38,7 +38,7 @@ const ctrlBarDefs: { [barType in BarType]: CtrlBarDef } = {
     buttonTypes: ['cancel'],
   },
   chooseTarget1e: {
-    message: 'Choose a stone to take away from the opponent\'s workshop.',
+    message: 'Choose a stone to take from the opponent\'s workshop.',
     buttonTypes: ['cancel'],
   },
   chooseTarget1f: {

@@ -7,6 +7,7 @@ import { QuarryData } from '../type/quarry.d';
 import { CtrlBarData } from '../type/ctrlBar.d';
 import { PlayerData } from '../type/player.d';
 import { StoneType } from '../type/stone.d';
+import { BarType } from '../type/ctrlBar.d';
 
 type CurrentState =
   | 'init'
@@ -386,7 +387,7 @@ class State {
   public setTarget1Selectable(): boolean {
     const srcIdx = this.getMainBoardSelectedIdx();
     let targetStone: StoneType = 'none';
-    let nextState: SubState = 'beforeSubmit';
+    let nextState: BarType = '';
 
     switch (true) {
       case srcIdx === 0 || srcIdx === 1 || srcIdx === 6: {
@@ -531,7 +532,7 @@ class State {
     const srcIdx1 = this.getMainBoardSelectedIdx(1);
     const srcIdx2 = this.getMainBoardSelectedIdx(2);
     let targetStone: StoneType = 'none';
-    let nextState: SubState = 'beforeSubmit';
+    let nextState: BarType = '';
 
     switch (true) {
       case srcIdx0 === 0 || srcIdx0 === 1 || srcIdx0 === 6: {

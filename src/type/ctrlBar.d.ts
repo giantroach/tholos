@@ -3,6 +3,7 @@ import { CtrlButtonData, ButtonType } from './ctrlButton.d';
 type BarType =
   | ''
   | 'cancelable'
+  | 'turnInit'
   | 'choosePillar'
   | 'takeActionConfirm'
   | 'noValidTarget'

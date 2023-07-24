@@ -9,6 +9,10 @@ const ctrlBarDefs: { [barType in BarType]: CtrlBarDef } = {
     message: '',
     buttonTypes: ['cancel'],
   },
+  turnInit: {
+    message: 'Choose and take stones from query or choose and place a stone from your workshop.',
+    buttonTypes: [],
+  },
   choosePillar: {
     message: 'Choose a column to place your stone.',
     buttonTypes: ['cancel'],

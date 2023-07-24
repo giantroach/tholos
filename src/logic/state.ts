@@ -96,6 +96,7 @@ class State {
           break;
         }
         this.setQuarryWsSelectable();
+        this.assign(this.ctrlBarData.value, 'type', 'turnInit');
         break;
 
       case 'playerTurn:beforeQuarryCntSelect':

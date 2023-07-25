@@ -20,10 +20,13 @@ type CurrentState =
   | 'playerTurn:beforeTargetSelect2'
   | 'playerTurn:beforeTargetSelect3'
   | 'playerTurn:beforeSubmit'
-  | 'playerTurn:submit'
+  | 'playerTurn:beforeSubmitTake'
+  | 'playerTurn:beforeSubmitPlace'
+  | 'playerTurn:submitTake'
+  | 'playerTurn:submitPlace'
   | 'playerTurn:afterSubmit'
   | 'waitingForOtherPlayer'
-  | 'otherPlayerTurn';
+  | 'otherPlayerTurn'
 
 type SubState =
   | 'init'
@@ -33,8 +36,10 @@ type SubState =
   | 'beforeTargetSelect1'
   | 'beforeTargetSelect2'
   | 'beforeTargetSelect3'
-  | 'beforeSubmit'
-  | 'submit'
+  | 'beforeSubmitTake'
+  | 'beforeSubmitPlace'
+  | 'submitPlace'
+  | 'submitTake'
   | 'afterSubmit'
   | 'beforeStoneSelect';
 
@@ -106,7 +111,7 @@ class State {
           break;
         }
         if (this.isQuarryCarrySelected()) {
-          this.setSubState('beforeSubmit');
+          this.setSubState('beforeSubmitTake');
           break;
         }
         this.setQuarryCarryMax();
@@ -131,7 +136,7 @@ class State {
 
       case 'playerTurn:takeActionConfirmation':
         if (!this.isOwnStonePlacing()) {
-          this.setSubState('beforeSubmit');
+          this.setSubState('beforeSubmitPlace');
           break;
         }
         this.assign(this.ctrlBarData.value, 'type', 'takeActionConfirm');
@@ -140,7 +145,7 @@ class State {
 
       case 'playerTurn:beforeTargetSelect1': {
         if (!this.isOwnStonePlacing()) {
-          this.setSubState('beforeSubmit');
+          this.setSubState('beforeSubmitPlace');
           break;
         }
         if (!this.setTarget1Selectable()) {
@@ -152,23 +157,42 @@ class State {
 
       case 'playerTurn:beforeTargetSelect2':
         if (!this.setTarget2Selectable()) {
-          this.setSubState('beforeSubmit');
+          this.setSubState('beforeSubmitPlace');
           break;
         }
         break;
 
-      case 'playerTurn:beforeSubmit':
+      case 'playerTurn:beforeSubmitTake':
         this.assign(this.ctrlBarData.value, 'type', 'submitActionConfirm');
         this.everythingNotSelectable();
         break;
 
-      case 'playerTurn:submit':
-        this.request('moveStone', {
+      case 'playerTurn:beforeSubmitPlace':
+        this.assign(this.ctrlBarData.value, 'type', 'submitActionConfirm');
+        this.everythingNotSelectable();
+        break;
+
+      case 'playerTurn:submitTake':
+        this.request('takeStone', {
           color: 'black',
           from: null,
           to: null,
         });
         this.setSubState('afterSubmit');
+        break;
+
+      case 'playerTurn:submitPlace':
+        this.request('placeStone', {
+          color: 'black',
+          from: null,
+          to: null,
+        });
+        this.setSubState('afterSubmit');
+        break;
+
+      case 'playerTurn:afterSubmit':
+        this.everythingNotSelectable();
+        this.assign(this.ctrlBarData.value, 'type', '');
         break;
     }
   }
@@ -190,11 +214,16 @@ class State {
     }
   }
 
-  public submitState(mode?: string): void {
-    console.log('mode', mode);
+  public submitState(): void {
     if (/^playerTurn/.test(this.current)) {
-      this.current = 'playerTurn:submit';
-      this.throttledRefresh();
+      if (/beforeSubmitTake$/.test(this.current)) {
+        this.current = 'playerTurn:submitTake';
+        this.throttledRefresh();
+      }
+      if (/beforeSubmitPlace$/.test(this.current)) {
+        this.current = 'playerTurn:submitPlace';
+        this.throttledRefresh();
+      }
     }
   }
 
@@ -552,7 +581,7 @@ class State {
 
         if (srcIdx2 !== -1) {
           this.removeGhostExcept(this.mainBoardData.value, [srcIdx0, srcIdx2]);
-          this.setSubState('beforeSubmit');
+          this.setSubState('beforeSubmitPlace');
           return true;
         }
         const mb = this.mainBoardData.value;
@@ -577,20 +606,20 @@ class State {
       }
 
       case srcIdx0 === 2:
-        this.setSubState('beforeSubmit');
+        this.setSubState('beforeSubmitPlace');
         return true;
       case srcIdx0 === 3:
-        this.setSubState('beforeSubmit');
+        this.setSubState('beforeSubmitPlace');
         return true;
       case srcIdx0 === 4:
-        this.setSubState('beforeSubmit');
+        this.setSubState('beforeSubmitPlace');
         return true;
 
       case srcIdx0 === 5: {
         // check if board layer 1 is selected
         if (srcIdx2 !== -1) {
           this.removeGhostExcept(this.mainBoardData.value, [srcIdx0, srcIdx2]);
-          this.setSubState('beforeSubmit');
+          this.setSubState('beforeSubmitPlace');
           return true;
         }
 

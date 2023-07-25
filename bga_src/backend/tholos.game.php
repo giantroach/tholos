@@ -192,18 +192,22 @@ class Tholos extends Table
 
   function takeStone($id)
   {
-    self::checkAction('moveStone');
+    self::checkAction('takeStone');
     self::notifyAllPlayers('test', clienttranslate('Request received.'), [
       'id' => $id,
     ]);
+
+    $this->gamestate->nextState('nextPlayer');
   }
 
   function placeStone($id)
   {
-    self::checkAction('moveStone');
+    self::checkAction('placeStone');
     self::notifyAllPlayers('test', clienttranslate('Request received.'), [
       'id' => $id,
     ]);
+
+    $this->gamestate->nextState('nextPlayer');
   }
 
   //////////////////////////////////////////////////////////////////////////////
@@ -242,18 +246,15 @@ class Tholos extends Table
         The action method of state X is called everytime the current game state is set to X.
     */
 
-  /*
+  function stNextPlayer()
+  {
+    $playerID = self::activeNextPlayer();
+    self::giveExtraTime($playerID);
+    $this->gamestate->nextState('playerTurn');
 
-    Example for game state "MyGameState":
-
-    function stMyGameState()
-    {
-        // Do some stuff ...
-
-        // (very often) go to another gamestate
-        $this->gamestate->nextState( 'some_gamestate_transition' );
-    }
-    */
+    // FIXME: if all columns are full, go end game state.
+    // $this->gamestate->nextState("endGame");
+  }
 
   //////////////////////////////////////////////////////////////////////////////
   //////////// Zombie

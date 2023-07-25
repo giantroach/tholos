@@ -192,8 +192,8 @@ const cancelState = () => {
   state?.cancelState();
 };
 
-const submitState = (mode?: string) => {
-  state?.submitState(mode);
+const submitState = () => {
+  state?.submitState();
 };
 
 const takeAction = () => {
@@ -201,11 +201,11 @@ const takeAction = () => {
 };
 
 const noAction = () => {
-  state?.setSubState('beforeSubmit');
+  state?.setSubState('beforeSubmitPlace');
 };
 
 const noValidTarget = () => {
-  state?.setSubState('beforeSubmit');
+  state?.setSubState('beforeSubmitPlace');
 };
 
 defineExpose({

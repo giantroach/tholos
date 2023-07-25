@@ -261,34 +261,37 @@ define([
     */
 
     setupActions: function () {
-      vue.$watch(() => vue.bgaRequest, (req) => {
-        if (!req) {
-          return;
-        }
-        const reqBase = `/${appName}/${appName}`;
-        const url = `${reqBase}/${req.name}.html`;
-        vue.bgaRequestPromise = new Promise((resolve, reject) => {
-          this.ajaxcall(
-            url,
-            Object.assign(
-              {
-                lock: true,
+      vue.$watch(
+        () => vue.bgaRequest,
+        (req) => {
+          if (!req) {
+            return;
+          }
+          const reqBase = `/${appName}/${appName}`;
+          const url = `${reqBase}/${req.name}.html`;
+          vue.bgaRequestPromise = new Promise((resolve, reject) => {
+            this.ajaxcall(
+              url,
+              Object.assign(
+                {
+                  lock: true,
+                },
+                req.args
+              ),
+              this,
+              (result) => {
+                resolve(result);
               },
-              req.args
-            ),
-            this,
-            (result) => {
-              resolve(result);
-            },
-            (error) => {
-              // this is called even if it success
-              if (error) {
-                reject(error);
+              (error) => {
+                // this is called even if it success
+                if (error) {
+                  reject(error);
+                }
               }
-            }
-          );
-        });
-      });
+            );
+          });
+        }
+      );
     },
   });
 });

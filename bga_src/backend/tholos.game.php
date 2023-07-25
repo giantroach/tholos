@@ -190,7 +190,15 @@ class Tholos extends Table
 
     */
 
-  function moveStone($id)
+  function takeStone($id)
+  {
+    self::checkAction('moveStone');
+    self::notifyAllPlayers('test', clienttranslate('Request received.'), [
+      'id' => $id,
+    ]);
+  }
+
+  function placeStone($id)
   {
     self::checkAction('moveStone');
     self::notifyAllPlayers('test', clienttranslate('Request received.'), [

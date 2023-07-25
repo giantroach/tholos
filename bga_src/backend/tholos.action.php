@@ -35,12 +35,21 @@ class action_tholos extends APP_GameAction
     }
   }
 
-  public function moveStone()
+  public function takeStone()
   {
     self::setAjaxMode();
     $id = self::getArg('id', AT_alphanum, false);
 
-    $this->game->moveStone($id);
+    $this->game->takeStone($id);
+    self::ajaxResponse();
+  }
+
+  public function placeStone()
+  {
+    self::setAjaxMode();
+    $id = self::getArg('id', AT_alphanum, false);
+
+    $this->game->placeStone($id);
     self::ajaxResponse();
   }
 

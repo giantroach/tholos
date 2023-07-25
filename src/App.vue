@@ -31,7 +31,7 @@ let bgaRequest: Ref<BgaRequest> = ref({
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const bgaRequestPromise: Promise<any> = Promise.resolve();
 const bgaNotifications: Ref<BgaNotification[]> = ref([]);
-const bgaStates: CurrentState[] = [];
+const bgaStates: Ref<CurrentState[]> = ref([]);
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 let bgaNotifQueue: Promise<any> = Promise.resolve();
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -76,8 +76,8 @@ onMounted(() => {
   // this must be done after the mount
   setTimeout(() => {
     initBgaNotification();
+    initBgaState();
   });
-  initBgaState();
 
   const unwatch = watch(gamedata, () => {
     restore();
@@ -96,12 +96,12 @@ const request = (name: string, args: any): Promise<any> => {
     };
     setTimeout(() => {
       bgaRequestPromise
-      .then((reply) => {
-        resolve(reply);
-      })
-      .catch((e) => {
-        reject(e);
-      });
+        .then((reply) => {
+          resolve(reply);
+        })
+        .catch((e) => {
+          reject(e);
+        });
     });
   });
 };
@@ -156,30 +156,36 @@ const initBgaNotification = (): void => {
           }
         });
       });
-    }
+    },
+    { immediate: true }
   );
 };
 
 const initBgaState = (): void => {
-  watch(bgaStates, (states: CurrentState[]) => {
-    const s = states.shift();
-    if (!s) {
-      return;
-    }
-    bgaStateQueue = bgaStateQueue.then(() => {
-      return new Promise<void>((resolve) => {
-        switch (s) {
-          default:
-            state?.setState(s);
-            setTimeout(() => {
-              // secure the least time gap
-              resolve();
-            }, 1000);
-            break;
-        }
+  watch(
+    // @ts-ignore
+    vue.bgaStates,
+    (states: CurrentState[]) => {
+      const s = states.shift();
+      if (!s) {
+        return;
+      }
+      bgaStateQueue = bgaStateQueue.then(() => {
+        return new Promise<void>((resolve) => {
+          switch (s) {
+            default:
+              state?.setState(s);
+              setTimeout(() => {
+                // secure the least time gap
+                resolve();
+              }, 1000);
+              break;
+          }
+        });
       });
-    });
-  });
+    },
+    { immediate: true }
+  );
 };
 
 const cancelState = () => {
@@ -200,7 +206,7 @@ const noAction = () => {
 
 const noValidTarget = () => {
   state?.setSubState('beforeSubmit');
-}
+};
 
 defineExpose({
   playerID,

@@ -99,6 +99,26 @@ class Tholos extends Table
 
     // TODO: setup the initial game situation here
 
+    // Update quarry data
+    $sql = "INSERT INTO quarry (color, count) VALUES ('white', 13)";
+    self::DbQuery($sql);
+    $sql = "INSERT INTO quarry (color, count) VALUES ('gray', 10)";
+    self::DbQuery($sql);
+    $sql = "INSERT INTO quarry (color, count) VALUES ('black', 13)";
+    self::DbQuery($sql);
+
+    // update workshop data
+    $sql = "INSERT INTO workshop (ws, color) VALUES ('white', 'white')";
+    self::DbQuery($sql);
+    $sql = "INSERT INTO workshop (ws, color) VALUES ('white', 'white')";
+    self::DbQuery($sql);
+    $sql = "INSERT INTO workshop (ws, color) VALUES ('black', 'black')";
+    self::DbQuery($sql);
+    $sql = "INSERT INTO workshop (ws, color) VALUES ('black', 'black')";
+    self::DbQuery($sql);
+
+    // NOTE: Nothing to do with mainBoard
+
     // Activate first player (which is in general a good idea :) )
     $this->activeNextPlayer();
 
@@ -126,6 +146,14 @@ class Tholos extends Table
     $result['players'] = self::getCollectionFromDb($sql);
 
     // TODO: Gather all information about current game situation (visible by player $current_player_id).
+    $sql = 'SELECT * from quarry';
+    $result['quarry'] = self::getCollectionFromDb($sql);
+
+    $sql = 'SELECT * from workshop';
+    $result['workshop'] = self::getCollectionFromDb($sql);
+
+    $sql = 'SELECT * from mainBoard';
+    $result['mainBoard'] = self::getCollectionFromDb($sql);
 
     return $result;
   }

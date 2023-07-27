@@ -2,22 +2,22 @@ import { StoneType, StoneDef } from '../type/stone.d';
 import stoneImgUrl from '../assets/stones.png'
 
 const stoneDefs: { [stoneType in StoneType]: StoneDef } = {
-  stoneB: {
-    image: stoneImgUrl,
-    width: '58px',
-    height: '66px',
-  },
-  stoneW: {
+  white: {
     image: stoneImgUrl,
     width: '58px',
     height: '66px',
     imgLeft: 58,
   },
-  stoneG: {
+  gray: {
     image: stoneImgUrl,
     width: '58px',
     height: '66px',
     imgLeft: 116,
+  },
+  black: {
+    image: stoneImgUrl,
+    width: '58px',
+    height: '66px',
   },
   none: {
     image: null,

@@ -46,7 +46,8 @@ const defaultMainboardData: BoardData = {
   pillars: [
     {
       type: 'p1',
-      stones: ['stoneB'],
+      // stones: ['stoneG'],
+      stones: [],
       selectable: [[], [], []],
       selected: [[], [], []],
       ghosts: [],
@@ -54,7 +55,8 @@ const defaultMainboardData: BoardData = {
     },
     {
       type: 'p2',
-      stones: ['stoneW', 'stoneG'],
+      // stones: ['stoneW', 'stoneG'],
+      stones: [],
       selectable: [[], [], []],
       selected: [[], [], []],
       ghosts: [],
@@ -62,7 +64,9 @@ const defaultMainboardData: BoardData = {
     },
     {
       type: 'p3',
-      stones: ['stoneW', 'stoneG', 'stoneG', 'stoneB', 'stoneW'],
+      // stones: ['stoneW', 'stoneG', 'stoneG', 'stoneB', 'stoneW'],
+      // stones: ['stoneW', 'stoneG', 'stoneG', 'stoneB'],
+      stones: [],
       selectable: [[], [], []],
       selected: [[], [], []],
       ghosts: [],
@@ -70,7 +74,8 @@ const defaultMainboardData: BoardData = {
     },
     {
       type: 'p4',
-      stones: ['stoneW'],
+      // stones: ['stoneW'],
+      stones: [],
       selectable: [[], [], []],
       selected: [[], [], []],
       ghosts: [],
@@ -78,7 +83,8 @@ const defaultMainboardData: BoardData = {
     },
     {
       type: 'p5',
-      stones: ['stoneB'],
+      // stones: ['stoneB'],
+      stones: [],
       selectable: [[], [], []],
       selected: [[], [], []],
       ghosts: [],
@@ -86,7 +92,8 @@ const defaultMainboardData: BoardData = {
     },
     {
       type: 'p6',
-      stones: ['stoneG'],
+      // stones: ['stoneG'],
+      stones: [],
       selectable: [[], [], []],
       selected: [[], [], []],
       ghosts: [],
@@ -94,7 +101,8 @@ const defaultMainboardData: BoardData = {
     },
     {
       type: 'p7',
-      stones: ['stoneG', 'stoneG'],
+      // stones: ['stoneG', 'stoneG'],
+      stones: [],
       selectable: [[], [], []],
       selected: [[], [], []],
       ghosts: [],
@@ -107,14 +115,14 @@ const defaultMainboardData: BoardData = {
 const defaultWsWBoardData: BoardData = {
   pillars: [
     {
-      stones: ['stoneW'],
+      stones: [],
       selectable: [[], [], []],
       selected: [[], [], []],
       ghosts: [],
       active: false,
     },
     {
-      stones: ['stoneW'],
+      stones: [],
       selectable: [[], [], []],
       selected: [[], [], []],
       ghosts: [],
@@ -134,14 +142,14 @@ const defaultWsWBoardData: BoardData = {
 const defaultWsBBoardData: BoardData = {
   pillars: [
     {
-      stones: ['stoneG'],
+      stones: [],
       selectable: [[], [], []],
       selected: [[], [], []],
       ghosts: [],
       active: false,
     },
     {
-      stones: ['stoneB'],
+      stones: [],
       selectable: [[], [], []],
       selected: [[], [], []],
       ghosts: [],

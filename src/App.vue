@@ -14,6 +14,7 @@ import { BoardData } from './type/board.d';
 import { QuarryData } from './type/quarry.d';
 import { CtrlBarData } from './type/ctrlBar.d';
 import { PlayerData } from './type/player.d';
+import { objToArray } from './util/util';
 
 import {
   defaultMainboardData,
@@ -80,9 +81,11 @@ onMounted(() => {
   });
 
   const unwatch = watch(gamedata, () => {
-    restore();
     unwatch();
     ready.value = true;
+    setTimeout(() => {
+      restore();
+    }, 100);
   });
 });
 
@@ -119,6 +122,28 @@ const state: State = new State(
 const restore = () => {
   // restore all the data based on gamedata
   restorePlayerSide();
+
+  // restore quarry
+  const q = gamedata.value.quarry;
+  quarryData.value.stones[0] = Number(q.white.count);
+  quarryData.value.stones[1] = Number(q.gray.count);
+  quarryData.value.stones[2] = Number(q.black.count);
+
+  // restore workshop
+  const wsa = objToArray(gamedata.value.workshop);
+  wsa
+    .filter((w) => w.ws === 'white')
+    .forEach((w, idx) => {
+      wsWBoardData.value.pillars[idx].stones.push(w.color);
+    });
+  wsa
+    .filter((w) => w.ws === 'black')
+    .forEach((w, idx) => {
+      wsBBoardData.value.pillars[idx].stones.push(w.color);
+    });
+
+  // restore mainboard
+
   state.refresh();
   sub = new Sub(playerID);
 };

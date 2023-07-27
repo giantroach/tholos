@@ -299,9 +299,9 @@ class State {
       return false;
     }
     if (playerSide === 'white') {
-      return s === 'stoneW';
+      return s === 'white';
     }
-    return s === 'stoneB';
+    return s === 'black';
   }
 
   public setQuarryCarryMax() {
@@ -426,7 +426,7 @@ class State {
           nextBar = 'chooseTarget1a';
         }
         if (srcIdx === 1) {
-          targetStone = 'stoneW';
+          targetStone = 'white';
           nextBar = 'chooseTarget1b';
         }
         if (srcIdx === 6) {
@@ -567,15 +567,15 @@ class State {
     switch (true) {
       case srcIdx0 === 0 || srcIdx0 === 1 || srcIdx0 === 6: {
         if (srcIdx0 === 0) {
-          targetStone = 'stoneG';
+          targetStone = 'gray';
           nextBar = 'chooseTarget2a';
         }
         if (srcIdx0 === 1) {
-          targetStone = 'stoneW';
+          targetStone = 'white';
           nextBar = 'chooseTarget2b';
         }
         if (srcIdx0 === 6) {
-          targetStone = 'stoneB';
+          targetStone = 'black';
           nextBar = 'chooseTarget2g';
         }
 

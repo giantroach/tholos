@@ -96,6 +96,43 @@ const testdata = [
       },
     },
     tablespeed: '1',
+    mainBoard: [],
+    workshop: {
+      "1": {
+        "id": "1",
+        "ws": "white",
+        "color": "white"
+      },
+      "2": {
+        "id": "2",
+        "ws": "white",
+        "color": "white"
+      },
+      "3": {
+        "id": "3",
+        "ws": "black",
+        "color": "black"
+      },
+      "4": {
+        "id": "4",
+        "ws": "black",
+        "color": "black"
+      }
+    },
+    quarry: {
+      "black": {
+        "color": "black",
+        "count": "13"
+      },
+      "gray": {
+        "color": "gray",
+        "count": "10"
+      },
+      "white": {
+        "color": "white",
+        "count": "13"
+      }
+    },
   },
 ];
 
@@ -103,7 +140,7 @@ function loadTestData(idx = 0) {
   const vue = window.vue;
   vue.gamedata = testdata[idx];
   // vue.restore();
-  vue.state.current = "playerTurn:init";
+  vue.state.current = 'playerTurn:init';
   // vue.state.refresh();
 }
 

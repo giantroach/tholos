@@ -1,4 +1,4 @@
-type StoneType = 'stoneB' | 'stoneW' | 'stoneG' | 'none';
+type StoneType = 'white' | 'gray' | 'black' | 'none';
 
 interface StoneDef {
   image: string | null;

@@ -99,7 +99,7 @@ const hideDialog = () => {
     </div>
     <div id="quarry-stone-w" class="quarry-stone quarry-stone-w">
       <Stone
-        type="stoneW"
+        type="white"
         :selectable="data.active && data.stones[0] > 0"
         :selected="data.selected[0]"
         @selectStone="selectStone(0)"
@@ -108,7 +108,7 @@ const hideDialog = () => {
     </div>
     <div id="quarry-stone-g" class="quarry-stone quarry-stone-g">
       <Stone
-        type="stoneG"
+        type="gray"
         :selectable="data.active && data.stones[1] > 0"
         :selected="data.selected[1]"
         @selectStone="selectStone(1)"
@@ -117,7 +117,7 @@ const hideDialog = () => {
     </div>
     <div id="quarry-stone-b" class="quarry-stone quarry-stone-b">
       <Stone
-        type="stoneB"
+        type="black"
         :selectable="data.active && data.stones[2] > 0"
         :selected="data.selected[2]"
         @selectStone="selectStone(2)"

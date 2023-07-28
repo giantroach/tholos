@@ -38,9 +38,10 @@ class action_tholos extends APP_GameAction
   public function takeStone()
   {
     self::setAjaxMode();
-    $id = self::getArg('id', AT_alphanum, false);
+    $color = self::getArg('color', AT_alphanum, true);
+    $count = self::getArg('count', AT_posint, true);
 
-    $this->game->takeStone($id);
+    $this->game->takeStone($color, $count);
     self::ajaxResponse();
   }
 

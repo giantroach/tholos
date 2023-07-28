@@ -183,6 +183,23 @@ class Tholos extends Table
         In this space, you can put any utility methods useful for your game logic
     */
 
+  function getActivePlayerSide()
+  {
+    $apid = self::getActivePlayerId();
+
+    $sql = "SELECT player_no from player where player_id='" . $apid . "'";
+    $playerNo = self::getUniqueValueFromDB($sql);
+
+    if ($playerNo == 1) {
+      return 'white';
+    }
+    if ($playerNo == 2) {
+      return 'black';
+    }
+
+    die('ok');
+  }
+
   //////////////////////////////////////////////////////////////////////////////
   //////////// Player actions
   ////////////
@@ -218,12 +235,42 @@ class Tholos extends Table
 
     */
 
-  function takeStone($id)
+  function takeStone($color, $count)
   {
     self::checkAction('takeStone');
-    self::notifyAllPlayers('test', clienttranslate('Request received.'), [
-      'id' => $id,
-    ]);
+
+    // FIXME: input check logic
+    // both stone count in quarry & stone count in workshop.
+
+    // update quarry
+    $sql = "SELECT count FROM quarry WHERE color='" . $color . "'";
+    $remains = intval(self::getUniqueValueFromDB($sql)) - 1;
+    $sql =
+      'UPDATE quarry SET count=' . $remains . " WHERE color='" . $color . "'";
+    self::DbQuery($sql);
+
+    // update workshop
+    $side = $this->getActivePlayerSide();
+    $sql =
+      "INSERT INTO workshop(ws, color) VALUES ('" .
+      $side .
+      "', '" .
+      $color .
+      "')";
+    self::DbQuery($sql);
+
+    self::notifyAllPlayers(
+      'takeStone',
+      clienttranslate(
+        '${player_name} took ${count} of ${color} stone(s) from the quarry.'
+      ),
+      [
+        'player_side' => $side,
+        'player_name' => self::getActivePlayerName(),
+        'color' => $color,
+        'count' => $count,
+      ]
+    );
 
     $this->gamestate->nextState('nextPlayer');
   }

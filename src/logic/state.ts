@@ -174,9 +174,8 @@ class State {
 
       case 'playerTurn:submitTake':
         this.request('takeStone', {
-          color: 'black',
-          from: null,
-          to: null,
+          color: this.getQuarrySelected(),
+          count: this.quarryData.value.carry,
         });
         this.setSubState('afterSubmit');
         break;
@@ -348,6 +347,20 @@ class State {
       this.assign(p, 'ghosts', g);
       this.assign(p, 'selectable', s);
     });
+  }
+
+  public getQuarrySelected(): StoneType {
+    const s = this.quarryData.value.selected;
+    if (s[0]) {
+      return 'white';
+    }
+    if (s[1]) {
+      return 'gray';
+    }
+    if (s[2]) {
+      return 'black';
+    }
+    return 'none';
   }
 
   public getOwnWs(): BoardData {

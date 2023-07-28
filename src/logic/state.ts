@@ -295,7 +295,7 @@ class State {
   public isOwnStonePlacing(): boolean {
     const s = this.getWsSelectedStone();
     const playerSide = this.playerData.value.playerSide;
-    if (s === 'stoneG') {
+    if (s === 'gray') {
       return false;
     }
     if (playerSide === 'white') {
@@ -422,7 +422,7 @@ class State {
     switch (true) {
       case srcIdx === 0 || srcIdx === 1 || srcIdx === 6: {
         if (srcIdx === 0) {
-          targetStone = 'stoneG';
+          targetStone = 'gray';
           nextBar = 'chooseTarget1a';
         }
         if (srcIdx === 1) {
@@ -430,7 +430,7 @@ class State {
           nextBar = 'chooseTarget1b';
         }
         if (srcIdx === 6) {
-          targetStone = 'stoneB';
+          targetStone = 'black';
           nextBar = 'chooseTarget1g';
         }
 

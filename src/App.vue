@@ -49,6 +49,9 @@ let gamedata: Ref<Gamedata> = ref({
   playerorder: [],
   players: {},
   tablespeed: '',
+  mainBoard: [],
+  workshop: {},
+  quarry: {},
 });
 
 let playerID = -1;

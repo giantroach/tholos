@@ -148,7 +148,13 @@ const restore = () => {
   // restore mainboard
 
   state.refresh();
-  sub = new Sub(playerID);
+  sub = new Sub(
+    playerID,
+    // mainBoardData,
+    wsWBoardData,
+    wsBBoardData,
+    quarryData,
+  );
 };
 
 const restorePlayerSide = () => {

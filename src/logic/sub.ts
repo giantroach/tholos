@@ -1,6 +1,7 @@
-import {
-  BgaNotification,
-} from "../type/bga-interface.d";
+import type { Ref } from 'vue';
+import { BoardData } from '../type/board.d';
+import { QuarryData } from '../type/quarry.d';
+import { BgaNotification, BgaTakeStoneNotif } from '../type/bga-interface.d';
 
 //
 // Sub handles BGA notifications and apply data accordingly.
@@ -9,10 +10,49 @@ import {
 export class Sub {
   constructor(
     public playerID: number, // public for testing purpose
+    // private mainBoardData: Ref<BoardData>,
+    private wsWBoardData: Ref<BoardData>,
+    private wsBBoardData: Ref<BoardData>,
+    private quarryData: Ref<QuarryData>
   ) {}
 
   public handle(notif: BgaNotification) {
+    console.log('gocha', notif);
     switch (notif.name) {
+      case 'takeStone':
+        const args = notif.args as BgaTakeStoneNotif;
+        const count = Number(args.count);
+
+        const ws =
+          args.player_side === 'white'
+            ? this.wsWBoardData.value
+            : this.wsBBoardData.value;
+
+        // update workshop
+        for (let i = 0; i < count; i += 1) {
+          const idx = ws.pillars.findIndex((p) => !p.stones.length);
+          if (idx === -1) {
+            throw 'unexpected state: no enough space to take stone ';
+          }
+          ws.pillars[idx].stones.push(args.color);
+        }
+
+        // update quarry
+        const q = this.quarryData.value;
+        switch (args.color) {
+          case 'white':
+            q.stones[0] -= count;
+            break;
+          case 'gray':
+            q.stones[1] -= count;
+            break;
+          case 'black':
+            q.stones[2] -= count;
+            break;
+        }
+
+        break;
+
       default:
         break;
     }

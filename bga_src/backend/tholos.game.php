@@ -155,7 +155,7 @@ class Tholos extends Table
     $sql = 'SELECT * from mainBoard';
     $result['mainBoard'] = self::getCollectionFromDb($sql);
 
-    $result['playerSide'] = $this->getActivePlayerSide();
+    $result['playerSide'] = $this->getPlayerSide($current_player_id);
 
     return $result;
   }
@@ -185,11 +185,9 @@ class Tholos extends Table
         In this space, you can put any utility methods useful for your game logic
     */
 
-  function getActivePlayerSide()
+  function getPlayerSide($playerID)
   {
-    $apid = self::getActivePlayerId();
-
-    $sql = "SELECT player_no from player where player_id='" . $apid . "'";
+    $sql = "SELECT player_no from player where player_id='" . $playerID . "'";
     $playerNo = self::getUniqueValueFromDB($sql);
 
     if ($playerNo == 1) {
@@ -200,6 +198,12 @@ class Tholos extends Table
     }
 
     die('ok');
+  }
+
+  function getActivePlayerSide()
+  {
+    $apid = self::getActivePlayerId();
+    return $this->getPlayerSide($apid);
   }
 
   function getLocationName($idx)
@@ -281,13 +285,15 @@ class Tholos extends Table
 
     // update workshop
     // FIXME: this inserts only one stone
-    $sql =
-      "INSERT INTO workshop(ws, color) VALUES ('" .
-      $side .
-      "', '" .
-      $color .
-      "')";
-    self::DbQuery($sql);
+    for ($i = 1; $i <= intval($count); $i++) {
+      $sql =
+        "INSERT INTO workshop(ws, color) VALUES ('" .
+        $side .
+        "', '" .
+        $color .
+        "')";
+      self::DbQuery($sql);
+    }
 
     self::notifyAllPlayers(
       'takeStone',
@@ -340,7 +346,9 @@ class Tholos extends Table
     $locationName = $this->getLocationName($target0);
     self::notifyAllPlayers(
       'placeStone',
-      clienttranslate('${player_name} placed a ${color} stone on ${locationName}.'),
+      clienttranslate(
+        '${player_name} placed a ${color} stone on ${locationName}.'
+      ),
       [
         'player_side' => $side,
         'player_name' => self::getActivePlayerName(),

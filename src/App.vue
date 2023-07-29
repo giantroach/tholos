@@ -103,12 +103,12 @@ const request = (name: string, args: any): Promise<any> => {
     };
     setTimeout(() => {
       bgaRequestPromise
-      .then((reply) => {
-        resolve(reply);
-      })
-      .catch((e) => {
-        reject(e);
-      });
+        .then((reply) => {
+          resolve(reply);
+        })
+        .catch((e) => {
+          reject(e);
+        });
     });
   });
 };
@@ -138,15 +138,15 @@ const restore = () => {
   // restore workshop
   const wsa = objToArray(gamedata.value.workshop);
   wsa
-  .filter((w) => w.ws === 'white')
-  .forEach((w, idx) => {
-    wsWBoardData.value.pillars[idx].stones.push(w.color);
-  });
+    .filter((w) => w.ws === 'white')
+    .forEach((w, idx) => {
+      wsWBoardData.value.pillars[idx].stones.push(w.color);
+    });
   wsa
-  .filter((w) => w.ws === 'black')
-  .forEach((w, idx) => {
-    wsBBoardData.value.pillars[idx].stones.push(w.color);
-  });
+    .filter((w) => w.ws === 'black')
+    .forEach((w, idx) => {
+      wsBBoardData.value.pillars[idx].stones.push(w.color);
+    });
 
   // restore mainboard
   const mb = mainBoardData.value;

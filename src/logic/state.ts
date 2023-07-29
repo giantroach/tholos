@@ -26,7 +26,7 @@ type CurrentState =
   | 'playerTurn:submitPlace'
   | 'playerTurn:afterSubmit'
   | 'waitingForOtherPlayer'
-  | 'otherPlayerTurn'
+  | 'otherPlayerTurn';
 
 type SubState =
   | 'init'

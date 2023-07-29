@@ -96,7 +96,28 @@ const testData = [
       },
     },
     tablespeed: '1',
-    mainBoard: [],
+    mainBoard: {
+      1: {
+        id: '1',
+        location: '0',
+        color: 'white',
+      },
+      2: {
+        id: '2',
+        location: '0',
+        color: 'black',
+      },
+      3: {
+        id: '3',
+        location: '2',
+        color: 'white',
+      },
+      4: {
+        id: '4',
+        location: '3',
+        color: 'black',
+      },
+    },
     workshop: {
       1: {
         id: '1',
@@ -133,6 +154,7 @@ const testData = [
         count: '13',
       },
     },
+    playerSide: 'black',
   },
 ];
 
@@ -155,11 +177,22 @@ const testEvent = [
       count: '1',
     },
   },
+  {
+    name: 'placeStone',
+    args: {
+      player_side: 'black',
+      player_name:
+        '<!--PNS--><span class="playername" style="color:#008000;">giantroach0</span><!--PNE-->',
+      color: 'black',
+      target: '0',
+      locationName: 'α',
+    },
+  },
 ];
 
 function loadTestEvent(idx = 0) {
   const vue = window.vue;
-  vue.bgaNotifications.push(testEvent[0]);
+  vue.bgaNotifications.push(testEvent[idx]);
 }
 
 // append UI

@@ -5,6 +5,12 @@
 import { Player, Gamestate } from './framework.d';
 import { StoneType } from './stone.d';
 
+interface MainBoardRec {
+  id: string;
+  location: string;
+  color: StoneType;
+}
+
 interface WorkshopRec {
   id: string;
   ws: 'black' | 'white';
@@ -29,7 +35,9 @@ interface Gamedata {
   tablespeed: string;
 
   // Add here variables you set up in getAllDatas
-  mainBoard: Array<any>;
+  mainBoard: {
+    [idx: string]: MainBoardRec;
+  };
   // array alike but not an array
   workshop: {
     [idx: string]: WorkshopRec;
@@ -37,6 +45,7 @@ interface Gamedata {
   quarry: {
     [color: string]: QuarryRec;
   };
+  playerSide: 'white' | 'black';
 }
 
 export { Score, Gamedata };

@@ -182,9 +182,9 @@ class State {
 
       case 'playerTurn:submitPlace':
         this.request('placeStone', {
-          color: 'black',
-          from: null,
-          to: null,
+          color: this.getWsSelectedStone(),
+          bonusAction: false,
+          target0: this.getMainBoardSelectedIdx(),
         });
         this.setSubState('afterSubmit');
         break;

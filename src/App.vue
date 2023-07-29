@@ -49,12 +49,13 @@ let gamedata: Ref<Gamedata> = ref({
   playerorder: [],
   players: {},
   tablespeed: '',
-  mainBoard: [],
+  mainBoard: {},
   workshop: {},
   quarry: {},
+  playerSide: 'white',
 });
 
-let playerID = -1;
+let playerID = ref(-1);
 let sub: null | Sub = null;
 
 const mainBoardData: Ref<BoardData> = ref(
@@ -102,12 +103,12 @@ const request = (name: string, args: any): Promise<any> => {
     };
     setTimeout(() => {
       bgaRequestPromise
-        .then((reply) => {
-          resolve(reply);
-        })
-        .catch((e) => {
-          reject(e);
-        });
+      .then((reply) => {
+        resolve(reply);
+      })
+      .catch((e) => {
+        reject(e);
+      });
     });
   });
 };
@@ -124,7 +125,9 @@ const state: State = new State(
 
 const restore = () => {
   // restore all the data based on gamedata
-  restorePlayerSide();
+
+  // player side
+  playerData.value.playerSide = gamedata.value.playerSide;
 
   // restore quarry
   const q = gamedata.value.quarry;
@@ -135,34 +138,25 @@ const restore = () => {
   // restore workshop
   const wsa = objToArray(gamedata.value.workshop);
   wsa
-    .filter((w) => w.ws === 'white')
-    .forEach((w, idx) => {
-      wsWBoardData.value.pillars[idx].stones.push(w.color);
-    });
+  .filter((w) => w.ws === 'white')
+  .forEach((w, idx) => {
+    wsWBoardData.value.pillars[idx].stones.push(w.color);
+  });
   wsa
-    .filter((w) => w.ws === 'black')
-    .forEach((w, idx) => {
-      wsBBoardData.value.pillars[idx].stones.push(w.color);
-    });
+  .filter((w) => w.ws === 'black')
+  .forEach((w, idx) => {
+    wsBBoardData.value.pillars[idx].stones.push(w.color);
+  });
 
   // restore mainboard
+  const mb = mainBoardData.value;
+  const mba = objToArray(gamedata.value.mainBoard);
+  mba.forEach((m) => {
+    mb.pillars[m.location].stones.push(m.color);
+  });
 
   state.refresh();
-  sub = new Sub(
-    playerID,
-    // mainBoardData,
-    wsWBoardData,
-    wsBBoardData,
-    quarryData,
-  );
-};
-
-const restorePlayerSide = () => {
-  if (String(gamedata.value.playerorder[0]) === String(playerID)) {
-    playerData.value.playerSide = 'white';
-  } else {
-    playerData.value.playerSide = 'black';
-  }
+  sub = new Sub(mainBoardData, wsWBoardData, wsBBoardData, quarryData);
 };
 
 const initBgaNotification = (): void => {

@@ -1,7 +1,11 @@
 import type { Ref } from 'vue';
 import { BoardData } from '../type/board.d';
 import { QuarryData } from '../type/quarry.d';
-import { BgaNotification, BgaTakeStoneNotif } from '../type/bga-interface.d';
+import {
+  BgaNotification,
+  BgaTakeStoneNotif,
+  BgaPlaceStoneNotif,
+} from '../type/bga-interface.d';
 
 //
 // Sub handles BGA notifications and apply data accordingly.
@@ -9,8 +13,7 @@ import { BgaNotification, BgaTakeStoneNotif } from '../type/bga-interface.d';
 
 export class Sub {
   constructor(
-    public playerID: number, // public for testing purpose
-    // private mainBoardData: Ref<BoardData>,
+    private mainBoardData: Ref<BoardData>,
     private wsWBoardData: Ref<BoardData>,
     private wsBBoardData: Ref<BoardData>,
     private quarryData: Ref<QuarryData>
@@ -19,7 +22,7 @@ export class Sub {
   public handle(notif: BgaNotification) {
     console.log('gocha', notif);
     switch (notif.name) {
-      case 'takeStone':
+      case 'takeStone': {
         const args = notif.args as BgaTakeStoneNotif;
         const count = Number(args.count);
 
@@ -52,6 +55,29 @@ export class Sub {
         }
 
         break;
+      }
+
+      case 'placeStone': {
+        const args = notif.args as BgaPlaceStoneNotif;
+
+        // update workshop
+        const ws =
+          args.player_side === 'white'
+            ? this.wsWBoardData.value
+            : this.wsBBoardData.value;
+        const idx = ws.pillars.findLastIndex((p) => p.stones[0] === args.color);
+        if (idx === -1) {
+          throw 'unexpected state: no corresponding stone found in workshop.';
+        }
+        ws.pillars[idx].stones.splice(0, 1);
+
+        // update mainBoard
+        const mb = this.mainBoardData.value;
+        const targetIdx = Number(args.target);
+        mb.pillars[targetIdx].stones.push(args.color);
+
+        break;
+      }
 
       default:
         break;

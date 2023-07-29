@@ -48,9 +48,21 @@ class action_tholos extends APP_GameAction
   public function placeStone()
   {
     self::setAjaxMode();
-    $id = self::getArg('id', AT_alphanum, false);
+    $color = self::getArg('color', AT_alphanum, true);
+    $bonusAction = self::getArg('bonusAction', AT_bool, true);
+    $target0 = self::getArg('target0', AT_posint, true);
+    $target1 = self::getArg('target1', AT_posint, false);
+    $target2 = self::getArg('target2', AT_posint, false);
+    $target3 = self::getArg('target2', AT_posint, false);
 
-    $this->game->placeStone($id);
+    $this->game->placeStone(
+      $color,
+      $bonusAction,
+      $target0,
+      $target1,
+      $target2,
+      $target3
+    );
     self::ajaxResponse();
   }
 

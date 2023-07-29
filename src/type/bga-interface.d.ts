@@ -11,14 +11,28 @@ interface BgaRequest {
 
 interface BgaNotification {
   name: BgaNotifyName;
-  args: BgaTakeStoneNotif;
+  args: BgaTakeStoneNotif | BgaPlaceStoneNotif;
 }
 
 interface BgaTakeStoneNotif {
   player_side: 'black' | 'white';
   player_name: string;
   color: StoneType;
-  count: string; // number string
+  count: string; // num string
 }
 
-export { BgaRequest, BgaConfirm, BgaNotification, BgaTakeStoneNotif };
+interface BgaPlaceStoneNotif {
+  player_side: 'black' | 'white';
+  player_name: string;
+  color: StoneType;
+  target: string; // num string
+  locationName: string;
+}
+
+export {
+  BgaRequest,
+  BgaConfirm,
+  BgaNotification,
+  BgaTakeStoneNotif,
+  BgaPlaceStoneNotif,
+};

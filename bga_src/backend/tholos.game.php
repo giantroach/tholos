@@ -155,6 +155,8 @@ class Tholos extends Table
     $sql = 'SELECT * from mainBoard';
     $result['mainBoard'] = self::getCollectionFromDb($sql);
 
+    $result['playerSide'] = $this->getActivePlayerSide();
+
     return $result;
   }
 
@@ -200,6 +202,33 @@ class Tholos extends Table
     die('ok');
   }
 
+  function getLocationName($idx)
+  {
+    if ($idx == 0) {
+      return 'α';
+    }
+    if ($idx == 1) {
+      return 'β';
+    }
+    if ($idx == 2) {
+      return 'γ';
+    }
+    if ($idx == 3) {
+      return 'δ';
+    }
+    if ($idx == 4) {
+      return 'π';
+    }
+    if ($idx == 5) {
+      return 'Σ';
+    }
+    if ($idx == 6) {
+      return 'Ω';
+    }
+
+    die('ok');
+  }
+
   //////////////////////////////////////////////////////////////////////////////
   //////////// Player actions
   ////////////
@@ -238,6 +267,7 @@ class Tholos extends Table
   function takeStone($color, $count)
   {
     self::checkAction('takeStone');
+    $side = $this->getActivePlayerSide();
 
     // FIXME: input check logic
     // both stone count in quarry & stone count in workshop.
@@ -250,7 +280,7 @@ class Tholos extends Table
     self::DbQuery($sql);
 
     // update workshop
-    $side = $this->getActivePlayerSide();
+    // FIXME: this inserts only one stone
     $sql =
       "INSERT INTO workshop(ws, color) VALUES ('" .
       $side .
@@ -275,12 +305,50 @@ class Tholos extends Table
     $this->gamestate->nextState('nextPlayer');
   }
 
-  function placeStone($id)
-  {
+  function placeStone(
+    $color,
+    $bonusAction,
+    $target0,
+    $target1,
+    $target2,
+    $target3
+  ) {
     self::checkAction('placeStone');
-    self::notifyAllPlayers('test', clienttranslate('Request received.'), [
-      'id' => $id,
-    ]);
+    $side = $this->getActivePlayerSide();
+
+    // FIXME: input check logic
+
+    // update workshop
+    $sql =
+      "DELETE FROM workshop WHERE color = '" .
+      $color .
+      "' AND ws = '" .
+      $side .
+      "' LIMIT 1";
+    self::DbQuery($sql);
+
+    // update mainboard
+    $sql =
+      "INSERT INTO mainBoard(location, color) VALUES('" .
+      $target0 .
+      "', '" .
+      $side .
+      "')";
+    self::DbQuery($sql);
+
+    // notify
+    $locationName = $this->getLocationName($target0);
+    self::notifyAllPlayers(
+      'placeStone',
+      clienttranslate('${player_name} placed a ${color} stone on ${locationName}.'),
+      [
+        'player_side' => $side,
+        'player_name' => self::getActivePlayerName(),
+        'color' => $color,
+        'target' => $target0,
+        'locationName' => $locationName,
+      ]
+    );
 
     $this->gamestate->nextState('nextPlayer');
   }

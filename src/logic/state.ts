@@ -79,6 +79,8 @@ class State {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public throttledRefresh: any;
 
+  public useAction: boolean = false;
+
   public refresh() {
     switch (this.current) {
       case 'waitingForOtherPlayer':
@@ -150,14 +152,17 @@ class State {
         }
         if (!this.setTarget1Selectable()) {
           this.assign(this.ctrlBarData.value, 'type', 'noValidTarget');
+          this.useAction = false;
           break;
         }
+        this.useAction = true;
         break;
       }
 
       case 'playerTurn:beforeTargetSelect2':
         if (!this.setTarget2Selectable()) {
-          this.setSubState('beforeSubmitPlace');
+          this.useAction = false;
+          this.assign(this.ctrlBarData.value, 'type', 'noValidTarget');
           break;
         }
         break;
@@ -183,8 +188,10 @@ class State {
       case 'playerTurn:submitPlace':
         this.request('placeStone', {
           color: this.getWsSelectedStone(),
-          bonusAction: false,
+          bonusAction: this.useAction,
           target0: this.getMainBoardSelectedIdx(),
+          target1: this.getTarget1(),
+          target2: this.getTarget2(),
         });
         this.setSubState('afterSubmit');
         break;
@@ -245,6 +252,8 @@ class State {
       this.assign(p, 'selected', [[], [], []]);
       this.assign(p, 'selectable', [[], [], []]);
     });
+
+    this.useAction = false;
   }
 
   public everythingNotSelectable() {
@@ -384,8 +393,11 @@ class State {
     }, 0);
   }
 
-  public getWsSelectedStone(idx = 0): StoneType {
-    const ws = this.getOwnWs();
+  public getWsSelectedStone(idx = 0, own = true): StoneType {
+    let ws = this.getOwnWs();
+    if (!own) {
+      ws = this.getOppoWs();
+    }
     for (let i = 0; i < ws.pillars.length; i += 1) {
       const idx2 = ws.pillars[i].selected[idx].indexOf(true);
       if (idx2 >= 0) {
@@ -662,6 +674,55 @@ class State {
     }
 
     return false;
+  }
+
+  public getTarget1(): null | StoneType | number {
+    const srcIdx = this.getMainBoardSelectedIdx();
+
+    if (!this.useAction) {
+      return null;
+    }
+
+    switch (true) {
+      case srcIdx === 0 || srcIdx === 2 || srcIdx === 1 || srcIdx === 6: {
+        // index of main board
+        return this.getMainBoardSelectedIdx(1);
+      }
+      case srcIdx === 3: {
+        // index of quarry
+        return this.quarryData.value.selected.findIndex((s) => s);
+      }
+      case srcIdx === 4: {
+        // stone type (as backend does not stone pos)
+        return this.getWsSelectedStone(1, false);
+      }
+      case srcIdx === 5: {
+        // stone type (as backend does not stone pos)
+        return this.getWsSelectedStone(1, true);
+      }
+    }
+
+    return null;
+  }
+
+  public getTarget2(): null | StoneType | number {
+    const srcIdx = this.getMainBoardSelectedIdx();
+
+    if (!this.useAction) {
+      return null;
+    }
+
+    switch (true) {
+      case srcIdx === 0 || srcIdx === 1 || srcIdx === 5 || srcIdx === 6: {
+        // index of main board
+        return this.getMainBoardSelectedIdx(2);
+      }
+      case srcIdx === 2 || srcIdx === 3 || srcIdx === 4: {
+        return null;
+      }
+    }
+
+    return null;
   }
 
   public removeGhostExcept(board: BoardData, exceptIdx: number[] = []) {

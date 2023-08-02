@@ -51,9 +51,8 @@ class action_tholos extends APP_GameAction
     $color = self::getArg('color', AT_alphanum, true);
     $bonusAction = self::getArg('bonusAction', AT_bool, true);
     $target0 = self::getArg('target0', AT_posint, true);
-    $target1 = self::getArg('target1', AT_posint, false);
-    $target2 = self::getArg('target2', AT_posint, false);
-    $target3 = self::getArg('target2', AT_posint, false);
+    $target1 = self::getArg('target1', AT_alphanum, false);
+    $target2 = self::getArg('target2', AT_alphanum, false);
 
     $this->game->placeStone(
       $color,

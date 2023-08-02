@@ -117,6 +117,11 @@ const testData = [
         location: '3',
         color: 'black',
       },
+      4: {
+        id: '4',
+        location: '3',
+        color: 'gray',
+      },
     },
     workshop: {
       1: {

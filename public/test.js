@@ -193,6 +193,18 @@ const testEvent = [
       locationName: 'α',
     },
   },
+  {
+    name: 'moveStone',
+    args: {
+      player_side: 'black',
+      player_name:
+      '<!--PNS--><span class="playername" style="color:#008000;">giantroach0</span><!--PNE-->',
+      from: '3',
+      fromName: 'δ',
+      to: '2',
+      toName: 'γ',
+    },
+  },
 ];
 
 function loadTestEvent(idx = 0) {

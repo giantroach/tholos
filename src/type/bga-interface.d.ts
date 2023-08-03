@@ -2,7 +2,7 @@ import { Card, Score, Center } from './gamedata';
 import { Player } from './framework.d';
 import { StoneType } from './stone.d';
 
-type BgaNotifyName = 'takeStone' | 'placeStone';
+type BgaNotifyName = 'takeStone' | 'placeStone' | 'moveStone';
 
 interface BgaRequest {
   name: string;
@@ -11,7 +11,7 @@ interface BgaRequest {
 
 interface BgaNotification {
   name: BgaNotifyName;
-  args: BgaTakeStoneNotif | BgaPlaceStoneNotif;
+  args: BgaTakeStoneNotif | BgaPlaceStoneNotif | BgaMoveStoneNotif;
 }
 
 interface BgaTakeStoneNotif {
@@ -29,10 +29,20 @@ interface BgaPlaceStoneNotif {
   locationName: string;
 }
 
+interface BgaMoveStoneNotif {
+  player_side: 'black' | 'white';
+  player_name: string;
+  from: string; // num string
+  from_name: string;
+  to: string;
+  to_name: string; // num string
+}
+
 export {
   BgaRequest,
   BgaConfirm,
   BgaNotification,
   BgaTakeStoneNotif,
   BgaPlaceStoneNotif,
+  BgaMoveStoneNotif,
 };

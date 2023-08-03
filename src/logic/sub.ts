@@ -5,6 +5,7 @@ import {
   BgaNotification,
   BgaTakeStoneNotif,
   BgaPlaceStoneNotif,
+  BgaMoveStoneNotif,
 } from '../type/bga-interface.d';
 
 //
@@ -75,6 +76,20 @@ export class Sub {
         const mb = this.mainBoardData.value;
         const targetIdx = Number(args.target);
         mb.pillars[targetIdx].stones.push(args.color);
+
+        break;
+      }
+
+      case 'moveStone': {
+        const args = notif.args as BgaMoveStoneNotif;
+
+        // update mainBoard
+        const mb = this.mainBoardData.value;
+        const fromIdx = Number(args.from);
+        const toIdx = Number(args.to);
+        const p = mb.pillars[fromIdx].stones;
+        const s = p.splice(p.length -1, 1)[0];
+        mb.pillars[toIdx].stones.push(s);
 
         break;
       }

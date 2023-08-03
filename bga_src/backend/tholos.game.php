@@ -233,6 +233,57 @@ class Tholos extends Table
     die('ok');
   }
 
+  function applyBonusAction($target0, $target1, $target2)
+  {
+    $t0 = intval($target0);
+    self::dump('$t0', $t0);
+    switch ($t0) {
+      case 0:
+        // move gray stone from $t1 to $t2
+        $t1 = intval($target1);
+        $t2 = intval($target2);
+        $this->moveStone($t1, $t2, 'gray');
+        break;
+    }
+  }
+
+  function notifyBonusAction($side, $target0, $target1, $target2)
+  {
+    $t0 = intval($target0);
+    self::dump('$t0', $t0);
+    switch ($t0) {
+      case 0:
+        $t1 = intval($target1);
+        $t2 = intval($target2);
+        self::notifyAllPlayers(
+          'moveStone',
+          clienttranslate(
+            '${player_name} moved a gray stone from  ${from_name} to ${to_name}.'
+          ),
+          [
+            'player_side' => $side,
+            'player_name' => self::getActivePlayerName(),
+            'from' => $t1,
+            'from_name' => $this->getLocationName($t1),
+            'to' => $t2,
+            'to_name' => $this->getLocationName($t2),
+          ]
+        );
+        break;
+    }
+  }
+
+  function moveStone($from, $to, $color = null)
+  {
+    $sql = 'UPDATE mainBoard SET location=' . $to . ' WHERE location=' . $from;
+    if ($color) {
+      // NOTE: this does not guarantee that the stone is the last pos
+      $sql = $sql . " AND color='" . $color . "'";
+    }
+    $sql = $sql . ' ORDER BY id desc LIMIT 1';
+    self::DbQuery($sql);
+  }
+
   //////////////////////////////////////////////////////////////////////////////
   //////////// Player actions
   ////////////
@@ -311,14 +362,8 @@ class Tholos extends Table
     $this->gamestate->nextState('nextPlayer');
   }
 
-  function placeStone(
-    $color,
-    $bonusAction,
-    $target0,
-    $target1,
-    $target2,
-    $target3
-  ) {
+  function placeStone($color, $bonusAction, $target0, $target1, $target2)
+  {
     self::checkAction('placeStone');
     $side = $this->getActivePlayerSide();
 
@@ -333,12 +378,17 @@ class Tholos extends Table
       "' LIMIT 1";
     self::DbQuery($sql);
 
+    // bonus action
+    if ($bonusAction) {
+      $this->applyBonusAction($target0, $target1, $target2);
+    }
+
     // update mainboard
     $sql =
       "INSERT INTO mainBoard(location, color) VALUES('" .
       $target0 .
       "', '" .
-      $side .
+      $color .
       "')";
     self::DbQuery($sql);
 
@@ -357,6 +407,11 @@ class Tholos extends Table
         'locationName' => $locationName,
       ]
     );
+
+    // notify for bonus action (it should be later than main action)
+    if ($bonusAction) {
+      $this->notifyBonusAction($side, $target0, $target1, $target2);
+    }
 
     $this->gamestate->nextState('nextPlayer');
   }

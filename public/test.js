@@ -205,6 +205,26 @@ const testEvent = [
       toName: 'γ',
     },
   },
+  {
+    name: 'removeStone',
+    args: {
+      player_side: 'black',
+      player_name:
+      '<!--PNS--><span class="playername" style="color:#008000;">giantroach0</span><!--PNE-->',
+      from: '0',
+      fromName: 'α',
+    },
+  },
+  {
+    name: 'stealStone',
+    args: {
+      player_side: 'black',
+      player_name:
+      '<!--PNS--><span class="playername" style="color:#008000;">giantroach0</span><!--PNE-->',
+      color: 'white',
+      from: '3',
+    },
+  },
 ];
 
 function loadTestEvent(idx = 0) {

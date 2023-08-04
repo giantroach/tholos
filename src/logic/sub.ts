@@ -6,6 +6,8 @@ import {
   BgaTakeStoneNotif,
   BgaPlaceStoneNotif,
   BgaMoveStoneNotif,
+  BgaRemoveStoneNotif,
+  BgaStealStoneNotif,
 } from '../type/bga-interface.d';
 
 //
@@ -90,6 +92,48 @@ export class Sub {
         const p = mb.pillars[fromIdx].stones;
         const s = p.splice(p.length -1, 1)[0];
         mb.pillars[toIdx].stones.push(s);
+
+        break;
+      }
+
+      case 'removeStone': {
+        const args = notif.args as BgaRemoveStoneNotif;
+
+        // update mainBoard
+        const mb = this.mainBoardData.value;
+        const fromIdx = Number(args.from);
+        const p = mb.pillars[fromIdx].stones;
+        p.splice(p.length -1, 1)[0];
+
+        break;
+      }
+
+      case 'stealStone': {
+        const args = notif.args as BgaStealStoneNotif;
+
+        // update workshop
+        const wsFrom =
+          args.player_side === 'black'
+          ? this.wsWBoardData.value
+          : this.wsBBoardData.value;
+        const wsTo =
+          args.player_side === 'white'
+          ? this.wsWBoardData.value
+          : this.wsBBoardData.value;
+
+        // remove from oppo
+        const idx = wsFrom.pillars.findLastIndex((p) => p.stones[0] === args.color);
+        if (idx === -1) {
+          throw 'unexpected state: no corresponding stone found in workshop.';
+        }
+        wsFrom.pillars[idx].stones.splice(0, 1);
+
+        // place on yours
+        const idx2 = wsTo.pillars.findIndex((p) => !p.stones[0]);
+        if (idx2 === -1) {
+          throw 'unexpected state: no place to place stone in your workshop.';
+        }
+        wsTo.pillars[idx2].stones.push(args.color);
 
         break;
       }

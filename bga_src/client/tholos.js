@@ -232,7 +232,13 @@ define([
       // this.notifqueue.setSynchronous( 'cardPlayed', 3000 );
       //
 
-      const notifications = ['takeStone', 'placeStone', 'moveStone'];
+      const notifications = [
+        'takeStone',
+        'placeStone',
+        'moveStone',
+        'removeStone',
+        'stealStone',
+      ];
       notifications.forEach((n) => {
         dojo.subscribe(n, this, (data) => {
           vue.bgaNotifications.push({

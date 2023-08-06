@@ -90,7 +90,7 @@ export class Sub {
         const fromIdx = Number(args.from);
         const toIdx = Number(args.to);
         const p = mb.pillars[fromIdx].stones;
-        const s = p.splice(p.length -1, 1)[0];
+        const s = p.splice(p.length - 1, 1)[0];
         mb.pillars[toIdx].stones.push(s);
 
         break;
@@ -103,7 +103,19 @@ export class Sub {
         const mb = this.mainBoardData.value;
         const fromIdx = Number(args.from);
         const p = mb.pillars[fromIdx].stones;
-        p.splice(p.length -1, 1)[0];
+        const s = p.splice(p.length - 1, 1)[0];
+        const q = this.quarryData.value;
+        switch (s) {
+          case 'white':
+            q.stones[0] += 1;
+            break;
+          case 'gray':
+            q.stones[1] += 1;
+            break;
+          case 'black':
+            q.stones[2] += 1;
+            break;
+        }
 
         break;
       }
@@ -114,15 +126,17 @@ export class Sub {
         // update workshop
         const wsFrom =
           args.player_side === 'black'
-          ? this.wsWBoardData.value
-          : this.wsBBoardData.value;
+            ? this.wsWBoardData.value
+            : this.wsBBoardData.value;
         const wsTo =
           args.player_side === 'white'
-          ? this.wsWBoardData.value
-          : this.wsBBoardData.value;
+            ? this.wsWBoardData.value
+            : this.wsBBoardData.value;
 
         // remove from oppo
-        const idx = wsFrom.pillars.findLastIndex((p) => p.stones[0] === args.color);
+        const idx = wsFrom.pillars.findLastIndex(
+          (p) => p.stones[0] === args.color
+        );
         if (idx === -1) {
           throw 'unexpected state: no corresponding stone found in workshop.';
         }

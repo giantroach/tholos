@@ -273,14 +273,24 @@ class Tholos extends Table
     }
   }
 
-  function moveStone($from, $to, $color = null)
+  function moveStone($from, $to, $color)
   {
-    $sql = 'UPDATE mainBoard SET location=' . $to . ' WHERE location=' . $from;
-    if ($color) {
-      // NOTE: this does not guarantee that the stone is the last pos
-      $sql = $sql . " AND color='" . $color . "'";
-    }
-    $sql = $sql . ' ORDER BY id desc LIMIT 1';
+    // Do delete then insert to increment the index
+    $sql =
+      'DELETE FROM mainBoard WHERE location=' .
+      $from .
+      " AND color='" .
+      $color .
+      "'" .
+      ' ORDER BY id desc LIMIT 1';
+    self::DbQuery($sql);
+
+    $sql =
+      "INSERT INTO mainBoard(location, color) VALUES('" .
+      $to .
+      "', '" .
+      $color .
+      "')";
     self::DbQuery($sql);
   }
 

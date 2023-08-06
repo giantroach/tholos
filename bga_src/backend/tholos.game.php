@@ -244,6 +244,11 @@ class Tholos extends Table
         $t2 = intval($target2);
         $this->moveStone($t1, $t2, 'gray');
         break;
+      case 2:
+        // remove the top stone from t1
+        $t1 = intval($target1);
+        $this->removeStone($t1);
+        break;
     }
   }
 
@@ -258,7 +263,7 @@ class Tholos extends Table
         self::notifyAllPlayers(
           'moveStone',
           clienttranslate(
-            '${player_name} moved a gray stone from  ${from_name} to ${to_name}.'
+            '${player_name} moved a gray stone from the column ${from_name} to the column ${to_name}.'
           ),
           [
             'player_side' => $side,
@@ -267,6 +272,22 @@ class Tholos extends Table
             'from_name' => $this->getLocationName($t1),
             'to' => $t2,
             'to_name' => $this->getLocationName($t2),
+          ]
+        );
+        break;
+
+      case 2:
+        $t1 = intval($target1);
+        self::notifyAllPlayers(
+          'removeStone',
+          clienttranslate(
+            '${player_name} returned the top stone of the column ${from_name} back to the quarry.'
+          ),
+          [
+            'player_side' => $side,
+            'player_name' => self::getActivePlayerName(),
+            'from' => $t1,
+            'from_name' => $this->getLocationName($t1),
           ]
         );
         break;
@@ -291,6 +312,31 @@ class Tholos extends Table
       "', '" .
       $color .
       "')";
+    self::DbQuery($sql);
+  }
+
+  function removeStone($from)
+  {
+    // get color / num first and refill quarry
+    $sql =
+      'SELECT color FROM mainBoard WHERE location=' .
+      $from .
+      ' ORDER BY id desc LIMIT 1';
+    $color = self::getUniqueValueFromDB($sql);
+
+    $sql = "SELECT count FROM quarry WHERE color='" . $color . "'";
+    $num = intval(self::getUniqueValueFromDB($sql));
+
+    // Delete
+    $sql =
+      'DELETE FROM mainBoard WHERE location=' .
+      $from .
+      ' ORDER BY id desc LIMIT 1';
+    self::DbQuery($sql);
+
+    // Refill
+    $sql =
+      'UPDATE quarry SET count=' . ($num + 1) . " WHERE color='" . $color . "'";
     self::DbQuery($sql);
   }
 

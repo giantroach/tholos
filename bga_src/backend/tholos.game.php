@@ -242,12 +242,17 @@ class Tholos extends Table
         // move gray stone from $t1 to $t2
         $t1 = intval($target1);
         $t2 = intval($target2);
-        $this->moveStone($t1, $t2, 'gray');
+        $this->_moveStone($t1, $t2, 'gray');
         break;
       case 2:
         // remove the top stone from t1
         $t1 = intval($target1);
-        $this->removeStone($t1);
+        $this->_removeStone($t1);
+        break;
+      case 3:
+        // take stone from quarry
+        $color = $target1;
+        $this->_takeStone($color);
         break;
     }
   }
@@ -263,7 +268,7 @@ class Tholos extends Table
         self::notifyAllPlayers(
           'moveStone',
           clienttranslate(
-            '${player_name} moved a gray stone from the column ${from_name} to the column ${to_name}.'
+            '[Bonus Action] ${player_name} moved a gray stone from the column ${from_name} to the column ${to_name}.'
           ),
           [
             'player_side' => $side,
@@ -281,7 +286,7 @@ class Tholos extends Table
         self::notifyAllPlayers(
           'removeStone',
           clienttranslate(
-            '${player_name} returned the top stone of the column ${from_name} back to the quarry.'
+            '[Bonus Action] ${player_name} returned the top stone of the column ${from_name} back to the quarry.'
           ),
           [
             'player_side' => $side,
@@ -291,10 +296,26 @@ class Tholos extends Table
           ]
         );
         break;
+
+      case 3:
+        $color = $target1;
+        self::notifyAllPlayers(
+          'takeStone',
+          clienttranslate(
+            '[Bonus Action] ${player_name} took a ${color} stone from the quarry.'
+          ),
+          [
+            'player_side' => $side,
+            'player_name' => self::getActivePlayerName(),
+            'color' => $color,
+            'count' => 1,
+          ]
+        );
+        break;
     }
   }
 
-  function moveStone($from, $to, $color)
+  function _moveStone($from, $to, $color)
   {
     // Do delete then insert to increment the index
     $sql =
@@ -315,7 +336,7 @@ class Tholos extends Table
     self::DbQuery($sql);
   }
 
-  function removeStone($from)
+  function _removeStone($from)
   {
     // get color / num first and refill quarry
     $sql =
@@ -338,6 +359,30 @@ class Tholos extends Table
     $sql =
       'UPDATE quarry SET count=' . ($num + 1) . " WHERE color='" . $color . "'";
     self::DbQuery($sql);
+  }
+
+  function _takeStone($color, $count = 1)
+  {
+    $side = $this->getActivePlayerSide();
+
+    // update quarry
+    $sql = "SELECT count FROM quarry WHERE color='" . $color . "'";
+    $remains = intval(self::getUniqueValueFromDB($sql)) - $count;
+    $sql =
+      'UPDATE quarry SET count=' . $remains . " WHERE color='" . $color . "'";
+    self::DbQuery($sql);
+
+    // update workshop
+    // FIXME: this inserts only one stone
+    for ($i = 1; $i <= intval($count); $i++) {
+      $sql =
+        "INSERT INTO workshop(ws, color) VALUES ('" .
+        $side .
+        "', '" .
+        $color .
+        "')";
+      self::DbQuery($sql);
+    }
   }
 
   //////////////////////////////////////////////////////////////////////////////
@@ -383,24 +428,7 @@ class Tholos extends Table
     // FIXME: input check logic
     // both stone count in quarry & stone count in workshop.
 
-    // update quarry
-    $sql = "SELECT count FROM quarry WHERE color='" . $color . "'";
-    $remains = intval(self::getUniqueValueFromDB($sql)) - 1;
-    $sql =
-      'UPDATE quarry SET count=' . $remains . " WHERE color='" . $color . "'";
-    self::DbQuery($sql);
-
-    // update workshop
-    // FIXME: this inserts only one stone
-    for ($i = 1; $i <= intval($count); $i++) {
-      $sql =
-        "INSERT INTO workshop(ws, color) VALUES ('" .
-        $side .
-        "', '" .
-        $color .
-        "')";
-      self::DbQuery($sql);
-    }
+    $this->_takeStone($color, intval($count));
 
     self::notifyAllPlayers(
       'takeStone',

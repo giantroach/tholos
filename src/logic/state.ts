@@ -690,7 +690,17 @@ class State {
       }
       case srcIdx === 3: {
         // index of quarry
-        return this.quarryData.value.selected.findIndex((s) => s);
+        const idx = this.quarryData.value.selected.findIndex((s) => s);
+        switch(idx) {
+          case 0:
+            return 'white';
+          case 1:
+            return 'gray';
+          case 2:
+            return 'black';
+        }
+        // invalid state
+        return null;
       }
       case srcIdx === 4: {
         // stone type (as backend does not stone pos)

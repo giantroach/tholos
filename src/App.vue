@@ -9,7 +9,11 @@ import { State, CurrentState } from './logic/state';
 import { Sub } from './logic/sub';
 
 import { Gamedata } from './type/gamedata.d';
-import { BgaRequest, BgaNotification } from './type/bga-interface.d';
+import {
+  BgaRequest,
+  BgaNotification,
+  BgaPlaceStoneNotif,
+} from './type/bga-interface.d';
 import { BoardData } from './type/board.d';
 import { QuarryData } from './type/quarry.d';
 import { CtrlBarData } from './type/ctrlBar.d';
@@ -174,6 +178,19 @@ const initBgaNotification = (): void => {
       bgaNotifQueue = bgaNotifQueue.then(() => {
         return new Promise<void>((resolve) => {
           switch (notif.name) {
+            case 'placeStone':
+              sub?.handle(notif);
+              const args = notif.args as BgaPlaceStoneNotif;
+              if (args.bonusAction) {
+                // go without delay
+                resolve();
+              } else {
+                setTimeout(() => {
+                  // secure the least time gap
+                  resolve();
+                }, 1000);
+              }
+              break;
             default:
               sub?.handle(notif);
               setTimeout(() => {

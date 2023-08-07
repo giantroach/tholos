@@ -254,6 +254,11 @@ class Tholos extends Table
         $color = $target1;
         $this->_takeStone($color);
         break;
+      case 4:
+        // take stone from quarry
+        $color = $target1;
+        $this->_stealStone($color);
+        break;
     }
   }
 
@@ -309,6 +314,21 @@ class Tholos extends Table
             'player_name' => self::getActivePlayerName(),
             'color' => $color,
             'count' => 1,
+          ]
+        );
+        break;
+
+      case 4:
+        $color = $target1;
+        self::notifyAllPlayers(
+          'stealStone',
+          clienttranslate(
+            '[Bonus Action] ${player_name} stole a ${color} stone from the workshop.'
+          ),
+          [
+            'player_side' => $side,
+            'player_name' => self::getActivePlayerName(),
+            'color' => $color,
           ]
         );
         break;
@@ -373,7 +393,6 @@ class Tholos extends Table
     self::DbQuery($sql);
 
     // update workshop
-    // FIXME: this inserts only one stone
     for ($i = 1; $i <= intval($count); $i++) {
       $sql =
         "INSERT INTO workshop(ws, color) VALUES ('" .
@@ -383,6 +402,29 @@ class Tholos extends Table
         "')";
       self::DbQuery($sql);
     }
+  }
+
+  function _stealStone($color)
+  {
+    $side = $this->getActivePlayerSide();
+
+    // update workshop (victim)
+    $sql =
+      "DELETE FROM workshop WHERE ws<>'" .
+      $side .
+      "' AND color='" .
+      $color .
+      "' LIMIT 1";
+    self::DbQuery($sql);
+
+    // update workshop (active player)
+    $sql =
+      "INSERT INTO workshop(ws, color) VALUES ('" .
+      $side .
+      "', '" .
+      $color .
+      "')";
+    self::DbQuery($sql);
   }
 
   //////////////////////////////////////////////////////////////////////////////
@@ -489,6 +531,7 @@ class Tholos extends Table
         'color' => $color,
         'target' => $target0,
         'locationName' => $locationName,
+        'bonusAction' => $bonusAction,
       ]
     );
 

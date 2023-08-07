@@ -37,6 +37,7 @@ interface BgaPlaceStoneNotif {
   color: StoneType;
   target: string; // num string
   locationName: string;
+  bonusAction: boolean;
 }
 
 interface BgaMoveStoneNotif {

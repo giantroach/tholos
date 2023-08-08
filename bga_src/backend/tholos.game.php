@@ -244,6 +244,12 @@ class Tholos extends Table
         $t2 = intval($target2);
         $this->_moveStone($t1, $t2, 'gray');
         break;
+      case 1:
+        // move gray stone from $t1 to $t2
+        $t1 = intval($target1);
+        $t2 = intval($target2);
+        $this->_moveStone($t1, $t2, 'white');
+        break;
       case 2:
         // remove the top stone from t1
         $t1 = intval($target1);
@@ -259,6 +265,18 @@ class Tholos extends Table
         $color = $target1;
         $this->_stealStone($color);
         break;
+      case 5:
+        // take stone from quarry
+        $color = $target1;
+        $t2 = intval($target2);
+        $this->_placeStone($color, $t2);
+        break;
+      case 6:
+        // move gray stone from $t1 to $t2
+        $t1 = intval($target1);
+        $t2 = intval($target2);
+        $this->_moveStone($t1, $t2, 'black');
+        break;
     }
   }
 
@@ -273,7 +291,7 @@ class Tholos extends Table
         self::notifyAllPlayers(
           'moveStone',
           clienttranslate(
-            '[Bonus Action] ${player_name} moved a gray stone from the column ${from_name} to the column ${to_name}.'
+            '[Bonus Action] ${player_name} moved a ${color} stone from the column ${from_name} to the column ${to_name}.'
           ),
           [
             'player_side' => $side,
@@ -282,6 +300,27 @@ class Tholos extends Table
             'from_name' => $this->getLocationName($t1),
             'to' => $t2,
             'to_name' => $this->getLocationName($t2),
+            'color' => 'gray',
+          ]
+        );
+        break;
+
+      case 1:
+        $t1 = intval($target1);
+        $t2 = intval($target2);
+        self::notifyAllPlayers(
+          'moveStone',
+          clienttranslate(
+            '[Bonus Action] ${player_name} moved a ${color} stone from the column ${from_name} to the column ${to_name}.'
+          ),
+          [
+            'player_side' => $side,
+            'player_name' => self::getActivePlayerName(),
+            'from' => $t1,
+            'from_name' => $this->getLocationName($t1),
+            'to' => $t2,
+            'to_name' => $this->getLocationName($t2),
+            'color' => 'white',
           ]
         );
         break;
@@ -332,7 +371,70 @@ class Tholos extends Table
           ]
         );
         break;
+
+      case 5:
+        $color = $target1;
+        $t2 = intval($target2);
+        self::notifyAllPlayers(
+          'placeStone',
+          clienttranslate(
+            '[Bonus Action] ${player_name} placed a ${color} stone on the column ${locationName}.'
+          ),
+          [
+            'player_side' => $side,
+            'player_name' => self::getActivePlayerName(),
+            'color' => $color,
+            'target' => $t2,
+            'locationName' => $this->getLocationName($t2),
+            'bonusAction' => false,
+          ]
+        );
+        break;
+
+      case 6:
+        $t1 = intval($target1);
+        $t2 = intval($target2);
+        self::notifyAllPlayers(
+          'moveStone',
+          clienttranslate(
+            '[Bonus Action] ${player_name} moved a ${color} stone from the column ${from_name} to the column ${to_name}.'
+          ),
+          [
+            'player_side' => $side,
+            'player_name' => self::getActivePlayerName(),
+            'from' => $t1,
+            'from_name' => $this->getLocationName($t1),
+            'to' => $t2,
+            'to_name' => $this->getLocationName($t2),
+            'color' => 'black',
+          ]
+        );
+        break;
+
     }
+  }
+
+  function _placeStone($color, $target)
+  {
+    $side = $this->getActivePlayerSide();
+
+    // update workshop
+    $sql =
+      "DELETE FROM workshop WHERE color = '" .
+      $color .
+      "' AND ws = '" .
+      $side .
+      "' LIMIT 1";
+    self::DbQuery($sql);
+
+    // update mainboard
+    $sql =
+      "INSERT INTO mainBoard(location, color) VALUES('" .
+      $target .
+      "', '" .
+      $color .
+      "')";
+    self::DbQuery($sql);
   }
 
   function _moveStone($from, $to, $color)
@@ -495,35 +597,20 @@ class Tholos extends Table
 
     // FIXME: input check logic
 
-    // update workshop
-    $sql =
-      "DELETE FROM workshop WHERE color = '" .
-      $color .
-      "' AND ws = '" .
-      $side .
-      "' LIMIT 1";
-    self::DbQuery($sql);
+    // place
+    $this->_placeStone($color, $target0);
 
     // bonus action
     if ($bonusAction) {
       $this->applyBonusAction($target0, $target1, $target2);
     }
 
-    // update mainboard
-    $sql =
-      "INSERT INTO mainBoard(location, color) VALUES('" .
-      $target0 .
-      "', '" .
-      $color .
-      "')";
-    self::DbQuery($sql);
-
     // notify
     $locationName = $this->getLocationName($target0);
     self::notifyAllPlayers(
       'placeStone',
       clienttranslate(
-        '${player_name} placed a ${color} stone on ${locationName}.'
+        '${player_name} placed a ${color} stone on the column ${locationName}.'
       ),
       [
         'player_side' => $side,

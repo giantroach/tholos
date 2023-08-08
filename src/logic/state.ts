@@ -338,7 +338,7 @@ class State {
     }
 
     this.assign(this.quarryData.value, 'carryMax', max);
-    this.assign(this.quarryData.value, 'carry', max);
+    // this.assign(this.quarryData.value, 'carry', max);
   }
 
   // only layer 0

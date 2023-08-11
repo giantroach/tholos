@@ -410,7 +410,6 @@ class Tholos extends Table
           ]
         );
         break;
-
     }
   }
 
@@ -529,6 +528,66 @@ class Tholos extends Table
     self::DbQuery($sql);
   }
 
+  function _updateScore()
+  {
+    $wScore = 0;
+    $bScore = 0;
+
+    $sql = 'SELECT player_id FROM player WHERE player_no=1';
+    $wPlayerID = self::getUniqueValueFromDB($sql);
+    $sql = 'SELECT player_id FROM player WHERE player_no=2';
+    $bPlayerID = self::getUniqueValueFromDB($sql);
+
+    for ($i = 0; $i <= 6; $i++) {
+      // FIXME:
+      $sql =
+        "SELECT COUNT(*) FROM mainBoard WHERE color='white' AND location=" . $i;
+      $ws = intval(self::getUniqueValueFromDB($sql));
+      $sql =
+        "SELECT COUNT(*) FROM mainBoard WHERE color='gray' AND location=" . $i;
+      $gs = intval(self::getUniqueValueFromDB($sql));
+      $sql =
+        "SELECT COUNT(*) FROM mainBoard WHERE color='black' AND location=" . $i;
+      $bs = intval(self::getUniqueValueFromDB($sql));
+
+      if ($ws > $bs) {
+        $wScore += $this->_getScore($ws, $bs, $gs);
+      }
+      if ($ws < $bs) {
+        $bScore += $this->_getScore($bs, $ws, $gs);
+      }
+    }
+
+    $sql =
+      "UPDATE player SET player_score='" .
+      $wScore .
+      "' WHERE player_id='" .
+      $wPlayerID .
+      "'";
+    self::DbQuery($sql);
+    self::notifyAllPlayers('updateScore', '', [
+      'playerID' => $wPlayerID,
+      'score' => $wScore,
+    ]);
+
+    $sql =
+      "UPDATE player SET player_score='" .
+      $bScore .
+      "' WHERE player_id='" .
+      $bPlayerID .
+      "'";
+    self::DbQuery($sql);
+    self::notifyAllPlayers('updateScore', '', [
+      'playerID' => $bPlayerID,
+      'score' => $bScore,
+    ]);
+  }
+
+  function _getScore($major, $minor, $grays)
+  {
+    return $major * 1 + $minor + 3 - $grays * 2;
+  }
+
   //////////////////////////////////////////////////////////////////////////////
   //////////// Player actions
   ////////////
@@ -627,6 +686,8 @@ class Tholos extends Table
       $this->notifyBonusAction($side, $target0, $target1, $target2);
     }
 
+    $this->_updateScore();
+
     $this->gamestate->nextState('nextPlayer');
   }
 
@@ -669,11 +730,19 @@ class Tholos extends Table
   function stNextPlayer()
   {
     $playerID = self::activeNextPlayer();
+
+    $sql = 'SELECT COUNT(*) FROM mainBoard';
+    $cnt = self::getUniqueValueFromDB($sql);
+    if ($cnt >= 25) {
+      // if all columns are full, go end game state.
+      $this->_updateScore();
+      // FIXME: show score
+      $this->gamestate->nextState('endGame');
+      return;
+    }
+
     self::giveExtraTime($playerID);
     $this->gamestate->nextState('playerTurn');
-
-    // FIXME: if all columns are full, go end game state.
-    // $this->gamestate->nextState("endGame");
   }
 
   //////////////////////////////////////////////////////////////////////////////

@@ -232,6 +232,11 @@ define([
       // this.notifqueue.setSynchronous( 'cardPlayed', 3000 );
       //
 
+      dojo.subscribe("updateScore", this, (data) => {
+        const a = data.args;
+        this.scoreCtrl[a.playerID].setValue(a.score);
+      });
+
       const notifications = [
         'takeStone',
         'placeStone',

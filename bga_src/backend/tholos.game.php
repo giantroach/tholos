@@ -736,7 +736,7 @@ class Tholos extends Table
 
     $sql = 'SELECT COUNT(*) FROM mainBoard';
     $cnt = self::getUniqueValueFromDB($sql);
-    if ($cnt >= 25) {
+    if ($cnt >= 35) {
       // if all columns are full, go end game state.
       $this->_updateScore();
       // FIXME: show score

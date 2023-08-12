@@ -86,6 +86,29 @@ define([
         vue.translation = {
           'Tholos..': _('Tholos'),
         };
+
+        // update player area
+        gamedatas.playerorder.forEach((pID, idx) => {
+          // append stone icon
+          const icon = document.createElement('div');
+          icon.style.height = '20px';
+          icon.style.width = '20px';
+          icon.style.display = 'inline-block';
+          icon.style.backgroundImage = `url(${g_gamethemeurl}img/player_icon.png)`;
+          console.log('gamedatas.playerSide', gamedatas.playerSide);
+          if (gamedatas.playerID === Number(pID)) {
+            icon.style.backgroundPosition =
+              gamedatas.playerSide === 'black' ? '0 0' : '-20px 0';
+          } else {
+            icon.style.backgroundPosition =
+              gamedatas.playerSide === 'black' ? '-20px 0' : '0 0';
+          }
+          icon.style.marginBottom = '-2px';
+          document
+            .querySelector(`#player_board_${pID} .player_score`)
+            ?.prepend(icon);
+        });
+
         console.log('Ending game setup');
       });
     },
@@ -232,7 +255,7 @@ define([
       // this.notifqueue.setSynchronous( 'cardPlayed', 3000 );
       //
 
-      dojo.subscribe("updateScore", this, (data) => {
+      dojo.subscribe('updateScore', this, (data) => {
         const a = data.args;
         this.scoreCtrl[a.playerID].setValue(a.score);
       });

@@ -8,7 +8,7 @@
     "build": "npm run build:dev && npm run build:bgaBackend && npm run build:bgaClient",
     "build:bgaBackend": "cp -f ./bga_src/backend/* ./dist/",
     "build:bgaClient": "cp -f ./bga_src/client/* ./dist/",
-    "build:bgaCpImg": "cp -f ./bga_src/img/* ./dist/img",
+    "build:bgaCpImg": "mkdir -p ./dist/img/ && rm -rf ./dist/img/* && cp -f ./bga_src/img/* ./dist/img/",
     "build:dev": "vue-tsc && vite build && rm ./dist/index.html && rm ./dist/test.js",
     "clear:dist": "rm -rf ./dist/*",
     "preview": "vite preview"

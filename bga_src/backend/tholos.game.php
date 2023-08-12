@@ -156,6 +156,7 @@ class Tholos extends Table
     $result['mainBoard'] = self::getCollectionFromDb($sql);
 
     $result['playerSide'] = $this->getPlayerSide($current_player_id);
+    $result['playerID'] = intval($current_player_id);
 
     return $result;
   }
@@ -577,6 +578,8 @@ class Tholos extends Table
       $bPlayerID .
       "'";
     self::DbQuery($sql);
+
+    // maybe better to notify all the detailed score and sum on client side?
     self::notifyAllPlayers('updateScore', '', [
       'playerID' => $bPlayerID,
       'score' => $bScore,
@@ -585,7 +588,7 @@ class Tholos extends Table
 
   function _getScore($major, $minor, $grays)
   {
-    return $major * 1 + $minor + 3 - $grays * 2;
+    return $major * 1 + $minor * 3 - $grays * 2;
   }
 
   //////////////////////////////////////////////////////////////////////////////

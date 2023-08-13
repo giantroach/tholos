@@ -163,6 +163,87 @@ const testData = [
   },
 ];
 
+const data2 = structuredClone(testData[0]);
+data2.mainBoard = {
+  1: {
+    id: '1',
+    location: '5',
+    color: 'white',
+  },
+  2: {
+    id: '2',
+    location: '5',
+    color: 'black',
+  },
+  3: {
+    id: '3',
+    location: '5',
+    color: 'black',
+  },
+  4: {
+    id: '4',
+    location: '5',
+    color: 'black',
+  },
+  5: {
+    id: '5',
+    location: '5',
+    color: 'black',
+  },
+  6: {
+    id: '6',
+    location: '4',
+    color: 'white',
+  },
+  7: {
+    id: '7',
+    location: '4',
+    color: 'black',
+  },
+  8: {
+    id: '8',
+    location: '4',
+    color: 'gray',
+  },
+  9: {
+    id: '9',
+    location: '4',
+    color: 'black',
+  },
+  10: {
+    id: '10',
+    location: '4',
+    color: 'gray',
+  },
+  11: {
+    id: '11',
+    location: '6',
+    color: 'white',
+  },
+  12: {
+    id: '12',
+    location: '6',
+    color: 'black',
+  },
+  13: {
+    id: '13',
+    location: '6',
+    color: 'gray',
+  },
+  14: {
+    id: '14',
+    location: '6',
+    color: 'black',
+  },
+  15: {
+    id: '15',
+    location: '6',
+    color: 'gray',
+  },
+},
+
+testData.push(data2);
+
 function loadTestData(idx = 0) {
   const vue = window.vue;
   vue.gamedata = testData[idx];

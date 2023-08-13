@@ -116,6 +116,7 @@ const hideHint = () => {
         v-bind:style="{
           left: def.stonePos[idx].x,
           top: def.stonePos[idx].y,
+          zIndex: def.stonePos[idx].zIndex || 'auto',
         }"
         v-on:mouseover="showHint($event, idx)"
         v-on:mouseleave="hideHint"

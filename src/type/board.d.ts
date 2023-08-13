@@ -5,6 +5,7 @@ type BoardType = 'main' | 'workshopW' | 'workshopB';
 interface StonePos {
   x: string;
   y: string;
+  zIndex?: number;
 }
 
 interface BoardDef {

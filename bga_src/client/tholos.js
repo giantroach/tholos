@@ -95,7 +95,6 @@ define([
           icon.style.width = '20px';
           icon.style.display = 'inline-block';
           icon.style.backgroundImage = `url(${g_gamethemeurl}img/player_icon.png)`;
-          console.log('gamedatas.playerSide', gamedatas.playerSide);
           if (gamedatas.playerID === Number(pID)) {
             icon.style.backgroundPosition =
               gamedatas.playerSide === 'black' ? '0 0' : '-20px 0';

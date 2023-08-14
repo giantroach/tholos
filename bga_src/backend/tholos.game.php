@@ -173,9 +173,12 @@ class Tholos extends Table
     */
   function getGameProgression()
   {
-    // TODO: compute and return the game progression
+    // compute and return the game progression
+    $sql = 'SELECT COUNT(*) FROM mainBoard';
+    $cnt = intval(self::getUniqueValueFromDB($sql));
+    $progress = $cnt / 35;
 
-    return 0;
+    return $progress;
   }
 
   //////////////////////////////////////////////////////////////////////////////

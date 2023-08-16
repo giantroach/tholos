@@ -594,6 +594,70 @@ class Tholos extends Table
     return $major * 1 + $minor * 3 - $grays * 2;
   }
 
+  function _takeInputCheck($color, $count)
+  {
+    $apid = self::getActivePlayerId();
+    $side = $this->getActivePlayerSide();
+
+    // has space in ws
+    $sql = "SELECT COUNT(*) FROM workshop WHERE ws='" . $side . "'";
+    $cnt = intval(self::getUniqueValueFromDB($sql));
+    if ((3 -$cnt) < $count) {
+      self::notifyPlayer($apid, "logError", clienttranslate(
+        'Invalid state. Reload the page: ${error}'
+      ), [
+        "error" => clienttranslate(
+          "No space in workshop"
+        ),
+      ]);
+      return false;
+    }
+
+    // has stone in quarry
+    $sql = "SELECT COUNT(*) FROM quarry WHERE color='" . $color . "'";
+    $cnt = intval(self::getUniqueValueFromDB($sql));
+    if ($cnt < $count) {
+      self::notifyPlayer($apid, "logError", clienttranslate(
+        'Invalid state. Reload the page: ${error}'
+      ), [
+        "error" => clienttranslate(
+          "No enough stone in quarry"
+        ),
+      ]);
+      return false;
+    }
+
+    return true;
+  }
+
+  function _placeInputCheck($color, $bonusAction, $target0, $target1, $target2)
+  {
+    $apid = self::getActivePlayerId();
+    $side = $this->getActivePlayerSide();
+
+    // check if the player has specified stone
+    $sql = "SELECT COUNT(*) FROM workshop WHERE ws='" . $side . "' AND color='" . $color . "'";
+    $cnt = intval(self::getUniqueValueFromDB($sql));
+    if ($cnt < 1) {
+      self::notifyPlayer($apid, "logError", clienttranslate(
+        'Invalid state. Reload the page: ${error}'
+      ), [
+        "error" => clienttranslate(
+          "No specified stone in workshop"
+        ),
+      ]);
+      return false;
+    }
+
+    if (!$bonusAction) {
+      return true;
+    }
+
+    // check bonus action
+
+    return true;
+  }
+
   //////////////////////////////////////////////////////////////////////////////
   //////////// Player actions
   ////////////
@@ -636,6 +700,9 @@ class Tholos extends Table
 
     // FIXME: input check logic
     // both stone count in quarry & stone count in workshop.
+    if (!$this->_takeInputCheck($color, $count)) {
+      return;
+    }
 
     $this->_takeStone($color, intval($count));
 
@@ -661,6 +728,11 @@ class Tholos extends Table
     $side = $this->getActivePlayerSide();
 
     // FIXME: input check logic
+    if (
+      !$this->_placeInputCheck($color, $bonusAction, $target0, $target1, $target2)
+    ) {
+      return;
+    }
 
     // place
     $this->_placeStone($color, $target0);

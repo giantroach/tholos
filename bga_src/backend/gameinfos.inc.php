@@ -85,16 +85,16 @@ $gameinfos = [
   'language_dependency' => false,
 
   // Complexity of the game, from 0 (extremely simple) to 5 (extremely complex)
-  'complexity' => 3,
+  'complexity' => 2,
 
   // Luck of the game, from 0 (absolutely no luck in this game) to 5 (totally luck driven)
-  'luck' => 3,
+  'luck' => 0,
 
   // Strategy of the game, from 0 (no strategy can be setup) to 5 (totally based on strategy)
-  'strategy' => 3,
+  'strategy' => 4,
 
   // Diplomacy of the game, from 0 (no interaction in this game) to 5 (totally based on interaction and discussion between players)
-  'diplomacy' => 3,
+  'diplomacy' => 2,
 
   // Colors attributed to players
   'player_colors' => ['ff0000', '008000', '0000ff', 'ffa500', '773300'],
@@ -128,9 +128,13 @@ $gameinfos = [
   // Each paragraph must be wrapped with totranslate() for translation and should not contain html (plain text without formatting).
   // A good length for this text is between 100 and 150 words (about 6 to 9 lines on a standard display)
   'presentation' => [
-    //    totranslate("This wonderful game is about geometric shapes!"),
-    //    totranslate("It was awarded best triangle game of the year in 2005 and nominated for the Spiel des Jahres."),
-    //    ...
+    totranslate(
+      'Take part in the construction of the Tholos of Delphi, the temple which marks the center of the universe defined by Zeus and built inside the Sanctuary of Athena Pronaia.'
+    ),
+    totranslate(
+      'As a builder, face your opponent in a duel and achieve the greatest influence within its sacred construction.'
+    ),
+    totranslate('May the gods be propitious to you!'),
   ],
 
   //////// BGA SANDBOX ONLY PARAMETERS (DO NOT MODIFY)

@@ -615,7 +615,7 @@ class Tholos extends Table
     }
 
     // has stone in quarry
-    $sql = "SELECT COUNT(*) FROM quarry WHERE color='" . $color . "'";
+    $sql = "SELECT count FROM quarry WHERE color='" . $color . "'";
     $cnt = intval(self::getUniqueValueFromDB($sql));
     if ($cnt < $count) {
       self::notifyPlayer(
@@ -712,7 +712,6 @@ class Tholos extends Table
         if (!$this->_checkTopStoneIs($target1, 'gray')) {
           return false;
         }
-
         // if t2 has space
         if (!$this->_checkHasSpace($target2)) {
           return false;
@@ -726,7 +725,21 @@ class Tholos extends Table
         break;
       case 2:
         // if t1 is different from t0
+        if (!$this->_checkSameTarget($t0, $target1)) {
+          return false;
+        }
         // if t1 has stone
+        if ($this->_getTopStone($target1) === null) {
+          self::notifyPlayer(
+            $apid,
+            'logError',
+            clienttranslate('Invalid state. Reload the page: ${error}'),
+            [
+              'error' => clienttranslate('No stone on the column'),
+            ]
+          );
+          return false;
+        }
         break;
       case 3:
         // if quarry has specified color stone
@@ -767,10 +780,19 @@ class Tholos extends Table
     return true;
   }
 
+  // returns null if no stone
+  function _getTopStone($loc)
+  {
+    $sql =
+      'SELECT color FROM mainBoard WHERE location=' .
+      $loc .
+      ' ORDER BY id desc LIMIT 1';
+    return self::getUniqueValueFromDB($sql);
+  }
+
   function _checkTopStoneIs($loc, $color)
   {
-    $sql = 'SELECT color FROM mainBoard WHERE location=' . $loc;
-    $c = self::getUniqueValueFromDB($sql);
+    $c = $this->_getTopStone($loc);
     if ($c !== $color) {
       self::notifyPlayer(
         $apid,
@@ -847,7 +869,7 @@ class Tholos extends Table
 
     // FIXME: input check logic
     // both stone count in quarry & stone count in workshop.
-    if (!$this->_takeInputCheck($color, $count)) {
+    if (!$this->_takeInputCheck($color, intval($count))) {
       return;
     }
 

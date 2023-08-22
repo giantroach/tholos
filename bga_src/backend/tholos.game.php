@@ -210,6 +210,16 @@ class Tholos extends Table
     return $this->getPlayerSide($apid);
   }
 
+  function getOppoSide()
+  {
+    $apid = self::getActivePlayerId();
+    $actSide = $this->getPlayerSide($apid);
+    if ($actSide === 'white') {
+      return 'black';
+    }
+    return 'white';
+  }
+
   function getLocationName($idx)
   {
     if ($idx == 0) {
@@ -265,7 +275,7 @@ class Tholos extends Table
         $this->_takeStone($color);
         break;
       case 4:
-        // take stone from quarry
+        // take stone from oppo
         $color = $target1;
         $this->_stealStone($color);
         break;
@@ -543,7 +553,6 @@ class Tholos extends Table
     $bPlayerID = self::getUniqueValueFromDB($sql);
 
     for ($i = 0; $i <= 6; $i++) {
-      // FIXME:
       $sql =
         "SELECT COUNT(*) FROM mainBoard WHERE color='white' AND location=" . $i;
       $ws = intval(self::getUniqueValueFromDB($sql));
@@ -615,17 +624,7 @@ class Tholos extends Table
     }
 
     // has stone in quarry
-    $sql = "SELECT count FROM quarry WHERE color='" . $color . "'";
-    $cnt = intval(self::getUniqueValueFromDB($sql));
-    if ($cnt < $count) {
-      self::notifyPlayer(
-        $apid,
-        'logError',
-        clienttranslate('Invalid state. Reload the page: ${error}'),
-        [
-          'error' => clienttranslate('No enough stone in quarry'),
-        ]
-      );
+    if (!$this->_CheckStoneInQuarry($color, $count)) {
       return false;
     }
 
@@ -638,37 +637,12 @@ class Tholos extends Table
     $side = $this->getActivePlayerSide();
 
     // check if the player has specified stone
-    $sql =
-      "SELECT COUNT(*) FROM workshop WHERE ws='" .
-      $side .
-      "' AND color='" .
-      $color .
-      "'";
-    $cnt = intval(self::getUniqueValueFromDB($sql));
-    if ($cnt < 1) {
-      self::notifyPlayer(
-        $apid,
-        'logError',
-        clienttranslate('Invalid state. Reload the page: ${error}'),
-        [
-          'error' => clienttranslate('No specified stone in workshop'),
-        ]
-      );
+    if (!$this->_checkWsHasStone($side, $color)) {
       return false;
     }
 
     // check if destination still have space
-    $sql = "SELECT COUNT(*) FROM mainBoard WHERE location='" . $target0 . "'";
-    $cnt = intval(self::getUniqueValueFromDB($sql));
-    if ($cnt >= 5) {
-      self::notifyPlayer(
-        $apid,
-        'logError',
-        clienttranslate('Invalid state. Reload the page: ${error}'),
-        [
-          'error' => clienttranslate('No space left on target column'),
-        ]
-      );
+    if (!$this->_checkColumnHasSpace($target0)) {
       return false;
     }
 
@@ -701,7 +675,6 @@ class Tholos extends Table
     $side = $this->getActivePlayerSide();
 
     $t0 = intval($target0);
-    // FIXME:
     switch ($t0) {
       case 0:
         // if t1 is different from t0
@@ -720,9 +693,21 @@ class Tholos extends Table
 
       case 1:
         // if t1 is different from t0
+        if (!$this->_checkSameTarget($t0, $target1)) {
+          return false;
+        }
         // if t1 top is white
+        if (!$this->_checkTopStoneIs($target1,
+          'white'
+        )) {
+          return false;
+        }
         // if t2 has space
+        if (!$this->_checkHasSpace($target2)) {
+          return false;
+        }
         break;
+
       case 2:
         // if t1 is different from t0
         if (!$this->_checkSameTarget($t0, $target1)) {
@@ -741,22 +726,99 @@ class Tholos extends Table
           return false;
         }
         break;
+
       case 3:
+        $color = $target1;
         // if quarry has specified color stone
+        if (!$this->_CheckStoneInQuarry($color, 1)) {
+          return false;
+        }
         break;
+
       case 4:
         // if oppo ws has the specified color stone
+        $oppoSide = $this->getOppoSide();
+        $color = $target1;
+        if (!$this->_checkWsHasStone($oppoSide, $color)) {
+          return false;
+        }
         break;
+
       case 5:
         // if player has specified color stone
+        if (!$this->_checkHasAnotherStone($color, $target1)) {
+          return false;
+        }
         // if t2 different from t1
+        if (!$this->_checkSameTarget($t0, $target1)) {
+          return false;
+        }
         // if t2 has space
+        if (!$this->_checkColumnHasSpace($target2)) {
+          return false;
+        }
         break;
+
       case 6:
         // if t1 is different from t0
+        if (!$this->_checkSameTarget($t0, $target1)) {
+          return false;
+        }
         // if t1 top is black
+        if (!$this->_checkTopStoneIs(
+          $target1,
+          'black'
+        )) {
+          return false;
+        }
         // if t2 has space
+        if (!$this->_checkHasSpace($target2)) {
+          return false;
+        }
         break;
+    }
+    return true;
+  }
+
+  function _checkColumnHasSpace($target)
+  {
+    $apid = self::getActivePlayerId();
+    $sql = "SELECT COUNT(*) FROM mainBoard WHERE location='" . $target . "'";
+    $cnt = intval(self::getUniqueValueFromDB($sql));
+    if ($cnt >= 5) {
+      self::notifyPlayer(
+        $apid,
+        'logError',
+        clienttranslate('Invalid state. Reload the page: ${error}'),
+        [
+          'error' => clienttranslate('No space left on target column'),
+        ]
+      );
+      return false;
+    }
+    return true;
+  }
+
+  function _checkWsHasStone($side, $color)
+  {
+    $apid = self::getActivePlayerId();
+    $sql =
+      "SELECT COUNT(*) FROM workshop WHERE ws='" .
+      $side .
+      "' AND color='" .
+      $color .
+      "'";
+    $cnt = intval(self::getUniqueValueFromDB($sql));
+    if ($cnt < 1) {
+      self::notifyPlayer(
+        $apid,
+        'logError',
+        clienttranslate('Invalid state. Reload the page: ${error}'),
+        [
+          'error' => clienttranslate('No specified stone in workshop'),
+        ]
+      );
+      return false;
     }
     return true;
   }
@@ -792,6 +854,7 @@ class Tholos extends Table
 
   function _checkTopStoneIs($loc, $color)
   {
+    $apid = self::getActivePlayerId();
     $c = $this->_getTopStone($loc);
     if ($c !== $color) {
       self::notifyPlayer(
@@ -810,6 +873,7 @@ class Tholos extends Table
 
   function _checkHasSpace($loc)
   {
+    $apid = self::getActivePlayerId();
     $sql = 'SELECT COUNT(*) FROM mainBoard WHERE location=' . $loc;
     $c = self::getUniqueValueFromDB($sql);
     if ($c >= 5) {
@@ -822,6 +886,74 @@ class Tholos extends Table
         ]
       );
       return false;
+    }
+
+    return true;
+  }
+
+  function _CheckStoneInQuarry($color, $count = 1)
+  {
+    $apid = self::getActivePlayerId();
+    $sql = "SELECT count FROM quarry WHERE color='" . $color . "'";
+    $cnt = intval(self::getUniqueValueFromDB($sql));
+    if ($cnt < $count) {
+      self::notifyPlayer(
+        $apid,
+        'logError',
+        clienttranslate('Invalid state. Reload the page: ${error}'),
+        [
+          'error' => clienttranslate('No enough stone in quarry'),
+        ]
+      );
+      return false;
+    }
+
+    return true;
+  }
+
+  function _checkHasAnotherStone($color1, $color2)
+  {
+    $apid = self::getActivePlayerId();
+    $side = $this->getActivePlayerSide();
+
+    if ($color1 === $color2) {
+      $sql =
+        "SELECT count(*) from workshop where color='" .
+        $color1 .
+        "' AND ws='" .
+        $side .
+        "'";
+      $cnt = intval(self::getUniqueValueFromDB($sql));
+      if ($cnt < 2) {
+        self::notifyPlayer(
+          $apid,
+          'logError',
+          clienttranslate('Invalid state. Reload the page: ${error}'),
+          [
+            'error' => clienttranslate('No specified stone in Workshop'),
+          ]
+        );
+        return false;
+      }
+    } else {
+      $sql =
+        "SELECT count(*) from workshop where color='" .
+        $color2 .
+        "' AND ws='" .
+        $side .
+        "'";
+      $cnt = intval(self::getUniqueValueFromDB($sql));
+      if ($cnt < 1) {
+        self::notifyPlayer(
+          $apid,
+          'logError',
+          clienttranslate('Invalid state. Reload the page: ${error}'),
+          [
+            'error' => clienttranslate('No specified stone in Workshop'),
+          ]
+        );
+        return false;
+      }
     }
 
     return true;
@@ -867,7 +999,6 @@ class Tholos extends Table
     self::checkAction('takeStone');
     $side = $this->getActivePlayerSide();
 
-    // FIXME: input check logic
     // both stone count in quarry & stone count in workshop.
     if (!$this->_takeInputCheck($color, intval($count))) {
       return;
@@ -896,7 +1027,6 @@ class Tholos extends Table
     self::checkAction('placeStone');
     $side = $this->getActivePlayerSide();
 
-    // FIXME: input check logic
     if (
       !$this->_placeInputCheck(
         $color,
@@ -989,7 +1119,6 @@ class Tholos extends Table
     if ($cnt >= 35) {
       // if all columns are full, go end game state.
       $this->_updateScore();
-      // FIXME: show score
       $this->gamestate->nextState('endGame');
       return;
     }

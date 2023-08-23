@@ -233,7 +233,17 @@ class State {
     }
   }
 
+  public resetSelectable(): void {
+    [this.wsWBoardData, this.wsBBoardData, this.mainBoardData].forEach((b) => {
+      b.value.pillars.forEach((p) => {
+        this.assign(p, 'selectable', [[], [], []]);
+      });
+    });
+  }
+
   public reset() {
+    this.resetSelectable();
+
     this.assign(this.ctrlBarData.value, 'type', '');
 
     [this.wsWBoardData, this.wsBBoardData].forEach((b) => {
@@ -444,6 +454,8 @@ class State {
     let targetStone: StoneType = 'none';
     let nextBar: BarType = '';
 
+    this.resetSelectable()
+
     switch (true) {
       case srcIdx === 0 || srcIdx === 1 || srcIdx === 6: {
         if (srcIdx === 0) {
@@ -588,6 +600,8 @@ class State {
     const srcIdx2 = this.getMainBoardSelectedIdx(2);
     let targetStone: StoneType = 'none';
     let nextBar: BarType = '';
+
+    this.resetSelectable()
 
     switch (true) {
       case srcIdx0 === 0 || srcIdx0 === 1 || srcIdx0 === 6: {

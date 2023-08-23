@@ -85,6 +85,85 @@ define([
         i18n = window['_'];
         vue.translation = {
           'Tholos..': _('Tholos'),
+
+          // src/def/ctrlBar.ts
+          'Choose and take stones from query or choose and place a stone from your workshop.':
+            _(
+              'Choose and take stones from query or choose and place a stone from your workshop.'
+            ),
+          'Choose a column to place your stone.': _(
+            'Choose a column to place your stone.'
+          ),
+          'Do you like to perform Bonus Action?': _(
+            'Do you like to perform Bonus Action?'
+          ),
+          'No valid target.': _('No valid target.'),
+          'Choose a gray stone to move from.': _(
+            'Choose a gray stone to move from.'
+          ),
+          'Choose a white stone to move from.': _(
+            'Choose a white stone to move from.'
+          ),
+          'Choose a stone to take away from the board.': _(
+            'Choose a stone to take away from the board.'
+          ),
+          'Choose a stone to take from the quarry.': _(
+            'Choose a stone to take from the quarry.'
+          ),
+          "Choose a stone to take from the opponent's workshop.": _(
+            "Choose a stone to take from the opponent's workshop."
+          ),
+          'Choose another stone in your workshop to place.': _(
+            'Choose another stone in your workshop to place.'
+          ),
+          'Choose a black stone to move from.': _(
+            'Choose a black stone to move from.'
+          ),
+          'Choose a column to move to.': _('Choose a column to move to.'),
+          'Choose a column to move to.': _('Choose a column to move to.'),
+          'Choose a column to move to.': _('Choose a column to move to.'),
+          'Choose a column to move to.': _('Choose a column to move to.'),
+          "Press 'Submit' to confirm": _("Press 'Submit' to confirm"),
+
+          // src/def/ctrlButton.ts
+          Cancel: _('Cancel'),
+          Submit: _('Submit'),
+          'Take Action': _('Take Action'),
+          'No Action': _('No Action'),
+          OK: _('OK'),
+
+          // src/def/pillar.ts
+          'Locations α: The player who places a stone of their color in this locations may move the top Gray color stone of the column at a different temple location to a third different —and valid— temple location.':
+            _(
+              'Locations α: The player who places a stone of their color in this locations may move the top Gray color stone of the column at a different temple location to a third different —and valid— temple location.'
+            ),
+          'Locations β: The player who places a stone of their color in this locations may move the top White color stone of the column at a different temple location to a third different —and valid— temple location.':
+            _(
+              'Locations β: The player who places a stone of their color in this locations may move the top White color stone of the column at a different temple location to a third different —and valid— temple location.'
+            ),
+          'Location γ: The player who places a stone of their color in this location may return the top stone (of any color) of the column at a different temple location back to the quarry.':
+            _(
+              'Location γ: The player who places a stone of their color in this location may return the top stone (of any color) of the column at a different temple location back to the quarry.'
+            ),
+          'Location δ: The player who places a stone of their color in this location may move a stone (of any color) from the quarry to their workshop; the player must have room for it in their workshop.':
+            _(
+              'Location δ: The player who places a stone of their color in this location may move a stone (of any color) from the quarry to their workshop; the player must have room for it in their workshop.'
+            ),
+          'Location π: The player who places a stone of their color in this location may move a stone (of any color) from their rival’s workshop to their own workshop; the player must have room for it in their workshop.':
+            _(
+              'Location π: The player who places a stone of their color in this location may move a stone (of any color) from their rival’s workshop to their own workshop; the player must have room for it in their workshop.'
+            ),
+          'Location Σ: The player who places a stone of their color in this location may place a stone (of any color) from their workshop in another valid temple location.':
+            _(
+              'Location Σ: The player who places a stone of their color in this location may place a stone (of any color) from their workshop in another valid temple location.'
+            ),
+          'Locations Ω: The player who places a stone of their color in this locations may move the top Black color stone of the column at a different temple location to a third different —and valid— temple location.':
+            _(
+              'Locations Ω: The player who places a stone of their color in this locations may move the top Black color stone of the column at a different temple location to a third different —and valid— temple location.'
+            ),
+
+          // src/def/quarry.ts
+          'How many stones?': _('How many stones?'),
         };
 
         // update player area

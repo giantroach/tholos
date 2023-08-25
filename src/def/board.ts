@@ -1,5 +1,6 @@
 import { BoardType, BoardDef, BoardData } from '../type/board.d';
 import mainBoard1ImgUrl from '../assets/main-board1.jpg';
+import mainBoard2ImgUrl from '../assets/main-board2.jpg';
 // import mainBoard2ImgUrl from '../assets/main-board2.jpg';
 import workshopImgUrl from '../assets/workshops.png';
 
@@ -17,6 +18,30 @@ const boardDefs: { [boardType in BoardType]: BoardDef } = {
       { x: '90px', y: '225px', zIndex: 200 },
       { x: '110px', y: '120px', zIndex: 100 },
     ],
+  },
+  main2: {
+    image: mainBoard2ImgUrl,
+    width: '472px',
+    height: '544px',
+    marginTop: '80px',
+    stonePos: [
+      { x: '208px', y: '20px', zIndex: 100 },
+      { x: '348px', y: '88px', zIndex: 200 },
+      { x: '384px', y: '240px', zIndex: 300 },
+      { x: '284px', y: '364px', zIndex: 400 },
+      { x: '130px', y: '364px', zIndex: 300 },
+      { x: '30px', y: '240px', zIndex: 200 },
+      { x: '66px', y: '88px', zIndex: 100 },
+    ],
+    ornamentPos: [
+      { x: '208px', y: '80px', zIndex: 100 },
+      { x: '300px', y: '120px', zIndex: 200 },
+      { x: '330px', y: '225px', zIndex: 300 },
+      { x: '260px', y: '310px', zIndex: 400 },
+      { x: '155px', y: '310px', zIndex: 300 },
+      { x: '90px', y: '225px', zIndex: 200 },
+      { x: '110px', y: '120px', zIndex: 100 },
+    ]
   },
   workshopW: {
     image: workshopImgUrl,

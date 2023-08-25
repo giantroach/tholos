@@ -35,6 +35,7 @@ interface Gamedata {
   tablespeed: string;
 
   // Add here variables you set up in getAllDatas
+  gameMode: 'standard' | 'advanced';
   mainBoard: {
     [idx: string]: MainBoardRec;
   };

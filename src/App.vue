@@ -278,7 +278,10 @@ defineExpose({
   <div class="layout" v-if="ready">
     <div class="top">
       <div class="left">
-        <Board type="main" :data="mainBoardData" />
+        <Board
+          :type="gamedata.gameMode === 'advanced' ? 'main2' : 'main'"
+          :data="mainBoardData"
+        />
       </div>
 
       <div class="right">

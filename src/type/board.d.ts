@@ -1,6 +1,6 @@
 import type { PillarData } from "./pillar.d";
 
-type BoardType = 'main' | 'workshopW' | 'workshopB';
+type BoardType = 'main' | 'main2' | 'workshopW' | 'workshopB';
 
 interface StonePos {
   x: string;
@@ -14,9 +14,11 @@ interface BoardDef {
   height: string;
   imgTop?: number;
   imgLeft?: number;
+  marginTop?: string;
 
   // Tholos exclusive
   stonePos: StonePos[];
+  ornamentPos?: StonePos[];
 }
 
 interface BoardData {

@@ -1,27 +1,48 @@
-const testData = [
-  {
-    current_player_id: '',
-    decision: {
-      decision_type: 'none',
-    },
-    game_result_neutralized: '0',
-    gamestate: {
-      id: '2',
-      active_player: '2348342',
-      args: null,
-      reflexion: {
-        total: {
-          2348342: -28,
-          2348343: '180',
-        },
-        initial: {
-          2348342: 178,
-        },
-        initial_ts: {
-          2348342: 1687781331158,
-        },
+const testDataBase = {
+  current_player_id: '',
+  decision: {
+    decision_type: 'none',
+  },
+  game_result_neutralized: '0',
+  gameMode: 'standard',
+  gamestate: {
+    id: '2',
+    active_player: '2348342',
+    args: null,
+    reflexion: {
+      total: {
+        2348342: -28,
+        2348343: '180',
       },
-      updateGameProgression: 0,
+      initial: {
+        2348342: 178,
+      },
+      initial_ts: {
+        2348342: 1687781331158,
+      },
+    },
+    updateGameProgression: 0,
+    name: 'playerTurn',
+    description: '${actplayer} must play a card or pass',
+    descriptionmyturn: '${you} must play a card or pass',
+    type: 'activeplayer',
+    possibleactions: ['moveStone', 'pass'],
+    transitions: {
+      moveStone: 2,
+      pass: 2,
+    },
+  },
+  gamestates: {
+    1: {
+      name: 'gameSetup',
+      description: '',
+      type: 'manager',
+      action: 'stGameSetup',
+      transitions: {
+        '': 2,
+      },
+    },
+    2: {
       name: 'playerTurn',
       description: '${actplayer} must play a card or pass',
       descriptionmyturn: '${you} must play a card or pass',
@@ -32,70 +53,117 @@ const testData = [
         pass: 2,
       },
     },
-    gamestates: {
-      1: {
-        name: 'gameSetup',
-        description: '',
-        type: 'manager',
-        action: 'stGameSetup',
-        transitions: {
-          '': 2,
-        },
-      },
-      2: {
-        name: 'playerTurn',
-        description: '${actplayer} must play a card or pass',
-        descriptionmyturn: '${you} must play a card or pass',
-        type: 'activeplayer',
-        possibleactions: ['moveStone', 'pass'],
-        transitions: {
-          moveStone: 2,
-          pass: 2,
-        },
-      },
-      99: {
-        name: 'gameEnd',
-        description: 'End of game',
-        type: 'manager',
-        action: 'stGameEnd',
-        args: 'argGameEnd',
-      },
+    99: {
+      name: 'gameEnd',
+      description: 'End of game',
+      type: 'manager',
+      action: 'stGameEnd',
+      args: 'argGameEnd',
     },
-    neutralized_player_id: '0',
-    notifications: {
-      last_packet_id: '1',
-      move_nbr: '1',
+  },
+  neutralized_player_id: '0',
+  notifications: {
+    last_packet_id: '1',
+    move_nbr: '1',
+  },
+  playerorder: ['2348342', 2348343],
+  players: {
+    2348342: {
+      id: '2348342',
+      score: '0',
+      color: 'ff0000',
+      color_back: null,
+      name: 'giantroach0',
+      avatar: '000000',
+      zombie: 0,
+      eliminated: 0,
+      is_ai: '0',
+      beginner: true,
+      ack: 'ack',
     },
-    playerorder: ['2348342', 2348343],
-    players: {
-      2348342: {
-        id: '2348342',
-        score: '0',
-        color: 'ff0000',
-        color_back: null,
-        name: 'giantroach0',
-        avatar: '000000',
-        zombie: 0,
-        eliminated: 0,
-        is_ai: '0',
-        beginner: true,
-        ack: 'ack',
-      },
-      2348343: {
-        id: '2348343',
-        score: '0',
-        color: '008000',
-        color_back: null,
-        name: 'giantroach1',
-        avatar: '000000',
-        zombie: 0,
-        eliminated: 0,
-        is_ai: '0',
-        beginner: true,
-        ack: 'ack',
-      },
+    2348343: {
+      id: '2348343',
+      score: '0',
+      color: '008000',
+      color_back: null,
+      name: 'giantroach1',
+      avatar: '000000',
+      zombie: 0,
+      eliminated: 0,
+      is_ai: '0',
+      beginner: true,
+      ack: 'ack',
     },
-    tablespeed: '1',
+  },
+  tablespeed: '1',
+  mainBoard: {
+    1: {
+      id: '1',
+      location: '0',
+      color: 'white',
+    },
+    2: {
+      id: '2',
+      location: '0',
+      color: 'black',
+    },
+    3: {
+      id: '3',
+      location: '2',
+      color: 'white',
+    },
+    4: {
+      id: '4',
+      location: '3',
+      color: 'black',
+    },
+    4: {
+      id: '4',
+      location: '3',
+      color: 'gray',
+    },
+  },
+  workshop: {
+    1: {
+      id: '1',
+      ws: 'white',
+      color: 'white',
+    },
+    2: {
+      id: '2',
+      ws: 'white',
+      color: 'white',
+    },
+    3: {
+      id: '3',
+      ws: 'black',
+      color: 'black',
+    },
+    4: {
+      id: '4',
+      ws: 'black',
+      color: 'black',
+    },
+  },
+  quarry: {
+    black: {
+      color: 'black',
+      count: '13',
+    },
+    gray: {
+      color: 'gray',
+      count: '10',
+    },
+    white: {
+      color: 'white',
+      count: '13',
+    },
+  },
+  playerSide: 'black',
+};
+
+const testData = [
+  Object.assign(structuredClone(testDataBase), {
     mainBoard: {
       1: {
         id: '1',
@@ -159,90 +227,157 @@ const testData = [
         count: '13',
       },
     },
-    playerSide: 'black',
-  },
+  }),
+  Object.assign(structuredClone(testDataBase), {
+    mainBoard: {
+      1: {
+        id: '1',
+        location: '5',
+        color: 'white',
+      },
+      2: {
+        id: '2',
+        location: '5',
+        color: 'black',
+      },
+      3: {
+        id: '3',
+        location: '5',
+        color: 'black',
+      },
+      4: {
+        id: '4',
+        location: '5',
+        color: 'black',
+      },
+      5: {
+        id: '5',
+        location: '5',
+        color: 'black',
+      },
+      6: {
+        id: '6',
+        location: '4',
+        color: 'white',
+      },
+      7: {
+        id: '7',
+        location: '4',
+        color: 'black',
+      },
+      8: {
+        id: '8',
+        location: '4',
+        color: 'gray',
+      },
+      9: {
+        id: '9',
+        location: '4',
+        color: 'black',
+      },
+      10: {
+        id: '10',
+        location: '4',
+        color: 'gray',
+      },
+      11: {
+        id: '11',
+        location: '6',
+        color: 'white',
+      },
+      12: {
+        id: '12',
+        location: '6',
+        color: 'black',
+      },
+      13: {
+        id: '13',
+        location: '6',
+        color: 'gray',
+      },
+      14: {
+        id: '14',
+        location: '6',
+        color: 'black',
+      },
+      15: {
+        id: '15',
+        location: '6',
+        color: 'gray',
+      },
+    },
+  }),
+  Object.assign(structuredClone(testDataBase), {
+    gameMode: 'advanced',
+    mainBoard: {
+      1: {
+        id: '1',
+        location: '1',
+        color: 'white',
+      },
+      2: {
+        id: '2',
+        location: '2',
+        color: 'black',
+      },
+      3: {
+        id: '3',
+        location: '3',
+        color: 'black',
+      },
+      4: {
+        id: '4',
+        location: '4',
+        color: 'black',
+      },
+      5: {
+        id: '5',
+        location: '5',
+        color: 'black',
+      },
+      6: {
+        id: '6',
+        location: '6',
+        color: 'white',
+      },
+      7: {
+        id: '7',
+        location: '0',
+        color: 'black',
+      },
+      8: {
+        id: '8',
+        location: '0',
+        color: 'black',
+      },
+      9: {
+        id: '9',
+        location: '0',
+        color: 'black',
+      },
+      10: {
+        id: '10',
+        location: '0',
+        color: 'black',
+      },
+      11: {
+        id: '11',
+        location: '0',
+        color: 'black',
+      },
+      12: {
+        id: '12',
+        location: '0',
+        color: 'black',
+      },
+      13: {
+        id: '13',
+        location: '0',
+        color: 'black',
+      },
+    }
+  }),
 ];
-
-const data2 = structuredClone(testData[0]);
-data2.mainBoard = {
-  1: {
-    id: '1',
-    location: '5',
-    color: 'white',
-  },
-  2: {
-    id: '2',
-    location: '5',
-    color: 'black',
-  },
-  3: {
-    id: '3',
-    location: '5',
-    color: 'black',
-  },
-  4: {
-    id: '4',
-    location: '5',
-    color: 'black',
-  },
-  5: {
-    id: '5',
-    location: '5',
-    color: 'black',
-  },
-  6: {
-    id: '6',
-    location: '4',
-    color: 'white',
-  },
-  7: {
-    id: '7',
-    location: '4',
-    color: 'black',
-  },
-  8: {
-    id: '8',
-    location: '4',
-    color: 'gray',
-  },
-  9: {
-    id: '9',
-    location: '4',
-    color: 'black',
-  },
-  10: {
-    id: '10',
-    location: '4',
-    color: 'gray',
-  },
-  11: {
-    id: '11',
-    location: '6',
-    color: 'white',
-  },
-  12: {
-    id: '12',
-    location: '6',
-    color: 'black',
-  },
-  13: {
-    id: '13',
-    location: '6',
-    color: 'gray',
-  },
-  14: {
-    id: '14',
-    location: '6',
-    color: 'black',
-  },
-  15: {
-    id: '15',
-    location: '6',
-    color: 'gray',
-  },
-},
-
-testData.push(data2);
 
 function loadTestData(idx = 0) {
   const vue = window.vue;
@@ -279,7 +414,7 @@ const testEvent = [
     args: {
       player_side: 'black',
       player_name:
-      '<!--PNS--><span class="playername" style="color:#008000;">giantroach0</span><!--PNE-->',
+        '<!--PNS--><span class="playername" style="color:#008000;">giantroach0</span><!--PNE-->',
       from: '3',
       fromName: 'δ',
       to: '2',
@@ -291,7 +426,7 @@ const testEvent = [
     args: {
       player_side: 'black',
       player_name:
-      '<!--PNS--><span class="playername" style="color:#008000;">giantroach0</span><!--PNE-->',
+        '<!--PNS--><span class="playername" style="color:#008000;">giantroach0</span><!--PNE-->',
       from: '0',
       fromName: 'α',
     },
@@ -301,7 +436,7 @@ const testEvent = [
     args: {
       player_side: 'black',
       player_name:
-      '<!--PNS--><span class="playername" style="color:#008000;">giantroach0</span><!--PNE-->',
+        '<!--PNS--><span class="playername" style="color:#008000;">giantroach0</span><!--PNE-->',
       color: 'white',
       from: '3',
     },

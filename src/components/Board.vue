@@ -106,6 +106,7 @@ const hideHint = () => {
       height: height,
       backgroundImage: 'url(\'' + urlBase + image + '\')',
       backgroundPosition: bgPos,
+      marginTop: def.marginTop || 0,
     }"
   >
     <ul class="stones">

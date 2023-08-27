@@ -45,6 +45,7 @@ let bgaStateQueue: Promise<any> = Promise.resolve();
 let gamedata: Ref<Gamedata> = ref({
   current_player_id: '',
   decision: { decision_type: '' },
+  gameMode: 'standard',
   game_result_neutralized: '',
   gamestate: null,
   gamestates: {},
@@ -157,6 +158,12 @@ const restore = () => {
   const mba = objToArray(gamedata.value.mainBoard);
   mba.forEach((m) => {
     mb.pillars[m.location].stones.push(m.color);
+  });
+
+  // restore ornaments (if any)
+  const ora = objToArray(gamedata.value.ornament || {});
+  ora.forEach((o) => {
+    mb.ornaments[o.location] = o.type;
   });
 
   state.refresh();

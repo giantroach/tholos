@@ -2,9 +2,12 @@
 import { inject, ref } from 'vue';
 import { boardDefs } from '../def/board';
 import { pillarDefs } from '../def/pillar';
+import { ornamentDefs } from '../def/ornament';
 import Pillar from './Pillar.vue';
+import Ornament from './Ornament.vue';
 import type { BoardType, BoardData } from '../type/board.d';
 import type { PillarHintDef } from '../type/pillar.d';
+import type { OrnamentHintDef } from '../type/ornament.d';
 import type { Ref } from 'vue';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -51,14 +54,29 @@ const hintDef: Ref<PillarHintDef> | undefined = ref({
 });
 const hintBgPos = ref(`0px 0px`);
 
-const showHint = (evt: MouseEvent, idx: number) => {
+const showHint = (
+  type: 'pillar' | 'ornament',
+  evt: MouseEvent,
+  idx: number
+) => {
   hintIdx.value = idx;
-  const hd = pillarDefs[data.value.pillars[idx].type || 'standard'].hint;
-  if (!hd || (!hd.image && !hd.text)) {
-    // no hint to display
-    return;
+  let hd: PillarHintDef | OrnamentHintDef | null = null;
+  if (type === 'pillar') {
+    hd = pillarDefs[data.value.pillars[idx].type || 'standard'].hint || null;
+    if (!hd || (!hd.image && !hd.text)) {
+      // no hint to display
+      return;
+    }
+    hintDef.value = hd;
   }
-  hintDef.value = hd;
+  if (type === 'ornament') {
+    hd = ornamentDefs[data.value.ornaments?.[idx] || 'standard'].hint || null;
+    if (!hd || (!hd.image && !hd.text)) {
+      // no hint to display
+      return;
+    }
+    hintDef.value = hd;
+  }
 
   hintBgPos.value = `-${hintDef.value.imgLeft}px -${hintDef.value.imgTop}px`;
 
@@ -72,7 +90,7 @@ const showHint = (evt: MouseEvent, idx: number) => {
 
   setTimeout(() => {
     // wait for render
-    const mcElm = document.querySelector('#pillar-hint-' + hintIdx.value);
+    const mcElm = document.querySelector('#popup-hint-' + hintIdx.value);
     const body = document.body;
     if (!mcElm) {
       return;
@@ -119,17 +137,37 @@ const hideHint = () => {
           top: def.stonePos[idx].y,
           zIndex: def.stonePos[idx].zIndex || 'auto',
         }"
-        v-on:mouseover="showHint($event, idx)"
+        v-on:mouseover="showHint('pillar', $event, idx)"
         v-on:mouseleave="hideHint"
       >
         <Pillar :data="pillar" :active="data.active" />
+      </li>
+    </ul>
+    <ul class="ornaments">
+      <li
+        v-for="(ornament, idx) in data.ornaments"
+        :key="idx"
+        class=""
+        v-bind:style="{
+          left: def.ornamentPos?.[idx].x || 0,
+          top: def.ornamentPos?.[idx].y || 0,
+          zIndex: def.ornamentPos?.[idx].zIndex || 'auto',
+        }"
+        v-on:mouseover="showHint('ornament', $event, idx)"
+        v-on:mouseleave="hideHint"
+      >
+        <Ornament
+          v-if="ornament"
+          :type="ornament"
+          :rotate="def.ornamentPos?.[idx].rotate || 0"
+        />
       </li>
     </ul>
   </div>
 
   <teleport to="#modals" v-if="modal">
     <div
-      :id="'pillar-hint-' + hintIdx"
+      :id="'popup-hint-' + hintIdx"
       class="hint"
       v-bind:style="{
         width: hintDef.width,
@@ -159,13 +197,15 @@ const hideHint = () => {
 </template>
 
 <style scoped>
-.stones {
+.stones,
+.ornaments {
   position: relative;
   margin: 0;
   list-style: none;
 }
 
-.stones > li {
+.stones > li,
+.ornaments > li {
   position: absolute;
 }
 

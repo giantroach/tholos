@@ -375,6 +375,43 @@ const testData = [
         location: '0',
         color: 'black',
       },
+    },
+    ornament: {
+      1: {
+        id: '1',
+        location: '0',
+        type: 'o1',
+      },
+      2: {
+        id: '2',
+        location: '1',
+        type: 'o2',
+      },
+      3: {
+        id: '3',
+        location: '2',
+        type: 'o3',
+      },
+      4: {
+        id: '4',
+        location: '3',
+        type: 'o4',
+      },
+      5: {
+        id: '5',
+        location: '4',
+        type: 'o5',
+      },
+      6: {
+        id: '6',
+        location: '5',
+        type: 'o6',
+      },
+      7: {
+        id: '7',
+        location: '6',
+        type: 'o7',
+      },
     }
   }),
 ];

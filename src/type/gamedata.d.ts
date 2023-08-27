@@ -4,6 +4,7 @@
 
 import { Player, Gamestate } from './framework.d';
 import { StoneType } from './stone.d';
+import { OrnamentType } from './ornament.d';
 
 interface MainBoardRec {
   id: string;
@@ -20,6 +21,12 @@ interface WorkshopRec {
 interface QuarryRec {
   color: StoneType;
   count: string;
+}
+
+interface OrnamentRec {
+  id: string;
+  location: string;
+  type: OrnamentType;
 }
 
 interface Gamedata {
@@ -45,6 +52,9 @@ interface Gamedata {
   };
   quarry: {
     [color: string]: QuarryRec;
+  };
+  ornament: {
+    [idx: string]: OrnamentRec;
   };
   playerSide: 'white' | 'black';
 }

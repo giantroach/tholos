@@ -20,8 +20,4 @@ interface OrnamentDef {
   hint?: OrnamentHintDef;
 }
 
-type OrnamentData = {
-  type?: OrnamentType;
-};
-
-export { OrnamentType, OrnamentDef, OrnamentHintDef, OrnamentData };
+export { OrnamentType, OrnamentDef, OrnamentHintDef };

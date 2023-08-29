@@ -164,6 +164,35 @@ define([
 
           // src/def/quarry.ts
           'How many stones?': _('How many stones?'),
+
+          // src/def/ornament.ts
+          '1. During the scoring, the player with the greatest influence in this column will score an additional +3 VP.':
+            _(
+              '1. During the scoring, the player with the greatest influence in this column will score an additional +3 VP.'
+            ),
+          '2. Unlike the rest of the columns, this column will be won by the player with the minority of stones of their color. Therefore, if there are 0 white stones and at least 1 black stone, the column will be claimed by the white player.':
+            _(
+              '2. Unlike the rest of the columns, this column will be won by the player with the minority of stones of their color. Therefore, if there are 0 white stones and at least 1 black stone, the column will be claimed by the white player.'
+            ),
+          '3. In this column, the gray stones are worth +2 VP instead of -2 VP in the score count.':
+            _(
+              '3. In this column, the gray stones are worth +2 VP instead of -2 VP in the score count.'
+            ),
+          '4. In this column, the gray stones are worth -3 VP instead of -2 VP in the score count.':
+            _(
+              '4. In this column, the gray stones are worth -3 VP instead of -2 VP in the score count.'
+            ),
+          '5. This location’s bonus temple action can also be activated with gray stones.':
+            _(
+              '5. This location’s bonus temple action can also be activated with gray stones.'
+            ),
+          '6. Choose between this location’s bonus temple action and the following: move a gray stone from the QUARRY to the TEMPLE (to a different location).':
+            _(
+              '6. Choose between this location’s bonus temple action and the following: move a gray stone from the QUARRY to the TEMPLE (to a different location).'
+            ),
+          '7. This column holds up to 7 stones instead of the usual 5.': _(
+            '7. This column holds up to 7 stones instead of the usual 5.'
+          ),
         };
 
         // update player area

@@ -1,5 +1,5 @@
 import type { PillarData } from "./pillar.d";
-import type { OrnamentData } from "./ornament.d";
+import type { OrnamentType } from "./ornament.d";
 
 type BoardType = 'main' | 'main2' | 'workshopW' | 'workshopB';
 
@@ -31,7 +31,7 @@ interface BoardDef {
 
 interface BoardData {
   pillars: PillarData[];
-  ornaments?: OrnamentData[];
+  ornaments?: OrnamentType[];
   active: boolean;
 }
 

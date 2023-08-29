@@ -1,7 +1,7 @@
 import { OrnamentType, OrnamentDef } from '../type/ornament.d';
 import ornamentImgUrl from '../assets/ornaments.png';
 
-const ornamentDefs: { [pillarType in OrnamentType]: OrnamentDef } = {
+const ornamentDefs: { [ornamentType in OrnamentType]: OrnamentDef } = {
   standard: {
     image: ornamentImgUrl,
     width: '95px',

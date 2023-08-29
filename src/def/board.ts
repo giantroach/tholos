@@ -34,13 +34,13 @@ const boardDefs: { [boardType in BoardType]: BoardDef } = {
       { x: '66px', y: '88px', zIndex: 100 },
     ],
     ornamentPos: [
-      { x: '189px', y: '106px', zIndex: 100, rotate: 0 },
-      { x: '244px', y: '132px', zIndex: 200, rotate: 51 },
-      { x: '259px', y: '195px', zIndex: 300, rotate: 102 },
-      { x: '220px', y: '244px', zIndex: 400, rotate: 153 },
-      { x: '163px', y: '249px', zIndex: 300, rotate: -153 },
-      { x: '114px', y: '192px', zIndex: 200, rotate: -102 },
-      { x: '128px', y: '128px', zIndex: 100, rotate: -51 },
+      { x: '189px', y: '120px', zIndex: 100, rotate: 0 },
+      { x: '248px', y: '148px', zIndex: 200, rotate: 51 },
+      { x: '262px', y: '210px', zIndex: 300, rotate: 102 },
+      { x: '224px', y: '262px', zIndex: 400, rotate: 153 },
+      { x: '156px', y: '262px', zIndex: 300, rotate: -153 },
+      { x: '114px', y: '210px', zIndex: 200, rotate: -102 },
+      { x: '128px', y: '148px', zIndex: 100, rotate: -51 },
     ]
   },
   workshopW: {

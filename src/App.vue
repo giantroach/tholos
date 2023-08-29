@@ -57,6 +57,7 @@ let gamedata: Ref<Gamedata> = ref({
   mainBoard: {},
   workshop: {},
   quarry: {},
+  ornament: {},
   playerSide: 'white',
 });
 
@@ -163,6 +164,7 @@ const restore = () => {
   // restore ornaments (if any)
   const ora = objToArray(gamedata.value.ornament || {});
   ora.forEach((o) => {
+    mb.ornaments ||= [];
     mb.ornaments[o.location] = o.type;
   });
 

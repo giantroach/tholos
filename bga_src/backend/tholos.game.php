@@ -546,6 +546,8 @@ class Tholos extends Table
   {
     $wScore = 0;
     $bScore = 0;
+    $wTieBreaker = 0;
+    $bTieBreaker = 0;
 
     $sql = 'SELECT player_id FROM player WHERE player_no=1';
     $wPlayerID = self::getUniqueValueFromDB($sql);
@@ -565,15 +567,19 @@ class Tholos extends Table
 
       if ($ws > $bs) {
         $wScore += $this->_getScore($ws, $bs, $gs);
+        $wTieBreaker += 1;
       }
       if ($ws < $bs) {
         $bScore += $this->_getScore($bs, $ws, $gs);
+        $bTieBreaker += 1;
       }
     }
 
     $sql =
       "UPDATE player SET player_score='" .
       $wScore .
+      "', player_score_aux='" .
+      $wTieBreaker .
       "' WHERE player_id='" .
       $wPlayerID .
       "'";
@@ -586,6 +592,8 @@ class Tholos extends Table
     $sql =
       "UPDATE player SET player_score='" .
       $bScore .
+      "', player_score_aux='" .
+      $bTieBreaker .
       "' WHERE player_id='" .
       $bPlayerID .
       "'";
@@ -697,9 +705,7 @@ class Tholos extends Table
           return false;
         }
         // if t1 top is white
-        if (!$this->_checkTopStoneIs($target1,
-          'white'
-        )) {
+        if (!$this->_checkTopStoneIs($target1, 'white')) {
           return false;
         }
         // if t2 has space
@@ -765,10 +771,7 @@ class Tholos extends Table
           return false;
         }
         // if t1 top is black
-        if (!$this->_checkTopStoneIs(
-          $target1,
-          'black'
-        )) {
+        if (!$this->_checkTopStoneIs($target1, 'black')) {
           return false;
         }
         // if t2 has space

@@ -23,7 +23,6 @@ export class Sub {
   ) {}
 
   public handle(notif: BgaNotification) {
-    console.log('gocha', notif);
     switch (notif.name) {
       case 'takeStone': {
         const args = notif.args as BgaTakeStoneNotif;

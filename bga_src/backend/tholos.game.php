@@ -178,7 +178,7 @@ class Tholos extends Table
     $cnt = intval(self::getUniqueValueFromDB($sql));
     $progress = $cnt / 35;
 
-    return $progress;
+    return $progress * 100;
   }
 
   //////////////////////////////////////////////////////////////////////////////

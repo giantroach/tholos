@@ -11,7 +11,7 @@ export default defineConfig({
       output: {
         entryFileNames: `modules/app.js`,
         chunkFileNames: 'modules/chunk.js',
-        assetFileNames: `modules/[name].[ext]`,
+        assetFileNames: `img/[name].[ext]`,
       },
     },
   },

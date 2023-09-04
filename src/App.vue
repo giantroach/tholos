@@ -254,6 +254,10 @@ const takeAction = () => {
   state?.setSubState('beforeTargetSelect1');
 };
 
+const takeActionOrnament = () => {
+  state?.setSubState('takeOrnamentAction');
+};
+
 const noAction = () => {
   state?.setSubState('beforeSubmitPlace');
 };
@@ -304,6 +308,8 @@ defineExpose({
         @cancel="cancelState()"
         @submit="submitState()"
         @takeAction="takeAction()"
+        @takeActionColumn="takeAction()"
+        @takeActionOrnament="takeActionOrnament()"
         @noAction="noAction()"
         @noValidTarget="noValidTarget()"
       >

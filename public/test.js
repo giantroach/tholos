@@ -414,6 +414,78 @@ const testData = [
       },
     }
   }),
+  Object.assign(structuredClone(testDataBase), {
+    gameMode: 'advanced',
+    mainBoard: {
+      1: {
+        id: '1',
+        location: '1',
+        color: 'white',
+      },
+      2: {
+        id: '2',
+        location: '2',
+        color: 'black',
+      },
+      3: {
+        id: '3',
+        location: '3',
+        color: 'black',
+      },
+      4: {
+        id: '4',
+        location: '4',
+        color: 'black',
+      },
+      5: {
+        id: '5',
+        location: '5',
+        color: 'black',
+      },
+      6: {
+        id: '6',
+        location: '6',
+        color: 'white',
+      },
+      7: {
+        id: '7',
+        location: '0',
+        color: 'black',
+      },
+      8: {
+        id: '8',
+        location: '0',
+        color: 'black',
+      },
+      9: {
+        id: '9',
+        location: '0',
+        color: 'black',
+      },
+      10: {
+        id: '10',
+        location: '0',
+        color: 'black',
+      },
+      11: {
+        id: '11',
+        location: '0',
+        color: 'black',
+      },
+      12: {
+        id: '12',
+        location: '0',
+        color: 'black',
+      },
+    },
+    ornament: {
+      7: {
+        id: '7',
+        location: '0',
+        type: 'o7',
+      },
+    }
+  }),
 ];
 
 function loadTestData(idx = 0) {

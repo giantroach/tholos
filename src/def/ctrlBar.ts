@@ -10,7 +10,8 @@ const ctrlBarDefs: { [barType in BarType]: CtrlBarDef } = {
     buttonTypes: ['cancel'],
   },
   turnInit: {
-    message: 'Choose and take stones from query or choose and place a stone from your workshop.',
+    message:
+      'Choose and take stones from query or choose and place a stone from your workshop.',
     buttonTypes: [],
   },
   choosePillar: {
@@ -20,6 +21,10 @@ const ctrlBarDefs: { [barType in BarType]: CtrlBarDef } = {
   takeActionConfirm: {
     message: 'Do you like to perform Bonus Action?',
     buttonTypes: ['takeAction', 'noAction'],
+  },
+  takeOrnamentActionConfirm: {
+    message: 'Do you like to perform Bonus Action?',
+    buttonTypes: ['takeActionColumn', 'takeActionOrnament', 'noAction'],
   },
   noValidTarget: {
     message: 'No valid target.',
@@ -42,7 +47,7 @@ const ctrlBarDefs: { [barType in BarType]: CtrlBarDef } = {
     buttonTypes: ['cancel'],
   },
   chooseTarget1e: {
-    message: 'Choose a stone to take from the opponent\'s workshop.',
+    message: "Choose a stone to take from the opponent's workshop.",
     buttonTypes: ['cancel'],
   },
   chooseTarget1f: {

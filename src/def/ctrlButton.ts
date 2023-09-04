@@ -40,6 +40,20 @@ const ctrlButtonDefs: { [buttonType in ButtonType]: CtrlButtonDef } = {
     background: '#ff621f',
     border: '2px solid #ffb571',
   },
+  takeActionColumn: {
+    label: 'Take Action (Column)',
+    size: { width: '200px', height: '30px', radius: '15px' },
+    textColor: 'white',
+    background: '#ff621f',
+    border: '2px solid #ffb571',
+  },
+  takeActionOrnament: {
+    label: 'Take Action (Ornament)',
+    size: { width: '200px', height: '30px', radius: '15px' },
+    textColor: 'white',
+    background: '#ff621f',
+    border: '2px solid #ffb571',
+  },
 };
 
 const defaultCtrlButtonData: CtrlButtonData = {

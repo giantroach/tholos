@@ -331,6 +331,9 @@ class State {
     const s = this.getWsSelectedStone();
     const playerSide = this.playerData.value.playerSide;
     if (s === 'gray') {
+      if (this.isColumnWithOrnament(this.getMainBoardSelectedIdx(), 'o5')) {
+        return true;
+      }
       return false;
     }
     if (playerSide === 'white') {

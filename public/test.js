@@ -412,7 +412,29 @@ const testData = [
         location: '6',
         type: 'o7',
       },
-    }
+    },
+    workshop: {
+      1: {
+        id: '1',
+        ws: 'white',
+        color: 'white',
+      },
+      2: {
+        id: '2',
+        ws: 'white',
+        color: 'gray',
+      },
+      3: {
+        id: '3',
+        ws: 'black',
+        color: 'black',
+      },
+      4: {
+        id: '4',
+        ws: 'black',
+        color: 'gray',
+      },
+    },
   }),
   Object.assign(structuredClone(testDataBase), {
     gameMode: 'advanced',

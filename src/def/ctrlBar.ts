@@ -58,6 +58,10 @@ const ctrlBarDefs: { [barType in BarType]: CtrlBarDef } = {
     message: 'Choose a black stone to move from.',
     buttonTypes: ['cancel'],
   },
+  chooseTarget1o6: {
+    message: 'Choose a column to place a gray stone from quarry.',
+    buttonTypes: ['cancel'],
+  },
   chooseTarget2a: {
     message: 'Choose a column to move to.',
     buttonTypes: ['cancel'],

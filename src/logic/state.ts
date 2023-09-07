@@ -145,7 +145,11 @@ class State {
           break;
         }
         if (this.isColumnWithOrnament(this.getMainBoardSelectedIdx(), 'o6')) {
-          this.assign(this.ctrlBarData.value, 'type', 'takeOrnamentActionConfirm');
+          this.assign(
+            this.ctrlBarData.value,
+            'type',
+            'takeOrnamentActionConfirm'
+          );
         } else {
           this.assign(this.ctrlBarData.value, 'type', 'takeActionConfirm');
         }
@@ -382,17 +386,25 @@ class State {
     // this.assign(this.quarryData.value, 'carry', max);
   }
 
-  // only layer 0
-  public setPillarTopSelectable() {
+  public setPillarTopSelectable(
+    layer = 0,
+    stoneType: StoneType | null = null,
+    exceptIdx: number | null = null
+  ) {
     const mb = this.mainBoardData.value;
     this.assign(mb, 'active', true);
     mb.pillars.forEach((p, idx) => {
-      const s: boolean[][] = [new Array(p.stones.length).fill(false)];
+      if (idx === exceptIdx) {
+        return;
+      }
+      const filled = new Array(p.stones.length).fill(false);
+      const s: boolean[][] = [];
+      s[layer] = filled;
       const g = [];
       const max = this.isColumnWithOrnament(idx, 'o7') ? 7 : 5;
-      if (s[0].length < max) {
-        const stone = this.getWsSelectedStone();
-        s[0][s[0].length] = true;
+      if (s[layer].length < max) {
+        const stone = stoneType || this.getWsSelectedStone();
+        s[layer][s[layer].length] = true;
         g[0] = stone;
       }
       this.assign(p, 'ghosts', g);
@@ -485,6 +497,21 @@ class State {
     const srcIdx = this.getMainBoardSelectedIdx();
     let targetStone: StoneType = 'none';
     let nextBar: BarType = '';
+
+    // FIXME:
+    if (this.useOrnamentAction) {
+      const idx = this.getMainBoardSelectedIdx(1);
+      if (idx !== -1) {
+        this.setSubState('beforeTargetSelect2');
+        return true;
+      }
+      if (this.quarryData.value.stones[1] <= 0) {
+        return false;
+      }
+      this.setPillarTopSelectable(1, 'gray', srcIdx);
+      this.assign(this.ctrlBarData.value, 'type', 'chooseTarget1o6');
+      return true;
+    }
 
     this.resetSelectable();
 
@@ -636,6 +663,11 @@ class State {
 
     this.resetSelectable();
 
+    if (this.useOrnamentAction) {
+      this.setSubState('beforeSubmitPlace');
+      return true;
+    }
+
     switch (true) {
       case srcIdx0 === 0 || srcIdx0 === 1 || srcIdx0 === 6: {
         if (srcIdx0 === 0) {
@@ -730,6 +762,14 @@ class State {
 
     if (!this.useAction) {
       return null;
+    }
+
+    if (this.useOrnamentAction) {
+      const idx = this.getMainBoardSelectedIdx(1);
+      if (idx === -1) {
+        return null;
+      }
+      return idx;
     }
 
     switch (true) {

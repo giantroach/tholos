@@ -14,6 +14,7 @@ type BarType =
   | 'chooseTarget1e'
   | 'chooseTarget1f'
   | 'chooseTarget1g'
+  | 'chooseTarget1o6'
   | 'chooseTarget2a'
   | 'chooseTarget2b'
   | 'chooseTarget2f'

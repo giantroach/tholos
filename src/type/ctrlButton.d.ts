@@ -3,7 +3,9 @@ type ButtonType =
   | 'submit'
   | 'takeAction'
   | 'noAction'
-  | 'noValidTarget';
+  | 'noValidTarget'
+  | 'takeActionColumn'
+  | 'takeActionOrnament';
 
 interface ButtonSizeDef {
   width: string;

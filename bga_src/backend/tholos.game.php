@@ -37,6 +37,7 @@ class Tholos extends Table
       //    "my_first_game_variant" => 100,
       //    "my_second_game_variant" => 101,
       //      ...
+      'ornaments' => 100,
     ]);
   }
 
@@ -119,6 +120,23 @@ class Tholos extends Table
 
     // NOTE: Nothing to do with mainBoard
 
+    // ornaments (if needed)
+    $numOfOrn = intval($this->getGameStateValue('ornaments'));
+    if ($numOfOrn > 0) {
+      $ornBuckets = ['o1', 'o2', 'o3', 'o4', 'o5', 'o6', 'o7'];
+      $randOrnKeys = array_rand($ornBuckets, $numOfOrn);
+      $locBuckets = [0, 1, 2, 3, 4, 5, 6];
+      $randLocKeys = array_rand($locBuckets, $numOfOrn);
+      for ($i = 0; $i <= $numOfOrn; $i++) {
+        $sql =
+          "INSERT INTO ornaments (location, type) VALUES ('" .
+          $randLocKeys[$i] .
+          "', " .
+          $randOrnKeys[$i] .
+          ')';
+      }
+    }
+
     // Activate first player (which is in general a good idea :) )
     $this->activeNextPlayer();
 
@@ -157,6 +175,9 @@ class Tholos extends Table
 
     $result['playerSide'] = $this->getPlayerSide($current_player_id);
     $result['playerID'] = intval($current_player_id);
+
+    $sql = 'SELECT * FROM ornaments';
+    $result['ornament'] = self::getCollectionFromDb($sql);
 
     return $result;
   }
@@ -960,6 +981,24 @@ class Tholos extends Table
     }
 
     return true;
+  }
+
+  function isColumnWithOrnament($idx, $oType)
+  {
+    $numOfOrn = intval($this->getGameStateValue('ornaments'));
+    if ($numOfOrn === 0) {
+      return false;
+    }
+    $sql =
+      'SELECT COUNT(*) FROM ornaments WHERE location=' .
+      $idx .
+      ' AND type=' .
+      $oType;
+    $cnt = self::getUniqueValueFromDB($sql);
+    if ($cnt !== 0) {
+      return true;
+    }
+    return false;
   }
 
   //////////////////////////////////////////////////////////////////////////////

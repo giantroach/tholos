@@ -8,6 +8,7 @@ import { CtrlBarData } from '../type/ctrlBar.d';
 import { PlayerData } from '../type/player.d';
 import { StoneType } from '../type/stone.d';
 import { BarType } from '../type/ctrlBar.d';
+import { OrnamentType } from '../type/ornament.d';
 
 type CurrentState =
   | 'init'
@@ -346,7 +347,7 @@ class State {
     return s === 'black';
   }
 
-  public isColumnWithOrnament(idx, oType): boolean {
+  public isColumnWithOrnament(idx: number, oType: OrnamentType): boolean {
     const mb = this.mainBoardData.value;
     if (!mb.ornaments || !mb.ornaments[idx]) {
       return false;
@@ -811,6 +812,10 @@ class State {
       return null;
     }
 
+    if (this.useOrnamentAction) {
+      return null;
+    }
+
     switch (true) {
       case srcIdx === 0 || srcIdx === 1 || srcIdx === 5 || srcIdx === 6: {
         // index of main board
@@ -839,6 +844,7 @@ class State {
     const v1 = JSON.stringify(obj[key]);
     const v2 = JSON.stringify(val);
     if (v1 !== v2) {
+      console.log(key, v1, v2);
       obj[key] = val;
     }
   }

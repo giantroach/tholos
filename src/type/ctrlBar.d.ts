@@ -6,6 +6,7 @@ type BarType =
   | 'turnInit'
   | 'choosePillar'
   | 'takeActionConfirm'
+  | 'takeOrnamentActionConfirm'
   | 'noValidTarget'
   | 'chooseTarget1a'
   | 'chooseTarget1b'

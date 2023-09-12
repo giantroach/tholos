@@ -76,7 +76,7 @@ define([
         vue.urlBase = g_gamethemeurl;
 
         // TODO: Set up your game interface here, according to "gamedatas"
-        this.refreshGamedata(gamedatas);
+        vue.gamedata = gamedatas;
         vue.playerID = this.player_id;
         // Setup game notifications to handle (see "setupNotifications" method below)
         this.setupNotifications();
@@ -85,14 +85,138 @@ define([
         i18n = window['_'];
         vue.translation = {
           'Tholos..': _('Tholos'),
-        };
-        console.log('Ending game setup');
-      });
-    },
 
-    refreshGamedata: function (gamedatas) {
-      Object.keys(gamedatas).forEach((prop) => {
-        vue.gamedata[prop] = gamedatas[prop];
+          // src/def/ctrlBar.ts
+          'Choose and take stones from query or choose and place a stone from your workshop.':
+            _(
+              'Choose and take stones from query or choose and place a stone from your workshop.'
+            ),
+          'Choose a column to place your stone.': _(
+            'Choose a column to place your stone.'
+          ),
+          'Do you like to perform Bonus Action?': _(
+            'Do you like to perform Bonus Action?'
+          ),
+          'No valid target.': _('No valid target.'),
+          'Choose a gray stone to move from.': _(
+            'Choose a gray stone to move from.'
+          ),
+          'Choose a white stone to move from.': _(
+            'Choose a white stone to move from.'
+          ),
+          'Choose a stone to take away from the board.': _(
+            'Choose a stone to take away from the board.'
+          ),
+          'Choose a stone to take from the quarry.': _(
+            'Choose a stone to take from the quarry.'
+          ),
+          "Choose a stone to take from the opponent's workshop.": _(
+            "Choose a stone to take from the opponent's workshop."
+          ),
+          'Choose another stone in your workshop to place.': _(
+            'Choose another stone in your workshop to place.'
+          ),
+          'Choose a black stone to move from.': _(
+            'Choose a black stone to move from.'
+          ),
+          'Choose a column to move to.': _('Choose a column to move to.'),
+          'Choose a column to move to.': _('Choose a column to move to.'),
+          'Choose a column to move to.': _('Choose a column to move to.'),
+          'Choose a column to move to.': _('Choose a column to move to.'),
+          "Press 'Submit' to confirm": _("Press 'Submit' to confirm"),
+
+          // src/def/ctrlButton.ts
+          Cancel: _('Cancel'),
+          Submit: _('Submit'),
+          'Take Action': _('Take Action'),
+          'No Action': _('No Action'),
+          OK: _('OK'),
+
+          // src/def/pillar.ts
+          'Locations α: The player who places a stone of their color in this locations may move the top Gray color stone of the column at a different temple location to a third different —and valid— temple location.':
+            _(
+              'Locations α: The player who places a stone of their color in this locations may move the top Gray color stone of the column at a different temple location to a third different —and valid— temple location.'
+            ),
+          'Locations β: The player who places a stone of their color in this locations may move the top White color stone of the column at a different temple location to a third different —and valid— temple location.':
+            _(
+              'Locations β: The player who places a stone of their color in this locations may move the top White color stone of the column at a different temple location to a third different —and valid— temple location.'
+            ),
+          'Location γ: The player who places a stone of their color in this location may return the top stone (of any color) of the column at a different temple location back to the quarry.':
+            _(
+              'Location γ: The player who places a stone of their color in this location may return the top stone (of any color) of the column at a different temple location back to the quarry.'
+            ),
+          'Location δ: The player who places a stone of their color in this location may move a stone (of any color) from the quarry to their workshop; the player must have room for it in their workshop.':
+            _(
+              'Location δ: The player who places a stone of their color in this location may move a stone (of any color) from the quarry to their workshop; the player must have room for it in their workshop.'
+            ),
+          'Location π: The player who places a stone of their color in this location may move a stone (of any color) from their rival’s workshop to their own workshop; the player must have room for it in their workshop.':
+            _(
+              'Location π: The player who places a stone of their color in this location may move a stone (of any color) from their rival’s workshop to their own workshop; the player must have room for it in their workshop.'
+            ),
+          'Location Σ: The player who places a stone of their color in this location may place a stone (of any color) from their workshop in another valid temple location.':
+            _(
+              'Location Σ: The player who places a stone of their color in this location may place a stone (of any color) from their workshop in another valid temple location.'
+            ),
+          'Locations Ω: The player who places a stone of their color in this locations may move the top Black color stone of the column at a different temple location to a third different —and valid— temple location.':
+            _(
+              'Locations Ω: The player who places a stone of their color in this locations may move the top Black color stone of the column at a different temple location to a third different —and valid— temple location.'
+            ),
+
+          // src/def/quarry.ts
+          'How many stones?': _('How many stones?'),
+
+          // src/def/ornament.ts
+          '1. During the scoring, the player with the greatest influence in this column will score an additional +3 VP.':
+            _(
+              '1. During the scoring, the player with the greatest influence in this column will score an additional +3 VP.'
+            ),
+          '2. Unlike the rest of the columns, this column will be won by the player with the minority of stones of their color. Therefore, if there are 0 white stones and at least 1 black stone, the column will be claimed by the white player.':
+            _(
+              '2. Unlike the rest of the columns, this column will be won by the player with the minority of stones of their color. Therefore, if there are 0 white stones and at least 1 black stone, the column will be claimed by the white player.'
+            ),
+          '3. In this column, the gray stones are worth +2 VP instead of -2 VP in the score count.':
+            _(
+              '3. In this column, the gray stones are worth +2 VP instead of -2 VP in the score count.'
+            ),
+          '4. In this column, the gray stones are worth -3 VP instead of -2 VP in the score count.':
+            _(
+              '4. In this column, the gray stones are worth -3 VP instead of -2 VP in the score count.'
+            ),
+          '5. This location’s bonus temple action can also be activated with gray stones.':
+            _(
+              '5. This location’s bonus temple action can also be activated with gray stones.'
+            ),
+          '6. Choose between this location’s bonus temple action and the following: move a gray stone from the QUARRY to the TEMPLE (to a different location).':
+            _(
+              '6. Choose between this location’s bonus temple action and the following: move a gray stone from the QUARRY to the TEMPLE (to a different location).'
+            ),
+          '7. This column holds up to 7 stones instead of the usual 5.': _(
+            '7. This column holds up to 7 stones instead of the usual 5.'
+          ),
+        };
+
+        // update player area
+        gamedatas.playerorder.forEach((pID, idx) => {
+          // append stone icon
+          const icon = document.createElement('div');
+          icon.style.height = '20px';
+          icon.style.width = '20px';
+          icon.style.display = 'inline-block';
+          icon.style.backgroundImage = `url(${g_gamethemeurl}img/player_icon.png)`;
+          if (gamedatas.playerID === Number(pID)) {
+            icon.style.backgroundPosition =
+              gamedatas.playerSide === 'black' ? '0 0' : '-20px 0';
+          } else {
+            icon.style.backgroundPosition =
+              gamedatas.playerSide === 'black' ? '-20px 0' : '0 0';
+          }
+          icon.style.marginBottom = '-2px';
+          document
+            .querySelector(`#player_board_${pID} .player_score`)
+            ?.prepend(icon);
+        });
+
+        console.log('Ending game setup');
       });
     },
 
@@ -238,7 +362,18 @@ define([
       // this.notifqueue.setSynchronous( 'cardPlayed', 3000 );
       //
 
-      const notifications = ['moveStone'];
+      dojo.subscribe('updateScore', this, (data) => {
+        const a = data.args;
+        this.scoreCtrl[a.playerID].setValue(a.score);
+      });
+
+      const notifications = [
+        'takeStone',
+        'placeStone',
+        'moveStone',
+        'removeStone',
+        'stealStone',
+      ];
       notifications.forEach((n) => {
         dojo.subscribe(n, this, (data) => {
           vue.bgaNotifications.push({
@@ -267,34 +402,37 @@ define([
     */
 
     setupActions: function () {
-      vue.$watch(() => vue.bgaRequest, (req) => {
-        if (!req) {
-          return;
-        }
-        const reqBase = `/${appName}/${appName}`;
-        const url = `${reqBase}/${req.name}.html`;
-        vue.bgaRequestPromise = new Promise((resolve, reject) => {
-          this.ajaxcall(
-            url,
-            Object.assign(
-              {
-                lock: true,
+      vue.$watch(
+        () => vue.bgaRequest,
+        (req) => {
+          if (!req) {
+            return;
+          }
+          const reqBase = `/${appName}/${appName}`;
+          const url = `${reqBase}/${req.name}.html`;
+          vue.bgaRequestPromise = new Promise((resolve, reject) => {
+            this.ajaxcall(
+              url,
+              Object.assign(
+                {
+                  lock: true,
+                },
+                req.args
+              ),
+              this,
+              (result) => {
+                resolve(result);
               },
-              req.args
-            ),
-            this,
-            (result) => {
-              resolve(result);
-            },
-            (error) => {
-              // this is called even if it success
-              if (error) {
-                reject(error);
+              (error) => {
+                // this is called even if it success
+                if (error) {
+                  reject(error);
+                }
               }
-            }
-          );
-        });
-      });
+            );
+          });
+        }
+      );
     },
   });
 });

@@ -99,6 +99,26 @@ class Tholos extends Table
 
     // TODO: setup the initial game situation here
 
+    // Update quarry data
+    $sql = "INSERT INTO quarry (color, count) VALUES ('white', 13)";
+    self::DbQuery($sql);
+    $sql = "INSERT INTO quarry (color, count) VALUES ('gray', 10)";
+    self::DbQuery($sql);
+    $sql = "INSERT INTO quarry (color, count) VALUES ('black', 13)";
+    self::DbQuery($sql);
+
+    // update workshop data
+    $sql = "INSERT INTO workshop (ws, color) VALUES ('white', 'white')";
+    self::DbQuery($sql);
+    $sql = "INSERT INTO workshop (ws, color) VALUES ('white', 'white')";
+    self::DbQuery($sql);
+    $sql = "INSERT INTO workshop (ws, color) VALUES ('black', 'black')";
+    self::DbQuery($sql);
+    $sql = "INSERT INTO workshop (ws, color) VALUES ('black', 'black')";
+    self::DbQuery($sql);
+
+    // NOTE: Nothing to do with mainBoard
+
     // Activate first player (which is in general a good idea :) )
     $this->activeNextPlayer();
 
@@ -126,6 +146,17 @@ class Tholos extends Table
     $result['players'] = self::getCollectionFromDb($sql);
 
     // TODO: Gather all information about current game situation (visible by player $current_player_id).
+    $sql = 'SELECT * from quarry';
+    $result['quarry'] = self::getCollectionFromDb($sql);
+
+    $sql = 'SELECT * from workshop';
+    $result['workshop'] = self::getCollectionFromDb($sql);
+
+    $sql = 'SELECT * from mainBoard';
+    $result['mainBoard'] = self::getCollectionFromDb($sql);
+
+    $result['playerSide'] = $this->getPlayerSide($current_player_id);
+    $result['playerID'] = intval($current_player_id);
 
     return $result;
   }
@@ -142,9 +173,12 @@ class Tholos extends Table
     */
   function getGameProgression()
   {
-    // TODO: compute and return the game progression
+    // compute and return the game progression
+    $sql = 'SELECT COUNT(*) FROM mainBoard';
+    $cnt = intval(self::getUniqueValueFromDB($sql));
+    $progress = $cnt / 35;
 
-    return 0;
+    return $progress * 100;
   }
 
   //////////////////////////////////////////////////////////////////////////////
@@ -154,6 +188,779 @@ class Tholos extends Table
   /*
         In this space, you can put any utility methods useful for your game logic
     */
+
+  function getPlayerSide($playerID)
+  {
+    $sql = "SELECT player_no from player where player_id='" . $playerID . "'";
+    $playerNo = self::getUniqueValueFromDB($sql);
+
+    if ($playerNo == 1) {
+      return 'white';
+    }
+    if ($playerNo == 2) {
+      return 'black';
+    }
+
+    die('ok');
+  }
+
+  function getActivePlayerSide()
+  {
+    $apid = self::getActivePlayerId();
+    return $this->getPlayerSide($apid);
+  }
+
+  function getOppoSide()
+  {
+    $apid = self::getActivePlayerId();
+    $actSide = $this->getPlayerSide($apid);
+    if ($actSide === 'white') {
+      return 'black';
+    }
+    return 'white';
+  }
+
+  function getLocationName($idx)
+  {
+    if ($idx == 0) {
+      return 'α';
+    }
+    if ($idx == 1) {
+      return 'β';
+    }
+    if ($idx == 2) {
+      return 'γ';
+    }
+    if ($idx == 3) {
+      return 'δ';
+    }
+    if ($idx == 4) {
+      return 'π';
+    }
+    if ($idx == 5) {
+      return 'Σ';
+    }
+    if ($idx == 6) {
+      return 'Ω';
+    }
+
+    die('ok');
+  }
+
+  function applyBonusAction($target0, $target1, $target2)
+  {
+    $t0 = intval($target0);
+    self::dump('$t0', $t0);
+    switch ($t0) {
+      case 0:
+        // move gray stone from $t1 to $t2
+        $t1 = intval($target1);
+        $t2 = intval($target2);
+        $this->_moveStone($t1, $t2, 'gray');
+        break;
+      case 1:
+        // move gray stone from $t1 to $t2
+        $t1 = intval($target1);
+        $t2 = intval($target2);
+        $this->_moveStone($t1, $t2, 'white');
+        break;
+      case 2:
+        // remove the top stone from t1
+        $t1 = intval($target1);
+        $this->_removeStone($t1);
+        break;
+      case 3:
+        // take stone from quarry
+        $color = $target1;
+        $this->_takeStone($color);
+        break;
+      case 4:
+        // take stone from oppo
+        $color = $target1;
+        $this->_stealStone($color);
+        break;
+      case 5:
+        // take stone from quarry
+        $color = $target1;
+        $t2 = intval($target2);
+        $this->_placeStone($color, $t2);
+        break;
+      case 6:
+        // move gray stone from $t1 to $t2
+        $t1 = intval($target1);
+        $t2 = intval($target2);
+        $this->_moveStone($t1, $t2, 'black');
+        break;
+    }
+  }
+
+  function notifyBonusAction($side, $target0, $target1, $target2)
+  {
+    $t0 = intval($target0);
+    self::dump('$t0', $t0);
+    switch ($t0) {
+      case 0:
+        $t1 = intval($target1);
+        $t2 = intval($target2);
+        self::notifyAllPlayers(
+          'moveStone',
+          clienttranslate(
+            '[Bonus Action] ${player_name} moved a ${color} stone from the column ${from_name} to the column ${to_name}.'
+          ),
+          [
+            'player_side' => $side,
+            'player_name' => self::getActivePlayerName(),
+            'from' => $t1,
+            'from_name' => $this->getLocationName($t1),
+            'to' => $t2,
+            'to_name' => $this->getLocationName($t2),
+            'color' => 'gray',
+          ]
+        );
+        break;
+
+      case 1:
+        $t1 = intval($target1);
+        $t2 = intval($target2);
+        self::notifyAllPlayers(
+          'moveStone',
+          clienttranslate(
+            '[Bonus Action] ${player_name} moved a ${color} stone from the column ${from_name} to the column ${to_name}.'
+          ),
+          [
+            'player_side' => $side,
+            'player_name' => self::getActivePlayerName(),
+            'from' => $t1,
+            'from_name' => $this->getLocationName($t1),
+            'to' => $t2,
+            'to_name' => $this->getLocationName($t2),
+            'color' => 'white',
+          ]
+        );
+        break;
+
+      case 2:
+        $t1 = intval($target1);
+        self::notifyAllPlayers(
+          'removeStone',
+          clienttranslate(
+            '[Bonus Action] ${player_name} returned the top stone of the column ${from_name} back to the quarry.'
+          ),
+          [
+            'player_side' => $side,
+            'player_name' => self::getActivePlayerName(),
+            'from' => $t1,
+            'from_name' => $this->getLocationName($t1),
+          ]
+        );
+        break;
+
+      case 3:
+        $color = $target1;
+        self::notifyAllPlayers(
+          'takeStone',
+          clienttranslate(
+            '[Bonus Action] ${player_name} took a ${color} stone from the quarry.'
+          ),
+          [
+            'player_side' => $side,
+            'player_name' => self::getActivePlayerName(),
+            'color' => $color,
+            'count' => 1,
+          ]
+        );
+        break;
+
+      case 4:
+        $color = $target1;
+        self::notifyAllPlayers(
+          'stealStone',
+          clienttranslate(
+            '[Bonus Action] ${player_name} stole a ${color} stone from the workshop.'
+          ),
+          [
+            'player_side' => $side,
+            'player_name' => self::getActivePlayerName(),
+            'color' => $color,
+          ]
+        );
+        break;
+
+      case 5:
+        $color = $target1;
+        $t2 = intval($target2);
+        self::notifyAllPlayers(
+          'placeStone',
+          clienttranslate(
+            '[Bonus Action] ${player_name} placed a ${color} stone on the column ${locationName}.'
+          ),
+          [
+            'player_side' => $side,
+            'player_name' => self::getActivePlayerName(),
+            'color' => $color,
+            'target' => $t2,
+            'locationName' => $this->getLocationName($t2),
+            'bonusAction' => false,
+          ]
+        );
+        break;
+
+      case 6:
+        $t1 = intval($target1);
+        $t2 = intval($target2);
+        self::notifyAllPlayers(
+          'moveStone',
+          clienttranslate(
+            '[Bonus Action] ${player_name} moved a ${color} stone from the column ${from_name} to the column ${to_name}.'
+          ),
+          [
+            'player_side' => $side,
+            'player_name' => self::getActivePlayerName(),
+            'from' => $t1,
+            'from_name' => $this->getLocationName($t1),
+            'to' => $t2,
+            'to_name' => $this->getLocationName($t2),
+            'color' => 'black',
+          ]
+        );
+        break;
+    }
+  }
+
+  function _placeStone($color, $target)
+  {
+    $side = $this->getActivePlayerSide();
+
+    // update workshop
+    $sql =
+      "DELETE FROM workshop WHERE color = '" .
+      $color .
+      "' AND ws = '" .
+      $side .
+      "' LIMIT 1";
+    self::DbQuery($sql);
+
+    // update mainboard
+    $sql =
+      "INSERT INTO mainBoard(location, color) VALUES('" .
+      $target .
+      "', '" .
+      $color .
+      "')";
+    self::DbQuery($sql);
+  }
+
+  function _moveStone($from, $to, $color)
+  {
+    // Do delete then insert to increment the index
+    $sql =
+      'DELETE FROM mainBoard WHERE location=' .
+      $from .
+      " AND color='" .
+      $color .
+      "'" .
+      ' ORDER BY id desc LIMIT 1';
+    self::DbQuery($sql);
+
+    $sql =
+      "INSERT INTO mainBoard(location, color) VALUES('" .
+      $to .
+      "', '" .
+      $color .
+      "')";
+    self::DbQuery($sql);
+  }
+
+  function _removeStone($from)
+  {
+    // get color / num first and refill quarry
+    $sql =
+      'SELECT color FROM mainBoard WHERE location=' .
+      $from .
+      ' ORDER BY id desc LIMIT 1';
+    $color = self::getUniqueValueFromDB($sql);
+
+    $sql = "SELECT count FROM quarry WHERE color='" . $color . "'";
+    $num = intval(self::getUniqueValueFromDB($sql));
+
+    // Delete
+    $sql =
+      'DELETE FROM mainBoard WHERE location=' .
+      $from .
+      ' ORDER BY id desc LIMIT 1';
+    self::DbQuery($sql);
+
+    // Refill
+    $sql =
+      'UPDATE quarry SET count=' . ($num + 1) . " WHERE color='" . $color . "'";
+    self::DbQuery($sql);
+  }
+
+  function _takeStone($color, $count = 1)
+  {
+    $side = $this->getActivePlayerSide();
+
+    // update quarry
+    $sql = "SELECT count FROM quarry WHERE color='" . $color . "'";
+    $remains = intval(self::getUniqueValueFromDB($sql)) - $count;
+    $sql =
+      'UPDATE quarry SET count=' . $remains . " WHERE color='" . $color . "'";
+    self::DbQuery($sql);
+
+    // update workshop
+    for ($i = 1; $i <= intval($count); $i++) {
+      $sql =
+        "INSERT INTO workshop(ws, color) VALUES ('" .
+        $side .
+        "', '" .
+        $color .
+        "')";
+      self::DbQuery($sql);
+    }
+  }
+
+  function _stealStone($color)
+  {
+    $side = $this->getActivePlayerSide();
+
+    // update workshop (victim)
+    $sql =
+      "DELETE FROM workshop WHERE ws<>'" .
+      $side .
+      "' AND color='" .
+      $color .
+      "' LIMIT 1";
+    self::DbQuery($sql);
+
+    // update workshop (active player)
+    $sql =
+      "INSERT INTO workshop(ws, color) VALUES ('" .
+      $side .
+      "', '" .
+      $color .
+      "')";
+    self::DbQuery($sql);
+  }
+
+  function _updateScore()
+  {
+    $wScore = 0;
+    $bScore = 0;
+    $wTieBreaker = 0;
+    $bTieBreaker = 0;
+
+    $sql = 'SELECT player_id FROM player WHERE player_no=1';
+    $wPlayerID = self::getUniqueValueFromDB($sql);
+    $sql = 'SELECT player_id FROM player WHERE player_no=2';
+    $bPlayerID = self::getUniqueValueFromDB($sql);
+
+    for ($i = 0; $i <= 6; $i++) {
+      $sql =
+        "SELECT COUNT(*) FROM mainBoard WHERE color='white' AND location=" . $i;
+      $ws = intval(self::getUniqueValueFromDB($sql));
+      $sql =
+        "SELECT COUNT(*) FROM mainBoard WHERE color='gray' AND location=" . $i;
+      $gs = intval(self::getUniqueValueFromDB($sql));
+      $sql =
+        "SELECT COUNT(*) FROM mainBoard WHERE color='black' AND location=" . $i;
+      $bs = intval(self::getUniqueValueFromDB($sql));
+
+      if ($ws > $bs) {
+        $wScore += $this->_getScore($ws, $bs, $gs);
+        $wTieBreaker += 1;
+      }
+      if ($ws < $bs) {
+        $bScore += $this->_getScore($bs, $ws, $gs);
+        $bTieBreaker += 1;
+      }
+    }
+
+    $sql =
+      "UPDATE player SET player_score='" .
+      $wScore .
+      "', player_score_aux='" .
+      $wTieBreaker .
+      "' WHERE player_id='" .
+      $wPlayerID .
+      "'";
+    self::DbQuery($sql);
+    self::notifyAllPlayers('updateScore', '', [
+      'playerID' => $wPlayerID,
+      'score' => $wScore,
+    ]);
+
+    $sql =
+      "UPDATE player SET player_score='" .
+      $bScore .
+      "', player_score_aux='" .
+      $bTieBreaker .
+      "' WHERE player_id='" .
+      $bPlayerID .
+      "'";
+    self::DbQuery($sql);
+
+    // maybe better to notify all the detailed score and sum on client side?
+    self::notifyAllPlayers('updateScore', '', [
+      'playerID' => $bPlayerID,
+      'score' => $bScore,
+    ]);
+  }
+
+  function _getScore($major, $minor, $grays)
+  {
+    return $major * 1 + $minor * 3 - $grays * 2;
+  }
+
+  function _takeInputCheck($color, $count)
+  {
+    $apid = self::getActivePlayerId();
+    $side = $this->getActivePlayerSide();
+
+    // has space in ws
+    $sql = "SELECT COUNT(*) FROM workshop WHERE ws='" . $side . "'";
+    $cnt = intval(self::getUniqueValueFromDB($sql));
+    if (3 - $cnt < $count) {
+      self::notifyPlayer(
+        $apid,
+        'logError',
+        clienttranslate('Invalid state. Reload the page: ${error}'),
+        [
+          'error' => clienttranslate('No space in workshop'),
+        ]
+      );
+      return false;
+    }
+
+    // has stone in quarry
+    if (!$this->_CheckStoneInQuarry($color, $count)) {
+      return false;
+    }
+
+    return true;
+  }
+
+  function _placeInputCheck($color, $bonusAction, $target0, $target1, $target2)
+  {
+    $apid = self::getActivePlayerId();
+    $side = $this->getActivePlayerSide();
+
+    // check if the player has specified stone
+    if (!$this->_checkWsHasStone($side, $color)) {
+      return false;
+    }
+
+    // check if destination still have space
+    if (!$this->_checkColumnHasSpace($target0)) {
+      return false;
+    }
+
+    // check color if it is eligible to take an action
+    if ($bonusAction && $color !== $side) {
+      self::notifyPlayer(
+        $apid,
+        'logError',
+        clienttranslate('Invalid state. Reload the page: ${error}'),
+        [
+          'error' => clienttranslate(
+            'You cannot take bonus action unless you place your color stone'
+          ),
+        ]
+      );
+      return false;
+    }
+
+    if (!$bonusAction) {
+      return true;
+    }
+
+    // check bonus action
+    return $this->_actionInputCheck($color, $target0, $target1, $target2);
+  }
+
+  function _actionInputCheck($color, $target0, $target1, $target2)
+  {
+    $apid = self::getActivePlayerId();
+    $side = $this->getActivePlayerSide();
+
+    $t0 = intval($target0);
+    switch ($t0) {
+      case 0:
+        // if t1 is different from t0
+        if (!$this->_checkSameTarget($t0, $target1)) {
+          return false;
+        }
+        // if t1 top is gray
+        if (!$this->_checkTopStoneIs($target1, 'gray')) {
+          return false;
+        }
+        // if t2 has space
+        if (!$this->_checkHasSpace($target2)) {
+          return false;
+        }
+        break;
+
+      case 1:
+        // if t1 is different from t0
+        if (!$this->_checkSameTarget($t0, $target1)) {
+          return false;
+        }
+        // if t1 top is white
+        if (!$this->_checkTopStoneIs($target1, 'white')) {
+          return false;
+        }
+        // if t2 has space
+        if (!$this->_checkHasSpace($target2)) {
+          return false;
+        }
+        break;
+
+      case 2:
+        // if t1 is different from t0
+        if (!$this->_checkSameTarget($t0, $target1)) {
+          return false;
+        }
+        // if t1 has stone
+        if ($this->_getTopStone($target1) === null) {
+          self::notifyPlayer(
+            $apid,
+            'logError',
+            clienttranslate('Invalid state. Reload the page: ${error}'),
+            [
+              'error' => clienttranslate('No stone on the column'),
+            ]
+          );
+          return false;
+        }
+        break;
+
+      case 3:
+        $color = $target1;
+        // if quarry has specified color stone
+        if (!$this->_CheckStoneInQuarry($color, 1)) {
+          return false;
+        }
+        break;
+
+      case 4:
+        // if oppo ws has the specified color stone
+        $oppoSide = $this->getOppoSide();
+        $color = $target1;
+        if (!$this->_checkWsHasStone($oppoSide, $color)) {
+          return false;
+        }
+        break;
+
+      case 5:
+        // if player has specified color stone
+        if (!$this->_checkHasAnotherStone($color, $target1)) {
+          return false;
+        }
+        // if t2 different from t1
+        if (!$this->_checkSameTarget($t0, $target1)) {
+          return false;
+        }
+        // if t2 has space
+        if (!$this->_checkColumnHasSpace($target2)) {
+          return false;
+        }
+        break;
+
+      case 6:
+        // if t1 is different from t0
+        if (!$this->_checkSameTarget($t0, $target1)) {
+          return false;
+        }
+        // if t1 top is black
+        if (!$this->_checkTopStoneIs($target1, 'black')) {
+          return false;
+        }
+        // if t2 has space
+        if (!$this->_checkHasSpace($target2)) {
+          return false;
+        }
+        break;
+    }
+    return true;
+  }
+
+  function _checkColumnHasSpace($target)
+  {
+    $apid = self::getActivePlayerId();
+    $sql = "SELECT COUNT(*) FROM mainBoard WHERE location='" . $target . "'";
+    $cnt = intval(self::getUniqueValueFromDB($sql));
+    if ($cnt >= 5) {
+      self::notifyPlayer(
+        $apid,
+        'logError',
+        clienttranslate('Invalid state. Reload the page: ${error}'),
+        [
+          'error' => clienttranslate('No space left on target column'),
+        ]
+      );
+      return false;
+    }
+    return true;
+  }
+
+  function _checkWsHasStone($side, $color)
+  {
+    $apid = self::getActivePlayerId();
+    $sql =
+      "SELECT COUNT(*) FROM workshop WHERE ws='" .
+      $side .
+      "' AND color='" .
+      $color .
+      "'";
+    $cnt = intval(self::getUniqueValueFromDB($sql));
+    if ($cnt < 1) {
+      self::notifyPlayer(
+        $apid,
+        'logError',
+        clienttranslate('Invalid state. Reload the page: ${error}'),
+        [
+          'error' => clienttranslate('No specified stone in workshop'),
+        ]
+      );
+      return false;
+    }
+    return true;
+  }
+
+  function _checkSameTarget($t0, $t1)
+  {
+    $apid = self::getActivePlayerId();
+
+    if (intval($t0) === intval($t1)) {
+      self::notifyPlayer(
+        $apid,
+        'logError',
+        clienttranslate('Invalid state. Reload the page: ${error}'),
+        [
+          'error' => clienttranslate('Trying to target the same column'),
+        ]
+      );
+      return false;
+    }
+
+    return true;
+  }
+
+  // returns null if no stone
+  function _getTopStone($loc)
+  {
+    $sql =
+      'SELECT color FROM mainBoard WHERE location=' .
+      $loc .
+      ' ORDER BY id desc LIMIT 1';
+    return self::getUniqueValueFromDB($sql);
+  }
+
+  function _checkTopStoneIs($loc, $color)
+  {
+    $apid = self::getActivePlayerId();
+    $c = $this->_getTopStone($loc);
+    if ($c !== $color) {
+      self::notifyPlayer(
+        $apid,
+        'logError',
+        clienttranslate('Invalid state. Reload the page: ${error}'),
+        [
+          'error' => clienttranslate('Invalid color stone'),
+        ]
+      );
+      return false;
+    }
+
+    return true;
+  }
+
+  function _checkHasSpace($loc)
+  {
+    $apid = self::getActivePlayerId();
+    $sql = 'SELECT COUNT(*) FROM mainBoard WHERE location=' . $loc;
+    $c = self::getUniqueValueFromDB($sql);
+    if ($c >= 5) {
+      self::notifyPlayer(
+        $apid,
+        'logError',
+        clienttranslate('Invalid state. Reload the page: ${error}'),
+        [
+          'error' => clienttranslate('Column is full'),
+        ]
+      );
+      return false;
+    }
+
+    return true;
+  }
+
+  function _CheckStoneInQuarry($color, $count = 1)
+  {
+    $apid = self::getActivePlayerId();
+    $sql = "SELECT count FROM quarry WHERE color='" . $color . "'";
+    $cnt = intval(self::getUniqueValueFromDB($sql));
+    if ($cnt < $count) {
+      self::notifyPlayer(
+        $apid,
+        'logError',
+        clienttranslate('Invalid state. Reload the page: ${error}'),
+        [
+          'error' => clienttranslate('No enough stone in quarry'),
+        ]
+      );
+      return false;
+    }
+
+    return true;
+  }
+
+  function _checkHasAnotherStone($color1, $color2)
+  {
+    $apid = self::getActivePlayerId();
+    $side = $this->getActivePlayerSide();
+
+    if ($color1 === $color2) {
+      $sql =
+        "SELECT count(*) from workshop where color='" .
+        $color1 .
+        "' AND ws='" .
+        $side .
+        "'";
+      $cnt = intval(self::getUniqueValueFromDB($sql));
+      if ($cnt < 2) {
+        self::notifyPlayer(
+          $apid,
+          'logError',
+          clienttranslate('Invalid state. Reload the page: ${error}'),
+          [
+            'error' => clienttranslate('No specified stone in Workshop'),
+          ]
+        );
+        return false;
+      }
+    } else {
+      $sql =
+        "SELECT count(*) from workshop where color='" .
+        $color2 .
+        "' AND ws='" .
+        $side .
+        "'";
+      $cnt = intval(self::getUniqueValueFromDB($sql));
+      if ($cnt < 1) {
+        self::notifyPlayer(
+          $apid,
+          'logError',
+          clienttranslate('Invalid state. Reload the page: ${error}'),
+          [
+            'error' => clienttranslate('No specified stone in Workshop'),
+          ]
+        );
+        return false;
+      }
+    }
+
+    return true;
+  }
 
   //////////////////////////////////////////////////////////////////////////////
   //////////// Player actions
@@ -190,12 +997,84 @@ class Tholos extends Table
 
     */
 
-  function moveStone($id)
+  function takeStone($color, $count)
   {
-    self::checkAction('moveStone');
-    self::notifyAllPlayers('test', clienttranslate('Request received.'), [
-      'id' => $id,
-    ]);
+    self::checkAction('takeStone');
+    $side = $this->getActivePlayerSide();
+
+    // both stone count in quarry & stone count in workshop.
+    if (!$this->_takeInputCheck($color, intval($count))) {
+      return;
+    }
+
+    $this->_takeStone($color, intval($count));
+
+    self::notifyAllPlayers(
+      'takeStone',
+      clienttranslate(
+        '${player_name} took ${count} of ${color} stone(s) from the quarry.'
+      ),
+      [
+        'player_side' => $side,
+        'player_name' => self::getActivePlayerName(),
+        'color' => $color,
+        'count' => $count,
+      ]
+    );
+
+    $this->gamestate->nextState('nextPlayer');
+  }
+
+  function placeStone($color, $bonusAction, $target0, $target1, $target2)
+  {
+    self::checkAction('placeStone');
+    $side = $this->getActivePlayerSide();
+
+    if (
+      !$this->_placeInputCheck(
+        $color,
+        $bonusAction,
+        $target0,
+        $target1,
+        $target2
+      )
+    ) {
+      return;
+    }
+
+    // place
+    $this->_placeStone($color, $target0);
+
+    // bonus action
+    if ($bonusAction) {
+      $this->applyBonusAction($target0, $target1, $target2);
+    }
+
+    // notify
+    $locationName = $this->getLocationName($target0);
+    self::notifyAllPlayers(
+      'placeStone',
+      clienttranslate(
+        '${player_name} placed a ${color} stone on the column ${locationName}.'
+      ),
+      [
+        'player_side' => $side,
+        'player_name' => self::getActivePlayerName(),
+        'color' => $color,
+        'target' => $target0,
+        'locationName' => $locationName,
+        'bonusAction' => $bonusAction,
+      ]
+    );
+
+    // notify for bonus action (it should be later than main action)
+    if ($bonusAction) {
+      $this->notifyBonusAction($side, $target0, $target1, $target2);
+    }
+
+    $this->_updateScore();
+
+    $this->gamestate->nextState('nextPlayer');
   }
 
   //////////////////////////////////////////////////////////////////////////////
@@ -234,18 +1113,22 @@ class Tholos extends Table
         The action method of state X is called everytime the current game state is set to X.
     */
 
-  /*
+  function stNextPlayer()
+  {
+    $playerID = self::activeNextPlayer();
 
-    Example for game state "MyGameState":
-
-    function stMyGameState()
-    {
-        // Do some stuff ...
-
-        // (very often) go to another gamestate
-        $this->gamestate->nextState( 'some_gamestate_transition' );
+    $sql = 'SELECT COUNT(*) FROM mainBoard';
+    $cnt = self::getUniqueValueFromDB($sql);
+    if ($cnt >= 35) {
+      // if all columns are full, go end game state.
+      $this->_updateScore();
+      $this->gamestate->nextState('endGame');
+      return;
     }
-    */
+
+    self::giveExtraTime($playerID);
+    $this->gamestate->nextState('playerTurn');
+  }
 
   //////////////////////////////////////////////////////////////////////////////
   //////////// Zombie

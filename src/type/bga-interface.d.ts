@@ -1,15 +1,13 @@
-import { Card, Score, Center } from "./gamedata";
-import { Player } from "./framework.d";
+import { Card, Score, Center } from './gamedata';
+import { Player } from './framework.d';
+import { StoneType } from './stone.d';
 
 type BgaNotifyName =
-  | "newRound"
-  | "playCard"
-  | "moveCard"
-  | "updateCard"
-  | "mulligan"
-  | "reincarnateCard"
-  | "score"
-  | "endRound";
+  | 'takeStone'
+  | 'placeStone'
+  | 'moveStone'
+  | 'removeStone'
+  | 'stealStone';
 
 interface BgaRequest {
   name: string;
@@ -19,93 +17,58 @@ interface BgaRequest {
 interface BgaNotification {
   name: BgaNotifyName;
   args:
-    | BgaNewRoundNotif
-    | BgaPlayCardNotif
-    | BgaMoveCardNotif
-    | BgaUpdateCardNotif
-    | BgaReincarnateCardNotif
-    | BgaScoreNotif
-    | BgaEndRoundNotif;
+    | BgaTakeStoneNotif
+    | BgaPlaceStoneNotif
+    | BgaMoveStoneNotif
+    | BgaRemoveStoneNotif
+    | BgaStealStoneNotif;
 }
 
-interface BgaNewRoundNotif {
-  player_cards: Card[];
-  // players: {
-  //   { [playerId: number]: Player };
-  // };
-  center: {
-    left: Center;
-    center: Center;
-    right: Center;
-  };
-  day_or_night: "day" | "night";
-  round: string;
-}
-
-interface BgaPlayCardNotif {
-  player_id: string; // num string
+interface BgaTakeStoneNotif {
+  player_side: 'black' | 'white';
   player_name: string;
-  card: Card;
-  cards: string; // number of cards
-  gridID: string;
+  color: StoneType;
+  count: string; // num string
 }
 
-interface BgaMoveCardNotif {
-  player_id: string; // num string
+interface BgaPlaceStoneNotif {
+  player_side: 'black' | 'white';
   player_name: string;
-  fromGridID: string;
-  toGridID: string;
+  color: StoneType;
+  target: string; // num string
+  locationName: string;
+  bonusAction: boolean;
 }
 
-interface BgaUpdateCardNotif {
-  player_id: string; // num string
+interface BgaMoveStoneNotif {
+  player_side: 'black' | 'white';
   player_name: string;
-  card: Card;
-  gridID: string;
+  from: string; // num string
+  from_name: string;
+  to: string;
+  to_name: string; // num string
 }
 
-interface BgaMulliganNotif {
-  card?: Card;
-  discardedCardID?: string;
-}
-
-interface BgaReincarnateCardNotif {
-  player_id: string; // num string
+interface BgaRemoveStoneNotif {
+  player_side: 'black' | 'white';
   player_name: string;
-  card?: Card;
-  col?: string;
-  gridID: string;
+  from: string; // num string
+  from_name: string;
 }
 
-interface BgaScoreNotif {
-  lane: string;
-  w_player_id: string;
-}
-
-interface BgaEndRoundNotif {
-  score: Score;
-  table: {
-    [playerId: string]: Card[];
-  };
-  center: {
-    left: Center;
-    center: Center;
-    right: Center;
-  };
-  day_or_night: "day" | "night";
+interface BgaStealStoneNotif {
+  player_side: 'black' | 'white';
+  player_name: string;
+  color: StoneType;
 }
 
 export {
   BgaRequest,
   BgaConfirm,
   BgaNotification,
-  BgaNewRoundNotif,
-  BgaPlayCardNotif,
-  BgaMoveCardNotif,
-  BgaUpdateCardNotif,
-  BgaDrawCardNotif,
-  BgaMulliganNotif,
-  BgaReincarnateCardNotif,
-  BgaScoreNotif,
-  BgaEndRoundNotif,
+  BgaTakeStoneNotif,
+  BgaPlaceStoneNotif,
+  BgaMoveStoneNotif,
+  BgaRemoveStoneNotif,
+  BgaStealStoneNotif,
 };

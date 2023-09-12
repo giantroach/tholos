@@ -56,18 +56,33 @@ $machinestates = [
     'description' => '',
     'type' => 'manager',
     'action' => 'stGameSetup',
-    'transitions' => ['' => 2],
+    'transitions' => ['playerTurn' => 21],
   ],
 
   // Note: ID=2 => your first state
 
-  2 => [
+  // TODO: impl advanced rule
+  // 1x
+
+  21 => [
     'name' => 'playerTurn',
-    'description' => clienttranslate('${actplayer} must play a card or pass'),
-    'descriptionmyturn' => clienttranslate('${you} must play a card or pass'),
+    'description' => clienttranslate(
+      '${actplayer} must take stones from quarry or place a stone from their workshop.'
+    ),
+    'descriptionmyturn' => clienttranslate(
+      '${you} must take stones from quarry or place a stone from your workshop.'
+    ),
     'type' => 'activeplayer',
-    'possibleactions' => ['moveStone', 'pass'],
-    'transitions' => ['moveStone' => 2, 'pass' => 2],
+    'possibleactions' => ['takeStone', 'placeStone'],
+    'transitions' => ['nextPlayer' => 22],
+  ],
+
+  22 => [
+    'name' => 'nextPlayer',
+    'type' => 'game',
+    'action' => 'stNextPlayer',
+    'updateGameProgression' => true,
+    'transitions' => ['playerTurn' => 21, 'endGame' => 99],
   ],
 
   /*

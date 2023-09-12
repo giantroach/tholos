@@ -3,6 +3,31 @@
  */
 
 import { Player, Gamestate } from './framework.d';
+import { StoneType } from './stone.d';
+import { OrnamentType } from './ornament.d';
+
+interface MainBoardRec {
+  id: string;
+  location: string;
+  color: StoneType;
+}
+
+interface WorkshopRec {
+  id: string;
+  ws: 'black' | 'white';
+  color: StoneType;
+}
+
+interface QuarryRec {
+  color: StoneType;
+  count: string;
+}
+
+interface OrnamentRec {
+  id: string;
+  location: string;
+  type: OrnamentType;
+}
 
 interface Gamedata {
   current_player_id: string;
@@ -17,6 +42,21 @@ interface Gamedata {
   tablespeed: string;
 
   // Add here variables you set up in getAllDatas
+  gameMode: 'standard' | 'advanced';
+  mainBoard: {
+    [idx: string]: MainBoardRec;
+  };
+  // array alike but not an array
+  workshop: {
+    [idx: string]: WorkshopRec;
+  };
+  quarry: {
+    [color: string]: QuarryRec;
+  };
+  ornament: {
+    [idx: string]: OrnamentRec;
+  };
+  playerSide: 'white' | 'black';
 }
 
 export { Score, Gamedata };

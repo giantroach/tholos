@@ -78,6 +78,11 @@ const showHint = (
     hintDef.value = hd;
   }
 
+  if (!hd) {
+    modal.value = false;
+    return;
+  }
+
   hintBgPos.value = `-${hintDef.value.imgLeft}px -${hintDef.value.imgTop}px`;
 
   const elm = evt.srcElement as HTMLElement;
@@ -112,6 +117,16 @@ const showHint = (
     modalTop.value = mcTop > minModalTop ? mcTop : minModalTop;
     modalLeft.value = mcLeft > 0 ? mcLeft : 0;
   });
+};
+
+const mouseover = (
+  type: 'pillar' | 'ornament',
+  evt: MouseEvent,
+  idx: number
+) => {
+  if (navigator.userAgent.search('Mobile') < 0) {
+    showHint(type, evt, idx);
+  }
 };
 
 const touchstart = (
@@ -152,7 +167,7 @@ const hideHint = () => {
           top: def.stonePos[idx].y,
           zIndex: def.stonePos[idx].zIndex || 'auto',
         }"
-        v-on:mouseover="showHint('pillar', $event, idx)"
+        v-on:mouseover="mouseover('pillar', $event, idx)"
         v-on:touchstart="touchstart('pillar', $event, idx)"
         v-on:mouseleave="hideHint"
       >
@@ -169,7 +184,8 @@ const hideHint = () => {
           top: def.ornamentPos?.[idx].y || 0,
           zIndex: def.ornamentPos?.[idx].zIndex || 'auto',
         }"
-        v-on:mouseover="showHint('ornament', $event, idx)"
+        v-on:mouseover="mouseover('ornament', $event, idx)"
+        v-on:touchstart="touchstart('ornament', $event, idx)"
         v-on:mouseleave="hideHint"
       >
         <Ornament

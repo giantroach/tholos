@@ -844,7 +844,7 @@ class State {
     const v1 = JSON.stringify(obj[key]);
     const v2 = JSON.stringify(val);
     if (v1 !== v2) {
-      console.log(key, v1, v2);
+      // console.log(key, v1, v2);
       obj[key] = val;
     }
   }

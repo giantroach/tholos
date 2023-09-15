@@ -56,7 +56,7 @@ const hintBgPos = ref(`0px 0px`);
 
 const showHint = (
   type: 'pillar' | 'ornament',
-  evt: MouseEvent,
+  evt: MouseEvent | TouchEvent,
   idx: number
 ) => {
   hintIdx.value = idx;
@@ -105,11 +105,26 @@ const showHint = (
       mcTop = bdRect.height - mcRect.height;
     }
     if (mcLeft + mcRect.width > bdRect.width) {
-      mcLeft = bdRect.width - mcRect.width;
+      // rather flip the side
+      mcLeft = rect.left + window.scrollX - 20 - mcRect.width;
+      // mcLeft = bdRect.width - mcRect.width;
     }
     modalTop.value = mcTop > minModalTop ? mcTop : minModalTop;
     modalLeft.value = mcLeft > 0 ? mcLeft : 0;
   });
+};
+
+const touchstart = (
+  type: 'pillar' | 'ornament',
+  evt: TouchEvent,
+  idx: number
+) => {
+  if (navigator.userAgent.search('Mobile') > 0) {
+    // avoid blinking
+    modalTop.value = -10000;
+    modalLeft.value = -10000;
+    showHint(type, evt, idx);
+  }
 };
 
 const hideHint = () => {
@@ -138,6 +153,7 @@ const hideHint = () => {
           zIndex: def.stonePos[idx].zIndex || 'auto',
         }"
         v-on:mouseover="showHint('pillar', $event, idx)"
+        v-on:touchstart="touchstart('pillar', $event, idx)"
         v-on:mouseleave="hideHint"
       >
         <Pillar :data="pillar" :active="data.active" />
@@ -230,6 +246,7 @@ const hideHint = () => {
   margin-left: 10px;
   display: flex;
   align-items: center;
+  font-size: small;
 }
 @keyframes fadein {
   0% {

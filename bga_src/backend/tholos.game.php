@@ -124,7 +124,8 @@ class Tholos extends Table
     $numOfOrn = intval($this->getGameStateValue('num_ornaments'));
 
     if ($numOfOrn > 0) {
-      $ornBuckets = ['o1', 'o2', 'o3', 'o4', 'o5', 'o6', 'o7'];
+      // $ornBuckets = ['o1', 'o2', 'o3', 'o4', 'o5', 'o6', 'o7'];
+      $ornBuckets = ['o1', 'o2', 'o3', 'o4'];
       $randOrnKeys = array_rand($ornBuckets, $numOfOrn);
       $locBuckets = [0, 1, 2, 3, 4, 5, 6];
       $randLocKeys = array_rand($locBuckets, $numOfOrn);
@@ -592,13 +593,33 @@ class Tholos extends Table
         "SELECT COUNT(*) FROM mainBoard WHERE color='black' AND location=" . $i;
       $bs = intval(self::getUniqueValueFromDB($sql));
 
-      if ($ws > $bs) {
-        $wScore += $this->_getScore($ws, $bs, $gs);
-        $wTieBreaker += 1;
-      }
-      if ($ws < $bs) {
-        $bScore += $this->_getScore($bs, $ws, $gs);
-        $bTieBreaker += 1;
+      $sql = 'SELECT type FROM ornaments WHERE location=' . $i;
+      $orn = self::getUniqueValueFromDB($sql);
+
+      if ($orn === 'o2') {
+        if ($ws > $bs) {
+          $bScore += $this->_getScore($bs, $ws, $gs, $orn);
+          $bTieBreaker += 1;
+        }
+        if ($ws < $bs) {
+          $wScore += $this->_getScore($ws, $bs, $gs, $orn);
+          $wTieBreaker += 1;
+        }
+      } else {
+        if ($ws > $bs) {
+          $wScore += $this->_getScore($ws, $bs, $gs, $orn);
+          if ($orn === 'o1') {
+            $wScore += 3;
+          }
+          $wTieBreaker += 1;
+        }
+        if ($ws < $bs) {
+          $bScore += $this->_getScore($bs, $ws, $gs, $orn);
+          if ($orn === 'o1') {
+            $bScore += 3;
+          }
+          $bTieBreaker += 1;
+        }
       }
     }
 
@@ -633,8 +654,14 @@ class Tholos extends Table
     ]);
   }
 
-  function _getScore($major, $minor, $grays)
+  function _getScore($major, $minor, $grays, $orn)
   {
+    if ($orn === 'o3') {
+      return $major * 1 + $minor * 3 + $grays * 2;
+    }
+    if ($orn === 'o4') {
+      return $major * 1 + $minor * 3 - $grays * 3;
+    }
     return $major * 1 + $minor * 3 - $grays * 2;
   }
 

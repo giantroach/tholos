@@ -57,7 +57,7 @@ $game_options = [
     'values' => [
       // A simple value for this option:
       0 => ['name' => totranslate('No ornament (default)')],
-      // 2 => ['name' => totranslate('2 ornaments (Advanced Mode)')],
+      2 => ['name' => totranslate('2 ornaments (Advanced Mode)')],
     ],
     'default' => 0,
   ],

@@ -125,7 +125,7 @@ class Tholos extends Table
 
     if ($numOfOrn > 0) {
       // $ornBuckets = ['o1', 'o2', 'o3', 'o4', 'o5', 'o6', 'o7'];
-      $ornBuckets = ['o1', 'o2', 'o3', 'o4'];
+      $ornBuckets = ['o1', 'o2', 'o3', 'o4', 'o7'];
       $randOrnKeys = array_rand($ornBuckets, $numOfOrn);
       $locBuckets = [0, 1, 2, 3, 4, 5, 6];
       $randLocKeys = array_rand($locBuckets, $numOfOrn);
@@ -842,7 +842,12 @@ class Tholos extends Table
     $apid = self::getActivePlayerId();
     $sql = "SELECT COUNT(*) FROM mainBoard WHERE location='" . $target . "'";
     $cnt = intval(self::getUniqueValueFromDB($sql));
-    if ($cnt >= 5) {
+
+    $sql =
+      "SELECT COUNT(*) FROM ornaments WHERE type='o7' AND location=" . $target;
+    $hasO7 = self::getUniqueValueFromDB($sql);
+
+    if ($cnt >= ($hasO7 > 0 ? 7 : 5)) {
       self::notifyPlayer(
         $apid,
         'logError',
@@ -1191,7 +1196,11 @@ class Tholos extends Table
 
     $sql = 'SELECT COUNT(*) FROM mainBoard';
     $cnt = self::getUniqueValueFromDB($sql);
-    if ($cnt >= 35) {
+
+    $sql = "SELECT COUNT(*) FROM ornaments WHERE type='o7'";
+    $hasO7 = self::getUniqueValueFromDB($sql);
+
+    if ($cnt >= ($hasO7 > 0 ? 37 : 35)) {
       // if all columns are full, go end game state.
       $this->_updateScore();
       $this->gamestate->nextState('endGame');

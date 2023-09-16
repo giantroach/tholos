@@ -37,7 +37,7 @@ class Tholos extends Table
       //    "my_first_game_variant" => 100,
       //    "my_second_game_variant" => 101,
       //      ...
-      'ornaments' => 100,
+      'num_ornaments' => 100,
     ]);
   }
 
@@ -121,19 +121,22 @@ class Tholos extends Table
     // NOTE: Nothing to do with mainBoard
 
     // ornaments (if needed)
-    $numOfOrn = intval($this->getGameStateValue('ornaments'));
+    $numOfOrn = intval($this->getGameStateValue('num_ornaments'));
+
     if ($numOfOrn > 0) {
       $ornBuckets = ['o1', 'o2', 'o3', 'o4', 'o5', 'o6', 'o7'];
       $randOrnKeys = array_rand($ornBuckets, $numOfOrn);
       $locBuckets = [0, 1, 2, 3, 4, 5, 6];
       $randLocKeys = array_rand($locBuckets, $numOfOrn);
-      for ($i = 0; $i <= $numOfOrn; $i++) {
+      for ($i = 0; $i < $numOfOrn; $i++) {
         $sql =
-          "INSERT INTO ornaments (location, type) VALUES ('" .
+          'INSERT INTO ornaments (location, type) VALUES (' .
           $randLocKeys[$i] .
-          "', " .
-          $randOrnKeys[$i] .
-          ')';
+          ", '" .
+          $ornBuckets[$randOrnKeys[$i]] .
+          "')";
+        // self::error($sql);
+        self::DbQuery($sql);
       }
     }
 
@@ -178,6 +181,9 @@ class Tholos extends Table
 
     $sql = 'SELECT * FROM ornaments';
     $result['ornament'] = self::getCollectionFromDb($sql);
+
+    $numOfOrn = intval($this->getGameStateValue('num_ornaments'));
+    $result['gameMode'] = $numOfOrn > 0 ? 'advanced' : 'standard';
 
     return $result;
   }
@@ -985,7 +991,7 @@ class Tholos extends Table
 
   function isColumnWithOrnament($idx, $oType)
   {
-    $numOfOrn = intval($this->getGameStateValue('ornaments'));
+    $numOfOrn = intval($this->getGameStateValue('num_ornaments'));
     if ($numOfOrn === 0) {
       return false;
     }

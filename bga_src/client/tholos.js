@@ -149,9 +149,9 @@ define([
             _(
               'Location δ: The player who places a stone of their color in this location may move a stone (of any color) from the quarry to their workshop; the player must have room for it in their workshop.'
             ),
-          'Location π: The player who places a stone of their color in this location may move a stone (of any color) from their rival’s workshop to their own workshop; the player must have room for it in their workshop.':
+          'Location π: The player who places a stone of their color in this location may move a stone (of any color) from their rival\'s workshop to their own workshop; the player must have room for it in their workshop.':
             _(
-              'Location π: The player who places a stone of their color in this location may move a stone (of any color) from their rival’s workshop to their own workshop; the player must have room for it in their workshop.'
+              'Location π: The player who places a stone of their color in this location may move a stone (of any color) from their rival\'s workshop to their own workshop; the player must have room for it in their workshop.'
             ),
           'Location Σ: The player who places a stone of their color in this location may place a stone (of any color) from their workshop in another valid temple location.':
             _(
@@ -182,13 +182,13 @@ define([
             _(
               '4. In this column, the gray stones are worth -3 VP instead of -2 VP in the score count.'
             ),
-          '5. This location’s bonus temple action can also be activated with gray stones.':
+          '5. This location\'s bonus temple action can also be activated with gray stones.':
             _(
-              '5. This location’s bonus temple action can also be activated with gray stones.'
+              '5. This location\'s bonus temple action can also be activated with gray stones.'
             ),
-          '6. Choose between this location’s bonus temple action and the following: move a gray stone from the QUARRY to the TEMPLE (to a different location).':
+          '6. Choose between this location\'s bonus temple action and the following: move a gray stone from the QUARRY to the TEMPLE (to a different location).':
             _(
-              '6. Choose between this location’s bonus temple action and the following: move a gray stone from the QUARRY to the TEMPLE (to a different location).'
+              '6. Choose between this location\'s bonus temple action and the following: move a gray stone from the QUARRY to the TEMPLE (to a different location).'
             ),
           '7. This column holds up to 7 stones instead of the usual 5.': _(
             '7. This column holds up to 7 stones instead of the usual 5.'

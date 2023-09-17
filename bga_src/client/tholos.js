@@ -373,6 +373,7 @@ define([
         'moveStone',
         'removeStone',
         'stealStone',
+        'placeFromQuarry',
       ];
       notifications.forEach((n) => {
         dojo.subscribe(n, this, (data) => {

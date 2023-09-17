@@ -7,7 +7,8 @@ type BgaNotifyName =
   | 'placeStone'
   | 'moveStone'
   | 'removeStone'
-  | 'stealStone';
+  | 'stealStone'
+  | 'placeFromQuarry';
 
 interface BgaRequest {
   name: string;
@@ -21,7 +22,8 @@ interface BgaNotification {
     | BgaPlaceStoneNotif
     | BgaMoveStoneNotif
     | BgaRemoveStoneNotif
-    | BgaStealStoneNotif;
+    | BgaStealStoneNotif
+    | BgaPlaceFromQuarryNotif;
 }
 
 interface BgaTakeStoneNotif {
@@ -62,6 +64,14 @@ interface BgaStealStoneNotif {
   color: StoneType;
 }
 
+interface BgaPlaceFromQuarryNotif {
+  player_name: string;
+  target: string; // num string
+  locationName: string;
+  // though it is always gray
+  color: StoneType;
+}
+
 export {
   BgaRequest,
   BgaConfirm,
@@ -71,4 +81,5 @@ export {
   BgaMoveStoneNotif,
   BgaRemoveStoneNotif,
   BgaStealStoneNotif,
+  BgaPlaceFromQuarryNotif,
 };

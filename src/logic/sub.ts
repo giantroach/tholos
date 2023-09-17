@@ -8,6 +8,7 @@ import {
   BgaMoveStoneNotif,
   BgaRemoveStoneNotif,
   BgaStealStoneNotif,
+  BgaPlaceFromQuarryNotif,
 } from '../type/bga-interface.d';
 
 //
@@ -147,6 +148,31 @@ export class Sub {
           throw 'unexpected state: no place to place stone in your workshop.';
         }
         wsTo.pillars[idx2].stones.push(args.color);
+
+        break;
+      }
+
+      case 'placeFromQuarry': {
+        const args = notif.args as BgaPlaceFromQuarryNotif;
+
+        // update mainBoard
+        const mb = this.mainBoardData.value;
+        const targetIdx = Number(args.target);
+        mb.pillars[targetIdx].stones.push(args.color);
+
+        // update quarry
+        const q = this.quarryData.value;
+        switch (args.color) {
+          case 'white':
+            q.stones[0] -= 1;
+            break;
+          case 'gray':
+            q.stones[1] -= 1;
+            break;
+          case 'black':
+            q.stones[2] -= 1;
+            break;
+        }
 
         break;
       }

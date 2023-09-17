@@ -709,7 +709,15 @@ class Tholos extends Table
     }
 
     // check color if it is eligible to take an action
-    if ($bonusAction && $color !== $side) {
+    $sql =
+      "SELECT COUNT(*) FROM ornaments WHERE type='o5' AND location=" . $target0;
+    $hasO5 = self::getUniqueValueFromDB($sql);
+
+    if (
+      $bonusAction &&
+      $color !== $side &&
+      !($hasO5 > 0 && $color === 'gray')
+    ) {
       self::notifyPlayer(
         $apid,
         'logError',

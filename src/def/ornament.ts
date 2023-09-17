@@ -85,7 +85,7 @@ const ornamentDefs: { [ornamentType in OrnamentType]: OrnamentDef } = {
     imgLeft: 0,
     hint: {
       image: ornamentSImgUrl,
-      text: '5. This location’s bonus temple action can also be activated with gray stones.',
+      text: '5. This location\'s bonus temple action can also be activated with gray stones.',
       width: '240px',
       height: '220px',
       imgWidth: '67px',
@@ -102,7 +102,7 @@ const ornamentDefs: { [ornamentType in OrnamentType]: OrnamentDef } = {
     imgLeft: 95,
     hint: {
       image: ornamentSImgUrl,
-      text: '6. Choose between this location’s bonus temple action and the following: move a gray stone from the QUARRY to the TEMPLE (to a different location).',
+      text: '6. Choose between this location\'s bonus temple action and the following: move a gray stone from the QUARRY to the TEMPLE (to a different location).',
       width: '240px',
       height: '220px',
       imgWidth: '67px',

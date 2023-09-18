@@ -101,6 +101,14 @@ const getSelectableLayer = (idx: number): number => {
       />
     </li>
 
+    <li
+      v-if="!data.stones.length && !data.ghosts.length"
+      class=""
+    >
+      <Stone
+        type="none" />
+    </li>
+
     <!-- <li v-if="data.selectable[0] && !data.stones[0]">
          <Stone
          type="none"

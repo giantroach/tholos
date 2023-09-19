@@ -39,6 +39,14 @@ const selectStone = () => {
   }
   emit('selectStone');
 };
+
+const touchend = (evt: Event) => {
+  if (navigator.userAgent.search('Mobile') > 0) {
+    // prevent opening context menu
+    evt.preventDefault();
+    selectStone();
+  }
+};
 </script>
 
 <template>
@@ -66,6 +74,7 @@ const selectStone = () => {
         backgroundPosition: bgPos,
       }"
       @click="selectStone()"
+      v-on:touchend="touchend($event)"
     ></div>
     <div
       class="none"
@@ -75,6 +84,7 @@ const selectStone = () => {
         height: height,
       }"
       @click="selectStone()"
+      v-on:touchend="touchend($event)"
     ></div>
   </div>
 </template>
@@ -92,7 +102,7 @@ const selectStone = () => {
 }
 .selectable2 > div {
   filter: drop-shadow(0 0 3px #a1eb00) drop-shadow(0 0 3px #a1eb00)
-  drop-shadow(0 0 3px #a1eb00);
+    drop-shadow(0 0 3px #a1eb00);
   cursor: pointer;
 }
 .selected0 > div {
@@ -107,7 +117,7 @@ const selectStone = () => {
 }
 .selected2 > div {
   filter: drop-shadow(0 0 3px #ff6f00) drop-shadow(0 0 3px #ff6f00)
-  drop-shadow(0 0 3px #ff6f00);
+    drop-shadow(0 0 3px #ff6f00);
   cursor: pointer;
 }
 

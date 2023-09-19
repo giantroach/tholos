@@ -143,7 +143,22 @@ const touchstart = (
 };
 
 const hideHint = () => {
+  modalTop.value = -10000;
+  modalLeft.value = -10000;
   modal.value = false;
+};
+
+const touchend = (evt: Event, prevDef = false) => {
+  if (navigator.userAgent.search('Mobile') > 0) {
+    if (modal.value) {
+      hideHint();
+    }
+  }
+  if (prevDef) {
+    // prevent opening context menu
+    // NOTE: This also cancels other events like showHint()
+    evt.preventDefault();
+  }
 };
 </script>
 
@@ -170,6 +185,7 @@ const hideHint = () => {
         v-on:mouseover="mouseover('pillar', $event, idx)"
         v-on:touchstart="touchstart('pillar', $event, idx)"
         v-on:mouseleave="hideHint"
+        v-on:touchend="touchend($event)"
       >
         <Pillar :data="pillar" :active="data.active" />
       </li>
@@ -187,6 +203,7 @@ const hideHint = () => {
         v-on:mouseover="mouseover('ornament', $event, idx)"
         v-on:touchstart="touchstart('ornament', $event, idx)"
         v-on:mouseleave="hideHint"
+        v-on:touchend="touchend($event, true)"
       >
         <Ornament
           v-if="ornament"

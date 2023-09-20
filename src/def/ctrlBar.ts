@@ -11,7 +11,7 @@ const ctrlBarDefs: { [barType in BarType]: CtrlBarDef } = {
   },
   turnInit: {
     message:
-      'Choose and take stones from query or choose and place a stone from your workshop.',
+      'Choose and take stones from the quarry or choose and place a stone from your workshop.',
     buttonTypes: [],
   },
   choosePillar: {
@@ -79,7 +79,7 @@ const ctrlBarDefs: { [barType in BarType]: CtrlBarDef } = {
     buttonTypes: ['cancel'],
   },
   submitActionConfirm: {
-    message: "Press 'Submit' to confirm",
+    message: "Press 'Submit' to confirm.",
     buttonTypes: ['submit', 'cancel'],
   },
 };

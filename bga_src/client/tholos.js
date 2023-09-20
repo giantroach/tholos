@@ -87,9 +87,9 @@ define([
           'Tholos..': _('Tholos'),
 
           // src/def/ctrlBar.ts
-          'Choose and take stones from query or choose and place a stone from your workshop.':
+          'Choose and take stones from the quarry or choose and place a stone from your workshop.':
             _(
-              'Choose and take stones from query or choose and place a stone from your workshop.'
+              'Choose and take stones from the quarry or choose and place a stone from your workshop.'
             ),
           'Choose a column to place your stone.': _(
             'Choose a column to place your stone.'
@@ -123,7 +123,7 @@ define([
           'Choose a column to move to.': _('Choose a column to move to.'),
           'Choose a column to move to.': _('Choose a column to move to.'),
           'Choose a column to move to.': _('Choose a column to move to.'),
-          "Press 'Submit' to confirm": _("Press 'Submit' to confirm"),
+          "Press 'Submit' to confirm.": _("Press 'Submit' to confirm."),
 
           // src/def/ctrlButton.ts
           Cancel: _('Cancel'),

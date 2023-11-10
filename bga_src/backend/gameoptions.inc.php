@@ -24,9 +24,8 @@
  *
  */
 
-$game_options = array(
-
-    /*
+$game_options = [
+  /*
 
     // note: game variant ID should start at 100 (ie: 100, 101, 102, ...). The maximum is 199.
     100 => array(
@@ -53,4 +52,13 @@ $game_options = array(
 
     */
 
-);
+  100 => [
+    'name' => totranslate('Number of Ornaments'),
+    'values' => [
+      // A simple value for this option:
+      0 => ['name' => totranslate('No ornament (default)')],
+      2 => ['name' => totranslate('2 ornaments (Advanced Mode)')],
+    ],
+    'default' => 0,
+  ],
+];

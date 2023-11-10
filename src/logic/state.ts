@@ -8,6 +8,7 @@ import { CtrlBarData } from '../type/ctrlBar.d';
 import { PlayerData } from '../type/player.d';
 import { StoneType } from '../type/stone.d';
 import { BarType } from '../type/ctrlBar.d';
+import { OrnamentType } from '../type/ornament.d';
 
 type CurrentState =
   | 'init'
@@ -16,6 +17,7 @@ type CurrentState =
   | 'playerTurn:beforeQuarryCntSelect'
   | 'playerTurn:beforePillarSelect'
   | 'playerTurn:takeActionConfirmation'
+  | 'playerTurn:takeOrnamentAction'
   | 'playerTurn:beforeTargetSelect1'
   | 'playerTurn:beforeTargetSelect2'
   | 'playerTurn:beforeTargetSelect3'
@@ -33,6 +35,7 @@ type SubState =
   | 'beforeQuarryCntSelect'
   | 'beforePillarSelect'
   | 'takeActionConfirmation'
+  | 'takeOrnamentAction'
   | 'beforeTargetSelect1'
   | 'beforeTargetSelect2'
   | 'beforeTargetSelect3'
@@ -80,6 +83,7 @@ class State {
   public throttledRefresh: any;
 
   public useAction: boolean = false;
+  public useOrnamentAction: boolean = false;
 
   public refresh() {
     switch (this.current) {
@@ -141,8 +145,22 @@ class State {
           this.setSubState('beforeSubmitPlace');
           break;
         }
-        this.assign(this.ctrlBarData.value, 'type', 'takeActionConfirm');
+        if (this.isColumnWithOrnament(this.getMainBoardSelectedIdx(), 'o6')) {
+          this.assign(
+            this.ctrlBarData.value,
+            'type',
+            'takeOrnamentActionConfirm'
+          );
+        } else {
+          this.assign(this.ctrlBarData.value, 'type', 'takeActionConfirm');
+        }
+        this.resetSelectable();
         this.assign(this.getOwnWs(), 'active', false);
+        break;
+
+      case 'playerTurn:takeOrnamentAction':
+        this.useOrnamentAction = true;
+        this.setSubState('beforeTargetSelect1');
         break;
 
       case 'playerTurn:beforeTargetSelect1': {
@@ -153,6 +171,7 @@ class State {
         if (!this.setTarget1Selectable()) {
           this.assign(this.ctrlBarData.value, 'type', 'noValidTarget');
           this.useAction = false;
+          this.useOrnamentAction = false;
           break;
         }
         this.useAction = true;
@@ -162,6 +181,7 @@ class State {
       case 'playerTurn:beforeTargetSelect2':
         if (!this.setTarget2Selectable()) {
           this.useAction = false;
+          this.useOrnamentAction = false;
           this.assign(this.ctrlBarData.value, 'type', 'noValidTarget');
           break;
         }
@@ -189,6 +209,7 @@ class State {
         this.request('placeStone', {
           color: this.getWsSelectedStone(),
           bonusAction: this.useAction,
+          ornamentAction: this.useOrnamentAction,
           target0: this.getMainBoardSelectedIdx(),
           target1: this.getTarget1(),
           target2: this.getTarget2(),
@@ -264,6 +285,7 @@ class State {
     });
 
     this.useAction = false;
+    this.useOrnamentAction = false;
   }
 
   public everythingNotSelectable() {
@@ -314,12 +336,26 @@ class State {
     const s = this.getWsSelectedStone();
     const playerSide = this.playerData.value.playerSide;
     if (s === 'gray') {
+      if (this.isColumnWithOrnament(this.getMainBoardSelectedIdx(), 'o5')) {
+        return true;
+      }
       return false;
     }
     if (playerSide === 'white') {
       return s === 'white';
     }
     return s === 'black';
+  }
+
+  public isColumnWithOrnament(idx: number, oType: OrnamentType): boolean {
+    const mb = this.mainBoardData.value;
+    if (!mb.ornaments || !mb.ornaments[idx]) {
+      return false;
+    }
+    if (mb.ornaments[idx] === oType) {
+      return true;
+    }
+    return false;
   }
 
   public setQuarryCarryMax() {
@@ -351,16 +387,25 @@ class State {
     // this.assign(this.quarryData.value, 'carry', max);
   }
 
-  // only layer 0
-  public setPillarTopSelectable() {
+  public setPillarTopSelectable(
+    layer = 0,
+    stoneType: StoneType | null = null,
+    exceptIdx: number | null = null
+  ) {
     const mb = this.mainBoardData.value;
     this.assign(mb, 'active', true);
-    mb.pillars.forEach((p) => {
-      const s: boolean[][] = [new Array(p.stones.length).fill(false)];
+    mb.pillars.forEach((p, idx) => {
+      if (idx === exceptIdx) {
+        return;
+      }
+      const filled = new Array(p.stones.length).fill(false);
+      const s: boolean[][] = [];
+      s[layer] = filled;
       const g = [];
-      if (s[0].length < 5) {
-        const stone = this.getWsSelectedStone();
-        s[0][s[0].length] = true;
+      const max = this.isColumnWithOrnament(idx, 'o7') ? 7 : 5;
+      if (s[layer].length < max) {
+        const stone = stoneType || this.getWsSelectedStone();
+        s[layer][s[layer].length] = true;
         g[0] = stone;
       }
       this.assign(p, 'ghosts', g);
@@ -454,7 +499,22 @@ class State {
     let targetStone: StoneType = 'none';
     let nextBar: BarType = '';
 
-    this.resetSelectable()
+    // FIXME:
+    if (this.useOrnamentAction) {
+      const idx = this.getMainBoardSelectedIdx(1);
+      if (idx !== -1) {
+        this.setSubState('beforeTargetSelect2');
+        return true;
+      }
+      if (this.quarryData.value.stones[1] <= 0) {
+        return false;
+      }
+      this.setPillarTopSelectable(1, 'gray', srcIdx);
+      this.assign(this.ctrlBarData.value, 'type', 'chooseTarget1o6');
+      return true;
+    }
+
+    this.resetSelectable();
 
     switch (true) {
       case srcIdx === 0 || srcIdx === 1 || srcIdx === 6: {
@@ -571,8 +631,9 @@ class State {
         // check if there is another place to place
         const mb = this.mainBoardData.value;
         if (
-          !mb.pillars.some((p) => {
-            return p.stones.length < 5;
+          !mb.pillars.some((p, idx) => {
+            const max = this.isColumnWithOrnament(idx, 'o7') ? 7 : 5;
+            return p.stones.length < max;
           })
         ) {
           return false;
@@ -601,7 +662,12 @@ class State {
     let targetStone: StoneType = 'none';
     let nextBar: BarType = '';
 
-    this.resetSelectable()
+    this.resetSelectable();
+
+    if (this.useOrnamentAction) {
+      this.setSubState('beforeSubmitPlace');
+      return true;
+    }
 
     switch (true) {
       case srcIdx0 === 0 || srcIdx0 === 1 || srcIdx0 === 6: {
@@ -631,7 +697,8 @@ class State {
             this.assign(p, 'selectable', s);
             return;
           }
-          if (p.stones.length < 5) {
+          const max = this.isColumnWithOrnament(idx, 'o7') ? 7 : 5;
+          if (p.stones.length < max) {
             const s: boolean[][] = [[], [], []];
             const g = [targetStone];
             s[2][p.stones.length] = true;
@@ -673,7 +740,8 @@ class State {
           if (idx === srcIdx0) {
             return;
           }
-          if (p.stones.length < 5) {
+          const max = this.isColumnWithOrnament(idx, 'o7') ? 7 : 5;
+          if (p.stones.length < max) {
             const s: boolean[][] = [[], [], []];
             const g = [srcStone];
             s[2][p.stones.length] = true;
@@ -697,6 +765,14 @@ class State {
       return null;
     }
 
+    if (this.useOrnamentAction) {
+      const idx = this.getMainBoardSelectedIdx(1);
+      if (idx === -1) {
+        return null;
+      }
+      return idx;
+    }
+
     switch (true) {
       case srcIdx === 0 || srcIdx === 2 || srcIdx === 1 || srcIdx === 6: {
         // index of main board
@@ -705,7 +781,7 @@ class State {
       case srcIdx === 3: {
         // index of quarry
         const idx = this.quarryData.value.selected.findIndex((s) => s);
-        switch(idx) {
+        switch (idx) {
           case 0:
             return 'white';
           case 1:
@@ -733,6 +809,10 @@ class State {
     const srcIdx = this.getMainBoardSelectedIdx();
 
     if (!this.useAction) {
+      return null;
+    }
+
+    if (this.useOrnamentAction) {
       return null;
     }
 
@@ -764,6 +844,7 @@ class State {
     const v1 = JSON.stringify(obj[key]);
     const v2 = JSON.stringify(val);
     if (v1 !== v2) {
+      // console.log(key, v1, v2);
       obj[key] = val;
     }
   }

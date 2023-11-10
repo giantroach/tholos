@@ -56,7 +56,7 @@ const hintBgPos = ref(`0px 0px`);
 
 const showHint = (
   type: 'pillar' | 'ornament',
-  evt: MouseEvent,
+  evt: MouseEvent | TouchEvent,
   idx: number
 ) => {
   hintIdx.value = idx;
@@ -76,6 +76,11 @@ const showHint = (
       return;
     }
     hintDef.value = hd;
+  }
+
+  if (!hd) {
+    modal.value = false;
+    return;
   }
 
   hintBgPos.value = `-${hintDef.value.imgLeft}px -${hintDef.value.imgTop}px`;
@@ -105,15 +110,55 @@ const showHint = (
       mcTop = bdRect.height - mcRect.height;
     }
     if (mcLeft + mcRect.width > bdRect.width) {
-      mcLeft = bdRect.width - mcRect.width;
+      // rather flip the side
+      mcLeft = rect.left + window.scrollX - 20 - mcRect.width;
+      // mcLeft = bdRect.width - mcRect.width;
     }
     modalTop.value = mcTop > minModalTop ? mcTop : minModalTop;
     modalLeft.value = mcLeft > 0 ? mcLeft : 0;
   });
 };
 
+const mouseover = (
+  type: 'pillar' | 'ornament',
+  evt: MouseEvent,
+  idx: number
+) => {
+  if (navigator.userAgent.search('Mobile') < 0) {
+    showHint(type, evt, idx);
+  }
+};
+
+const touchstart = (
+  type: 'pillar' | 'ornament',
+  evt: TouchEvent,
+  idx: number
+) => {
+  if (navigator.userAgent.search('Mobile') > 0) {
+    // avoid blinking
+    modalTop.value = -10000;
+    modalLeft.value = -10000;
+    showHint(type, evt, idx);
+  }
+};
+
 const hideHint = () => {
+  modalTop.value = -10000;
+  modalLeft.value = -10000;
   modal.value = false;
+};
+
+const touchend = (evt: Event, prevDef = false) => {
+  if (navigator.userAgent.search('Mobile') > 0) {
+    if (modal.value) {
+      hideHint();
+    }
+  }
+  if (prevDef) {
+    // prevent opening context menu
+    // NOTE: This also cancels other events like showHint()
+    evt.preventDefault();
+  }
 };
 </script>
 
@@ -137,8 +182,10 @@ const hideHint = () => {
           top: def.stonePos[idx].y,
           zIndex: def.stonePos[idx].zIndex || 'auto',
         }"
-        v-on:mouseover="showHint('pillar', $event, idx)"
+        v-on:mouseover="mouseover('pillar', $event, idx)"
+        v-on:touchstart="touchstart('pillar', $event, idx)"
         v-on:mouseleave="hideHint"
+        v-on:touchend="touchend($event)"
       >
         <Pillar :data="pillar" :active="data.active" />
       </li>
@@ -153,8 +200,10 @@ const hideHint = () => {
           top: def.ornamentPos?.[idx].y || 0,
           zIndex: def.ornamentPos?.[idx].zIndex || 'auto',
         }"
-        v-on:mouseover="showHint('ornament', $event, idx)"
+        v-on:mouseover="mouseover('ornament', $event, idx)"
+        v-on:touchstart="touchstart('ornament', $event, idx)"
         v-on:mouseleave="hideHint"
+        v-on:touchend="touchend($event, true)"
       >
         <Ornament
           v-if="ornament"
@@ -230,6 +279,7 @@ const hideHint = () => {
   margin-left: 10px;
   display: flex;
   align-items: center;
+  font-size: small;
 }
 @keyframes fadein {
   0% {

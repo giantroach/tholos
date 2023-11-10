@@ -37,6 +37,7 @@ class Tholos extends Table
       //    "my_first_game_variant" => 100,
       //    "my_second_game_variant" => 101,
       //      ...
+      'num_ornaments' => 100,
     ]);
   }
 
@@ -119,6 +120,26 @@ class Tholos extends Table
 
     // NOTE: Nothing to do with mainBoard
 
+    // ornaments (if needed)
+    $numOfOrn = intval($this->getGameStateValue('num_ornaments'));
+
+    if ($numOfOrn > 0) {
+      $ornBuckets = ['o1', 'o2', 'o3', 'o4', 'o5', 'o6', 'o7'];
+      $randOrnKeys = array_rand($ornBuckets, $numOfOrn);
+      $locBuckets = [0, 1, 2, 3, 4, 5, 6];
+      $randLocKeys = array_rand($locBuckets, $numOfOrn);
+      for ($i = 0; $i < $numOfOrn; $i++) {
+        $sql =
+          'INSERT INTO ornaments (location, type) VALUES (' .
+          $randLocKeys[$i] .
+          ", '" .
+          $ornBuckets[$randOrnKeys[$i]] .
+          "')";
+        // self::error($sql);
+        self::DbQuery($sql);
+      }
+    }
+
     // Activate first player (which is in general a good idea :) )
     $this->activeNextPlayer();
 
@@ -157,6 +178,12 @@ class Tholos extends Table
 
     $result['playerSide'] = $this->getPlayerSide($current_player_id);
     $result['playerID'] = intval($current_player_id);
+
+    $sql = 'SELECT * FROM ornaments';
+    $result['ornament'] = self::getCollectionFromDb($sql);
+
+    $numOfOrn = intval($this->getGameStateValue('num_ornaments'));
+    $result['gameMode'] = $numOfOrn > 0 ? 'advanced' : 'standard';
 
     return $result;
   }
@@ -250,7 +277,6 @@ class Tholos extends Table
   function applyBonusAction($target0, $target1, $target2)
   {
     $t0 = intval($target0);
-    self::dump('$t0', $t0);
     switch ($t0) {
       case 0:
         // move gray stone from $t1 to $t2
@@ -294,10 +320,27 @@ class Tholos extends Table
     }
   }
 
+  function applyOrnamentAction($target1)
+  {
+    $t1 = intval($target1);
+    // update quarry
+    $sql = "SELECT count FROM quarry WHERE color='gray'";
+    $remains = intval(self::getUniqueValueFromDB($sql)) - 1;
+    $sql =
+      'UPDATE quarry SET count=' . $remains . " WHERE color='gray'";
+    self::DbQuery($sql);
+
+    // main board
+    $sql =
+      "INSERT INTO mainBoard(location, color) VALUES('" .
+      $t1 .
+      "', 'gray')";
+    self::DbQuery($sql);
+  }
+
   function notifyBonusAction($side, $target0, $target1, $target2)
   {
     $t0 = intval($target0);
-    self::dump('$t0', $t0);
     switch ($t0) {
       case 0:
         $t1 = intval($target1);
@@ -425,6 +468,23 @@ class Tholos extends Table
         );
         break;
     }
+  }
+
+  function notifyOrnamentAction($target1)
+  {
+    $t1 = intval($target1);
+    self::notifyAllPlayers(
+      'placeFromQuarry',
+      clienttranslate(
+        '[Ornament Bonus Action] ${player_name} placed a ${color} stone on the column ${locationName} from the Quarry.'
+      ),
+      [
+        'player_name' => self::getActivePlayerName(),
+        'color' => 'gray',
+        'target' => $t1,
+        'locationName' => $this->getLocationName($t1),
+      ]
+    );
   }
 
   function _placeStone($color, $target)
@@ -565,13 +625,33 @@ class Tholos extends Table
         "SELECT COUNT(*) FROM mainBoard WHERE color='black' AND location=" . $i;
       $bs = intval(self::getUniqueValueFromDB($sql));
 
-      if ($ws > $bs) {
-        $wScore += $this->_getScore($ws, $bs, $gs);
-        $wTieBreaker += 1;
-      }
-      if ($ws < $bs) {
-        $bScore += $this->_getScore($bs, $ws, $gs);
-        $bTieBreaker += 1;
+      $sql = 'SELECT type FROM ornaments WHERE location=' . $i;
+      $orn = self::getUniqueValueFromDB($sql);
+
+      if ($orn === 'o2') {
+        if ($ws > $bs) {
+          $bScore += $this->_getScore($bs, $ws, $gs, $orn);
+          $bTieBreaker += 1;
+        }
+        if ($ws < $bs) {
+          $wScore += $this->_getScore($ws, $bs, $gs, $orn);
+          $wTieBreaker += 1;
+        }
+      } else {
+        if ($ws > $bs) {
+          $wScore += $this->_getScore($ws, $bs, $gs, $orn);
+          if ($orn === 'o1') {
+            $wScore += 3;
+          }
+          $wTieBreaker += 1;
+        }
+        if ($ws < $bs) {
+          $bScore += $this->_getScore($bs, $ws, $gs, $orn);
+          if ($orn === 'o1') {
+            $bScore += 3;
+          }
+          $bTieBreaker += 1;
+        }
       }
     }
 
@@ -606,8 +686,14 @@ class Tholos extends Table
     ]);
   }
 
-  function _getScore($major, $minor, $grays)
+  function _getScore($major, $minor, $grays, $orn)
   {
+    if ($orn === 'o3') {
+      return $major * 1 + $minor * 3 + $grays * 2;
+    }
+    if ($orn === 'o4') {
+      return $major * 1 + $minor * 3 - $grays * 3;
+    }
     return $major * 1 + $minor * 3 - $grays * 2;
   }
 
@@ -639,8 +725,14 @@ class Tholos extends Table
     return true;
   }
 
-  function _placeInputCheck($color, $bonusAction, $target0, $target1, $target2)
-  {
+  function _placeInputCheck(
+    $color,
+    $bonusAction,
+    $ornamentAction,
+    $target0,
+    $target1,
+    $target2
+  ) {
     $apid = self::getActivePlayerId();
     $side = $this->getActivePlayerSide();
 
@@ -655,7 +747,15 @@ class Tholos extends Table
     }
 
     // check color if it is eligible to take an action
-    if ($bonusAction && $color !== $side) {
+    $sql =
+      "SELECT COUNT(*) FROM ornaments WHERE type='o5' AND location=" . $target0;
+    $hasO5 = self::getUniqueValueFromDB($sql);
+
+    if (
+      $bonusAction &&
+      $color !== $side &&
+      !($hasO5 > 0 && $color === 'gray')
+    ) {
       self::notifyPlayer(
         $apid,
         'logError',
@@ -674,13 +774,37 @@ class Tholos extends Table
     }
 
     // check bonus action
-    return $this->_actionInputCheck($color, $target0, $target1, $target2);
+    return $this->_actionInputCheck(
+      $color,
+      $ornamentAction,
+      $target0,
+      $target1,
+      $target2
+    );
   }
 
-  function _actionInputCheck($color, $target0, $target1, $target2)
-  {
+  function _actionInputCheck(
+    $color,
+    $ornamentAction,
+    $target0,
+    $target1,
+    $target2
+  ) {
     $apid = self::getActivePlayerId();
-    $side = $this->getActivePlayerSide();
+
+    if ($ornamentAction) {
+      $sql =
+        "SELECT COUNT(*) FROM ornaments WHERE type='o6' AND location=" .
+        $target0;
+      $hasO6 = self::getUniqueValueFromDB($sql);
+      if (!$hasO6) {
+        return false;
+      }
+      if (!$this->_CheckStoneInQuarry('gray')) {
+        return false;
+      }
+      return true;
+    }
 
     $t0 = intval($target0);
     switch ($t0) {
@@ -788,7 +912,12 @@ class Tholos extends Table
     $apid = self::getActivePlayerId();
     $sql = "SELECT COUNT(*) FROM mainBoard WHERE location='" . $target . "'";
     $cnt = intval(self::getUniqueValueFromDB($sql));
-    if ($cnt >= 5) {
+
+    $sql =
+      "SELECT COUNT(*) FROM ornaments WHERE type='o7' AND location=" . $target;
+    $hasO7 = self::getUniqueValueFromDB($sql);
+
+    if ($cnt >= ($hasO7 > 0 ? 7 : 5)) {
       self::notifyPlayer(
         $apid,
         'logError',
@@ -962,6 +1091,24 @@ class Tholos extends Table
     return true;
   }
 
+  function isColumnWithOrnament($idx, $oType)
+  {
+    $numOfOrn = intval($this->getGameStateValue('num_ornaments'));
+    if ($numOfOrn === 0) {
+      return false;
+    }
+    $sql =
+      'SELECT COUNT(*) FROM ornaments WHERE location=' .
+      $idx .
+      ' AND type=' .
+      $oType;
+    $cnt = self::getUniqueValueFromDB($sql);
+    if ($cnt !== 0) {
+      return true;
+    }
+    return false;
+  }
+
   //////////////////////////////////////////////////////////////////////////////
   //////////// Player actions
   ////////////
@@ -1025,8 +1172,14 @@ class Tholos extends Table
     $this->gamestate->nextState('nextPlayer');
   }
 
-  function placeStone($color, $bonusAction, $target0, $target1, $target2)
-  {
+  function placeStone(
+    $color,
+    $bonusAction,
+    $ornamentAction,
+    $target0,
+    $target1,
+    $target2
+  ) {
     self::checkAction('placeStone');
     $side = $this->getActivePlayerSide();
 
@@ -1034,6 +1187,7 @@ class Tholos extends Table
       !$this->_placeInputCheck(
         $color,
         $bonusAction,
+        $ornamentAction,
         $target0,
         $target1,
         $target2
@@ -1047,7 +1201,11 @@ class Tholos extends Table
 
     // bonus action
     if ($bonusAction) {
-      $this->applyBonusAction($target0, $target1, $target2);
+      if ($ornamentAction) {
+        $this->applyOrnamentAction($target1);
+      } else {
+        $this->applyBonusAction($target0, $target1, $target2);
+      }
     }
 
     // notify
@@ -1069,7 +1227,11 @@ class Tholos extends Table
 
     // notify for bonus action (it should be later than main action)
     if ($bonusAction) {
-      $this->notifyBonusAction($side, $target0, $target1, $target2);
+      if ($ornamentAction) {
+        $this->notifyOrnamentAction($target1);
+      } else {
+        $this->notifyBonusAction($side, $target0, $target1, $target2);
+      }
     }
 
     $this->_updateScore();
@@ -1119,7 +1281,11 @@ class Tholos extends Table
 
     $sql = 'SELECT COUNT(*) FROM mainBoard';
     $cnt = self::getUniqueValueFromDB($sql);
-    if ($cnt >= 35) {
+
+    $sql = "SELECT COUNT(*) FROM ornaments WHERE type='o7'";
+    $hasO7 = self::getUniqueValueFromDB($sql);
+
+    if ($cnt >= ($hasO7 > 0 ? 37 : 35)) {
       // if all columns are full, go end game state.
       $this->_updateScore();
       $this->gamestate->nextState('endGame');

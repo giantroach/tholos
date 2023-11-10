@@ -13,6 +13,8 @@ const emit = defineEmits([
   'cancel',
   'submit',
   'takeAction',
+  'takeActionColumn',
+  'takeActionOrnament',
   'noAction',
   'noValidTarget',
 ]);

@@ -412,6 +412,100 @@ const testData = [
         location: '6',
         type: 'o7',
       },
+    },
+    workshop: {
+      1: {
+        id: '1',
+        ws: 'white',
+        color: 'white',
+      },
+      2: {
+        id: '2',
+        ws: 'white',
+        color: 'gray',
+      },
+      3: {
+        id: '3',
+        ws: 'black',
+        color: 'black',
+      },
+      4: {
+        id: '4',
+        ws: 'black',
+        color: 'gray',
+      },
+    },
+  }),
+  Object.assign(structuredClone(testDataBase), {
+    gameMode: 'advanced',
+    mainBoard: {
+      1: {
+        id: '1',
+        location: '1',
+        color: 'white',
+      },
+      2: {
+        id: '2',
+        location: '2',
+        color: 'black',
+      },
+      3: {
+        id: '3',
+        location: '3',
+        color: 'black',
+      },
+      4: {
+        id: '4',
+        location: '4',
+        color: 'black',
+      },
+      5: {
+        id: '5',
+        location: '5',
+        color: 'black',
+      },
+      6: {
+        id: '6',
+        location: '6',
+        color: 'white',
+      },
+      7: {
+        id: '7',
+        location: '0',
+        color: 'black',
+      },
+      8: {
+        id: '8',
+        location: '0',
+        color: 'black',
+      },
+      9: {
+        id: '9',
+        location: '0',
+        color: 'black',
+      },
+      10: {
+        id: '10',
+        location: '0',
+        color: 'black',
+      },
+      11: {
+        id: '11',
+        location: '0',
+        color: 'black',
+      },
+      12: {
+        id: '12',
+        location: '0',
+        color: 'black',
+      },
+    },
+    ornament: {
+      7: {
+        id: '7',
+        location: '0',
+        type: 'o7',
+      },
     }
   }),
 ];

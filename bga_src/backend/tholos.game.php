@@ -228,7 +228,7 @@ class Tholos extends Table
       return 'black';
     }
 
-    die('ok');
+    return 'observer';
   }
 
   function getActivePlayerSide()
@@ -326,15 +326,12 @@ class Tholos extends Table
     // update quarry
     $sql = "SELECT count FROM quarry WHERE color='gray'";
     $remains = intval(self::getUniqueValueFromDB($sql)) - 1;
-    $sql =
-      'UPDATE quarry SET count=' . $remains . " WHERE color='gray'";
+    $sql = 'UPDATE quarry SET count=' . $remains . " WHERE color='gray'";
     self::DbQuery($sql);
 
     // main board
     $sql =
-      "INSERT INTO mainBoard(location, color) VALUES('" .
-      $t1 .
-      "', 'gray')";
+      "INSERT INTO mainBoard(location, color) VALUES('" . $t1 . "', 'gray')";
     self::DbQuery($sql);
   }
 

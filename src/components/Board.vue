@@ -12,14 +12,8 @@ import type { Ref } from 'vue';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const props = defineProps<{
-  type: {
-    type: BoardType;
-    required: true;
-  };
-  data: {
-    type: BoardData;
-    required: false;
-  };
+  type: BoardType;
+  data: BoardData;
 }>() as any;
 const urlBase: Ref<string> = inject('urlBase') || ref('');
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

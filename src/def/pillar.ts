@@ -61,7 +61,7 @@ const pillarDefs: { [pillarType in PillarType]: PillarDef } = {
     stoneGap: -16,
     hint: {
       image: pillarHintImgUrl,
-      text: 'Location π: The player who places a stone of their color in this location may move a stone (of any color) from their rival’s workshop to their own workshop; the player must have room for it in their workshop.',
+      text: "Location π: The player who places a stone of their color in this location may move a stone (of any color) from their rival's workshop to their own workshop; the player must have room for it in their workshop.",
       width: '240px',
       height: '220px',
       imgWidth: '80px',

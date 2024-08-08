@@ -7,10 +7,7 @@ import type { Ref } from 'vue';
 import quarryImgUrl from '../assets/quarry.png';
 
 const props = defineProps<{
-  data: {
-    type: QuarryData;
-    required: true;
-  };
+  data:  QuarryData;
 }>() as any;
 
 const i18n: Ref<any> = inject('i18n') || ref('');

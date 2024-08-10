@@ -40,12 +40,12 @@ export class Sub {
           if (idx === -1) {
             throw 'unexpected state: no enough space to take stone ';
           }
-          ws.pillars[idx].stones.push(args.color);
+          ws.pillars[idx].stones.push(args.rawColor);
         }
 
         // update quarry
         const q = this.quarryData.value;
-        switch (args.color) {
+        switch (args.rawColor) {
           case 'white':
             q.stones[0] -= count;
             break;
@@ -68,7 +68,9 @@ export class Sub {
           args.player_side === 'white'
             ? this.wsWBoardData.value
             : this.wsBBoardData.value;
-        const idx = ws.pillars.findLastIndex((p) => p.stones[0] === args.color);
+        const idx = ws.pillars.findLastIndex(
+          (p) => p.stones[0] === args.rawColor
+        );
         if (idx === -1) {
           throw 'unexpected state: no corresponding stone found in workshop.';
         }
@@ -77,7 +79,7 @@ export class Sub {
         // update mainBoard
         const mb = this.mainBoardData.value;
         const targetIdx = Number(args.target);
-        mb.pillars[targetIdx].stones.push(args.color);
+        mb.pillars[targetIdx].stones.push(args.rawColor);
 
         break;
       }
@@ -135,7 +137,7 @@ export class Sub {
 
         // remove from oppo
         const idx = wsFrom.pillars.findLastIndex(
-          (p) => p.stones[0] === args.color
+          (p) => p.stones[0] === args.rawColor
         );
         if (idx === -1) {
           throw 'unexpected state: no corresponding stone found in workshop.';
@@ -147,7 +149,7 @@ export class Sub {
         if (idx2 === -1) {
           throw 'unexpected state: no place to place stone in your workshop.';
         }
-        wsTo.pillars[idx2].stones.push(args.color);
+        wsTo.pillars[idx2].stones.push(args.rawColor);
 
         break;
       }
@@ -158,11 +160,11 @@ export class Sub {
         // update mainBoard
         const mb = this.mainBoardData.value;
         const targetIdx = Number(args.target);
-        mb.pillars[targetIdx].stones.push(args.color);
+        mb.pillars[targetIdx].stones.push(args.rawColor);
 
         // update quarry
         const q = this.quarryData.value;
-        switch (args.color) {
+        switch (args.rawColor) {
           case 'white':
             q.stones[0] -= 1;
             break;

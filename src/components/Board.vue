@@ -154,6 +154,21 @@ const touchend = (evt: Event, prevDef = false) => {
     evt.preventDefault();
   }
 };
+
+const selectStone = (idx: number): void => {
+  if (!['workshopW', 'workshopB'].includes(props.type)) {
+    return;
+  }
+  // make other stones unselected
+  data.value.pillars.forEach((p, i) => {
+    if (i === idx) {
+      return
+    }
+    if (p.selected[0][0]) {
+      p.selected[0][0] = false;
+    }
+  });
+};
 </script>
 
 <template>
@@ -181,7 +196,11 @@ const touchend = (evt: Event, prevDef = false) => {
         v-on:mouseleave="hideHint"
         v-on:touchend="touchend($event)"
       >
-        <Pillar :data="pillar" :active="data.active" />
+        <Pillar
+          :data="pillar"
+          :active="data.active"
+          @selectStone="selectStone(idx)"
+        />
       </li>
     </ul>
     <ul class="ornaments">

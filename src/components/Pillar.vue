@@ -15,6 +15,8 @@ const props = withDefaults(defineProps<Props>(), {
   type: 'standard',
 });
 
+const emit = defineEmits(['selectStone']);
+
 const data: Ref<PillarData> = ref(props.data);
 const def: PillarDef = pillarDefs[props.type];
 
@@ -52,6 +54,15 @@ const getSelectableLayer = (idx: number): number => {
   }
   return -1;
 };
+
+const selectStone = (idx: number): void => {
+  const idxLayer = getSelectableLayer(idx);
+  data.value.selected[idxLayer][idx] = !data.value.selected[idxLayer][idx];
+  if (!data.value.selected[idxLayer][idx]) {
+    return;
+  }
+  emit('selectStone')
+};
 </script>
 
 <template>
@@ -69,10 +80,7 @@ const getSelectableLayer = (idx: number): number => {
         :selectable="isSelectable(idx)"
         :selected="isSelected(idx)"
         :selectIdx="getSelectableLayer(idx)"
-        @selectStone="
-          data.selected[getSelectableLayer(idx)][idx] =
-            !data.selected[getSelectableLayer(idx)][idx]
-        "
+        @selectStone="selectStone(idx)"
       />
     </li>
 
@@ -90,33 +98,13 @@ const getSelectableLayer = (idx: number): number => {
         :selected="isSelected(data.stones.length + idx)"
         :selectIdx="getSelectableLayer(data.stones.length + idx)"
         :ghost="true"
-        @selectStone="
-          data.selected[getSelectableLayer(data.stones.length + idx)][
-            data.stones.length + idx
-          ] =
-            !data.selected[getSelectableLayer(data.stones.length + idx)][
-              data.stones.length + idx
-            ]
-        "
+        @selectStone="selectStone(data.stones.length + idx)"
       />
     </li>
 
-    <li
-      v-if="!data.stones.length && !data.ghosts.length"
-      class=""
-    >
-      <Stone
-        type="none" />
+    <li v-if="!data.stones.length && !data.ghosts.length" class="">
+      <Stone type="none" />
     </li>
-
-    <!-- <li v-if="data.selectable[0] && !data.stones[0]">
-         <Stone
-         type="none"
-         :selectable="(props.active && data.selectable[0]) || false"
-         :selected="data.selected[0] || false"
-         @selectStone="data.selected[0] = !data.selected[0]"
-         />
-         </li> -->
   </ul>
 </template>
 

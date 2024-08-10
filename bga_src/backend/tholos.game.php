@@ -354,7 +354,7 @@ class Tholos extends Table
             'from_name' => $this->getLocationName($t1),
             'to' => $t2,
             'to_name' => $this->getLocationName($t2),
-            'color' => clienttranslate('Gray'),
+            'color' => clienttranslate('gray'),
             'rawColor' => 'gray',
           ]
         );
@@ -375,7 +375,7 @@ class Tholos extends Table
             'from_name' => $this->getLocationName($t1),
             'to' => $t2,
             'to_name' => $this->getLocationName($t2),
-            'color' => clienttranslate('White'),
+            'color' => clienttranslate('white'),
             'rawColor' => 'white',
           ]
         );
@@ -407,7 +407,7 @@ class Tholos extends Table
           [
             'player_side' => $side,
             'player_name' => self::getActivePlayerName(),
-            'color' => clienttranslate(ucfirst($color)),
+            'color' => clienttranslate($color),
             'rawColor' => $color,
             'count' => 1,
           ]
@@ -424,7 +424,7 @@ class Tholos extends Table
           [
             'player_side' => $side,
             'player_name' => self::getActivePlayerName(),
-            'color' => clienttranslate(ucfirst($color)),
+            'color' => clienttranslate($color),
             'rawColor' => $color,
           ]
         );
@@ -441,7 +441,7 @@ class Tholos extends Table
           [
             'player_side' => $side,
             'player_name' => self::getActivePlayerName(),
-            'color' => clienttranslate(ucfirst($color)),
+            'color' => clienttranslate($color),
             'rawColor' => $color,
             'target' => $t2,
             'locationName' => $this->getLocationName($t2),
@@ -465,7 +465,7 @@ class Tholos extends Table
             'from_name' => $this->getLocationName($t1),
             'to' => $t2,
             'to_name' => $this->getLocationName($t2),
-            'color' => clienttranslate('Black'),
+            'color' => clienttranslate('black'),
             'rawColor' => 'black',
           ]
         );
@@ -483,7 +483,7 @@ class Tholos extends Table
       ),
       [
         'player_name' => self::getActivePlayerName(),
-        'color' => clienttranslate('Gray'),
+        'color' => clienttranslate('gray'),
         'rawColor' => 'gray',
         'target' => $t1,
         'locationName' => $this->getLocationName($t1),
@@ -1168,7 +1168,7 @@ class Tholos extends Table
       [
         'player_side' => $side,
         'player_name' => self::getActivePlayerName(),
-        'color' => clienttranslate(ucfirst($color)),
+        'color' => clienttranslate($color),
         'rawColor' => $color,
         'count' => $count,
       ]
@@ -1223,7 +1223,7 @@ class Tholos extends Table
       [
         'player_side' => $side,
         'player_name' => self::getActivePlayerName(),
-        'color' => clienttranslate(ucfirst($color)),
+        'color' => clienttranslate($color),
         'rawColor' => $color,
         'target' => $target0,
         'locationName' => $locationName,

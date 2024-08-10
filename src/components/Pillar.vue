@@ -61,7 +61,7 @@ const selectStone = (idx: number): void => {
   if (!data.value.selected[idxLayer][idx]) {
     return;
   }
-  emit('selectStone')
+  emit('selectStone', idxLayer)
 };
 </script>
 

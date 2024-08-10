@@ -155,7 +155,7 @@ const touchend = (evt: Event, prevDef = false) => {
   }
 };
 
-const selectStone = (idx: number): void => {
+const selectStone = (layerIdx: number, idx: number): void => {
   if (!['workshopW', 'workshopB'].includes(props.type)) {
     return;
   }
@@ -164,8 +164,8 @@ const selectStone = (idx: number): void => {
     if (i === idx) {
       return
     }
-    if (p.selected[0][0]) {
-      p.selected[0][0] = false;
+    if (p.selected[layerIdx][0]) {
+      p.selected[layerIdx][0] = false;
     }
   });
 };
@@ -199,7 +199,7 @@ const selectStone = (idx: number): void => {
         <Pillar
           :data="pillar"
           :active="data.active"
-          @selectStone="selectStone(idx)"
+          @selectStone="selectStone($event, idx)"
         />
       </li>
     </ul>

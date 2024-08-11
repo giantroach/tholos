@@ -506,7 +506,7 @@ const testData = [
         location: '0',
         type: 'o7',
       },
-    }
+    },
   }),
 ];
 
@@ -525,7 +525,8 @@ const testEvent = [
       player_side: 'black',
       player_name:
         '<!--PNS--><span class="playername" style="color:#008000;">giantroach0</span><!--PNE-->',
-      color: 'white',
+      color: 'White',
+      rawColor: 'white',
       count: '1',
     },
   },
@@ -535,7 +536,8 @@ const testEvent = [
       player_side: 'black',
       player_name:
         '<!--PNS--><span class="playername" style="color:#008000;">giantroach0</span><!--PNE-->',
-      color: 'black',
+      color: 'Black',
+      rawColor: 'black',
       target: '0',
       locationName: 'α',
     },
@@ -568,7 +570,8 @@ const testEvent = [
       player_side: 'black',
       player_name:
         '<!--PNS--><span class="playername" style="color:#008000;">giantroach0</span><!--PNE-->',
-      color: 'white',
+      color: 'White',
+      rawColor: 'white',
       from: '3',
     },
   },

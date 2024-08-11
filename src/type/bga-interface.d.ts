@@ -29,14 +29,16 @@ interface BgaNotification {
 interface BgaTakeStoneNotif {
   player_side: 'black' | 'white';
   player_name: string;
-  color: StoneType;
+  color: string;
+  rawColor: StoneType;
   count: string; // num string
 }
 
 interface BgaPlaceStoneNotif {
   player_side: 'black' | 'white';
   player_name: string;
-  color: StoneType;
+  color: string;
+  rawColor: StoneType;
   target: string; // num string
   locationName: string;
   bonusAction: boolean;
@@ -61,7 +63,8 @@ interface BgaRemoveStoneNotif {
 interface BgaStealStoneNotif {
   player_side: 'black' | 'white';
   player_name: string;
-  color: StoneType;
+  color: string;
+  rawColor: StoneType;
 }
 
 interface BgaPlaceFromQuarryNotif {
@@ -69,7 +72,8 @@ interface BgaPlaceFromQuarryNotif {
   target: string; // num string
   locationName: string;
   // though it is always gray
-  color: StoneType;
+  color: string;
+  rawColor: StoneType;
 }
 
 export {

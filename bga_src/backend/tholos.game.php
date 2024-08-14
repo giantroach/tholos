@@ -348,13 +348,14 @@ class Tholos extends Table
             '[Bonus Action] ${player_name} moved a ${color} stone from the column ${from_name} to the column ${to_name}.'
           ),
           [
+            'i18n' => ['color'],
             'player_side' => $side,
             'player_name' => self::getActivePlayerName(),
             'from' => $t1,
             'from_name' => $this->getLocationName($t1),
             'to' => $t2,
             'to_name' => $this->getLocationName($t2),
-            'color' => clienttranslate('gray'),
+            'color' => 'gray',
             'rawColor' => 'gray',
           ]
         );
@@ -369,13 +370,14 @@ class Tholos extends Table
             '[Bonus Action] ${player_name} moved a ${color} stone from the column ${from_name} to the column ${to_name}.'
           ),
           [
+            'i18n' => ['color'],
             'player_side' => $side,
             'player_name' => self::getActivePlayerName(),
             'from' => $t1,
             'from_name' => $this->getLocationName($t1),
             'to' => $t2,
             'to_name' => $this->getLocationName($t2),
-            'color' => clienttranslate('white'),
+            'color' => 'white',
             'rawColor' => 'white',
           ]
         );
@@ -405,9 +407,10 @@ class Tholos extends Table
             '[Bonus Action] ${player_name} took a ${color} stone from the quarry.'
           ),
           [
+            'i18n' => ['color'],
             'player_side' => $side,
             'player_name' => self::getActivePlayerName(),
-            'color' => clienttranslate($color),
+            'color' => $color,
             'rawColor' => $color,
             'count' => 1,
           ]
@@ -422,9 +425,10 @@ class Tholos extends Table
             '[Bonus Action] ${player_name} stole a ${color} stone from the workshop.'
           ),
           [
+            'i18n' => ['color'],
             'player_side' => $side,
             'player_name' => self::getActivePlayerName(),
-            'color' => clienttranslate($color),
+            'color' => $color,
             'rawColor' => $color,
           ]
         );
@@ -439,9 +443,10 @@ class Tholos extends Table
             '[Bonus Action] ${player_name} placed a ${color} stone on the column ${locationName}.'
           ),
           [
+            'i18n' => ['color'],
             'player_side' => $side,
             'player_name' => self::getActivePlayerName(),
-            'color' => clienttranslate($color),
+            'color' => $color,
             'rawColor' => $color,
             'target' => $t2,
             'locationName' => $this->getLocationName($t2),
@@ -459,13 +464,14 @@ class Tholos extends Table
             '[Bonus Action] ${player_name} moved a ${color} stone from the column ${from_name} to the column ${to_name}.'
           ),
           [
+            'i18n' => ['color'],
             'player_side' => $side,
             'player_name' => self::getActivePlayerName(),
             'from' => $t1,
             'from_name' => $this->getLocationName($t1),
             'to' => $t2,
             'to_name' => $this->getLocationName($t2),
-            'color' => clienttranslate('black'),
+            'color' => 'black',
             'rawColor' => 'black',
           ]
         );
@@ -482,8 +488,9 @@ class Tholos extends Table
         '[Ornament Bonus Action] ${player_name} placed a ${color} stone on the column ${locationName} from the Quarry.'
       ),
       [
+        'i18n' => ['color'],
         'player_name' => self::getActivePlayerName(),
-        'color' => clienttranslate('gray'),
+        'color' => 'gray',
         'rawColor' => 'gray',
         'target' => $t1,
         'locationName' => $this->getLocationName($t1),
@@ -1166,9 +1173,10 @@ class Tholos extends Table
         '${player_name} took ${count} of ${color} stone(s) from the quarry.'
       ),
       [
+        'i18n' => ['color'],
         'player_side' => $side,
         'player_name' => self::getActivePlayerName(),
-        'color' => clienttranslate($color),
+        'color' => $color,
         'rawColor' => $color,
         'count' => $count,
       ]
@@ -1221,9 +1229,10 @@ class Tholos extends Table
         '${player_name} placed a ${color} stone on the column ${locationName}.'
       ),
       [
+        'i18n' => ['color'],
         'player_side' => $side,
         'player_name' => self::getActivePlayerName(),
-        'color' => clienttranslate($color),
+        'color' => $color,
         'rawColor' => $color,
         'target' => $target0,
         'locationName' => $locationName,
